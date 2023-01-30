@@ -1,6 +1,0 @@
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://seenema-db.cfurwbssmrrc.ap-northeast-2.rds.amazonaws.com:3306/seenema?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: seenema
-    password: 12341234
