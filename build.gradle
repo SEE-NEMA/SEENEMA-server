@@ -17,6 +17,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
+	annotationProcessor('org.projectlombok:lombok:1.18.22')
 }
 
 tasks.named('test') {
