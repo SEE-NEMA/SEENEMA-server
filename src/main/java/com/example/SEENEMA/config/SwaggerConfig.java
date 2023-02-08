@@ -15,9 +15,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {  // Swagger
 
-    private static final String API_NAME = "ToyProject API";
-    private static final String API_VERSION = "0.0.1";
-    private static final String API_DESCRIPTION = "ToyProject API 명세서";
+    private static final String API_NAME = "SEE-NEMA API";
+    private static final String API_VERSION = "3.0";
+    private static final String API_DESCRIPTION = "SEE-NEMA API 명세서";
 
     @Bean
     public Docket api() {
@@ -31,9 +31,9 @@ public class SwaggerConfig {  // Swagger
 
     public ApiInfo apiInfo() {  // API의 이름, 현재 버전, API에 대한 정보
         return new ApiInfoBuilder()
-                .title("SEENEMA Swagger")
-                .version("3.0")
-                .description("SEENEMA SwaggerConfig")
+                .title(API_NAME)
+                .version(API_VERSION)
+                .description(API_DESCRIPTION)
                 .build();
     }
 }
