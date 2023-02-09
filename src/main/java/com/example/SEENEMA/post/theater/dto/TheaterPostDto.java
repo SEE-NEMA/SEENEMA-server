@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class TheaterPostDto {
         private Theater theater; // 공연장
         private String title; // 제목
         private String content; // 내용
-        //private List<Tag> tags; // 태그
+        private List<Tag> tags;
 
         public TheaterPost toEntity(){
             return TheaterPost.builder()
@@ -27,10 +28,9 @@ public class TheaterPostDto {
                     .theater(theater)
                     .title(title)
                     .content(content)
-                    /*.tags(tags.toString())*/
+                    .tags(tags)
                     .build();
         }
-
     }
     @Getter
     public static class addResponse{
@@ -40,7 +40,8 @@ public class TheaterPostDto {
         private String title;
         private String content;
         private String createdAt;
-        //private String tags;
+
+        private List<Tag> tags;
 
         public addResponse(TheaterPost theaterPost){
             this.userId=theaterPost.getUser().getUserId();
@@ -49,7 +50,7 @@ public class TheaterPostDto {
             this.title=theaterPost.getTitle();
             this.content=theaterPost.getContent();
             this.createdAt=theaterPost.getCreatedAt().toString();
-            //this.tags=theaterPost.getTags();
+            this.tags=theaterPost.getTags();
         }
     }
 }
