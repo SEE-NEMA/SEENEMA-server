@@ -11,9 +11,9 @@ import javax.persistence.*;
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tag_id;
+    private Long tagId;
 
     @Column(nullable = false)
-    private String tag_name;
+    private String tagName;
 
 }

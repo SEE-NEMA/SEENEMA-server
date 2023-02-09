@@ -11,9 +11,9 @@ import javax.persistence.*;
 public class Theater {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long theater_id;
+    private Long theaterId;
 
     @Column(nullable = false)
-    private String theater_name;
+    private String theaterName;
 
 }
