@@ -7,6 +7,7 @@ import lombok.*;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,11 +16,12 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "POST_THEATER")
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class TheaterPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long post_no; // 게시글 no
+    private Long postNo; // 게시글 no
 
     @ManyToOne
     @JoinColumn(name="user_id")
@@ -48,13 +50,5 @@ public class TheaterPost {
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
-    }
-
-    public void updateTheaterPost(Theater theater, String title, String content, LocalDateTime createdAt, LocalDateTime editedAt) {
-        this.theater = theater;
-        this.title = title;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.editedAt = editedAt;
     }
 }
