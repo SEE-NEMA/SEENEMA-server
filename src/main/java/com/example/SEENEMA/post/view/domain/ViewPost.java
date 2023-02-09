@@ -6,6 +6,7 @@ import lombok.*;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,11 +15,12 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "POST_VIEW")
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class ViewPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long view_no; // 게시글 no
+    private Long viewNo; // 게시글 no
 
     @ManyToOne
     @JoinColumn(name="user_id")
@@ -57,15 +59,6 @@ public class ViewPost {
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
-    }
-
-    public void updateViewPost(String play, String seat, String title, String content, LocalDateTime createdAt, LocalDateTime editedAt) {
-        this.play = play;
-        this.seat = seat;
-        this.title = title;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.editedAt = editedAt;
     }
 
 }
