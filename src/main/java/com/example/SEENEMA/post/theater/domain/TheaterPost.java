@@ -34,6 +34,10 @@ public class TheaterPost {
     private String title; // 제목
     @Column(nullable = false)
     private String content; // 내용
+/*
+    @Column(nullable = true)
+    private String tags; // 태그
+ */
 
     @CreatedDate // 생성일 자동화
     @Column(updatable = false)
@@ -44,11 +48,12 @@ public class TheaterPost {
     private LocalDateTime editedAt; // 최종 수정 일시
 
     @Builder
-    public TheaterPost(User user, Theater theater, String title, String content, LocalDateTime createdAt) {
+    public TheaterPost(User user, Theater theater, String title, String content, LocalDateTime createdAt/*, String tags*/) {
         this.user = user;
         this.theater = theater;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
+        //this.tags=tags;
     }
 }
