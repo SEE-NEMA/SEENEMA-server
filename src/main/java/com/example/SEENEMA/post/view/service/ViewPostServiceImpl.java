@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ViewPostServiceImpl implements ViewPostService {
+public class   ViewPostServiceImpl implements ViewPostService {
     private final ViewPostRepository viewRepository;
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
