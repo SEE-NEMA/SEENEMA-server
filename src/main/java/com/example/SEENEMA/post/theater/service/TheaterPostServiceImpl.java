@@ -65,6 +65,14 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         return result;
     }
 
+    @Override
+    @Transactional
+    public TheaterPostDto.deleteResponse deleteTheaterPost(Long post_no){
+        // 공연장 후기 게시글 삭제
+        theaterPostRepo.deleteById(post_no);
+        return null;
+    }
+
 
     private User getUser(Long userId){
         return userRepo.findById(userId).get();
@@ -76,6 +84,15 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         List<Theater> theaters = theaterRepo.findAll();
         for(Theater t:theaters){
             if(t.getTheaterName().equals(theaterName)) {
+                return t;
+            }
+        }
+        return null;
+    }
+    private TheaterPost getTheaterPost(Long post_no){
+        List<TheaterPost> theaterPost = theaterPostRepo.findAll();
+        for(TheaterPost t:theaterPost){
+            if(t.getPostNo().equals(post_no)){
                 return t;
             }
         }

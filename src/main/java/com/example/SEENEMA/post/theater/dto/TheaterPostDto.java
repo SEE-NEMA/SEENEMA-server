@@ -66,4 +66,6 @@ public class TheaterPostDto {
             this.nickname = theaterPost.getUser().getNickname();
         }
     }
+    public static class deleteResponse{
+    }
 }
