@@ -44,6 +44,14 @@ public class ViewPostServiceImpl implements ViewPostService {
 
     }
 
+    @Override
+    @Transactional
+    public void deleteViewPost(Long viewNo){
+        ViewPost viewPost = getViewPost(viewNo);
+        viewPostRepository.delete(viewPost);
+    }
+
+
     private ViewPost getViewPost(Long viewNo){ return viewPostRepository.findById(viewNo).orElseThrow(); }
 
     private User getUser(Long userId){

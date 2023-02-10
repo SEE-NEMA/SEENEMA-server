@@ -13,5 +13,6 @@ public interface ViewPostService {
 
     ViewPostDto.addResponse updateViewPost(Long theaterId, Long viewNo, ViewPostDto.updateRequest requestDto);
 
+    void deleteViewPost(Long viewNo);
 
 }
