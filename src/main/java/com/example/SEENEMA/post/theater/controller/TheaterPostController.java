@@ -30,8 +30,8 @@ public class TheaterPostController {
     }
 
     @ApiOperation(value = "공연장 후기 게시물 삭제")
-    @DeleteMapping("/{post_no}")
-    public ResponseEntity<TheaterPostDto.deleteResponse> deleteTheaterPost(@PathVariable Long post_no){
-        return ResponseEntity.ok(service.deleteTheaterPost(post_no));
+    @DeleteMapping("/{postNo}")
+    public ResponseEntity<TheaterPostDto.deleteResponse> deleteTheaterPost(@PathVariable Long postNo){
+        return ResponseEntity.ok(service.deleteTheaterPost(postNo));
     }
 }
