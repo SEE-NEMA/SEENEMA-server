@@ -15,13 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class ViewPostServiceImpl implements ViewPostService {
-    private final ViewPostRepository viewRepository;
+    private final ViewPostRepository viewPostRepository;
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
 
     @Override
     @Transactional
-    public ViewPostDto.addResponse createView(Long userId, Long theaterId, ViewPostDto.addRequest requestDto){
+    public ViewPostDto.addResponse createViewPost(Long userId, Long theaterId, ViewPostDto.addRequest requestDto){
 
         User user = getUser(userId);
         Theater theater = getTheater(theaterId);
@@ -31,9 +31,20 @@ public class ViewPostServiceImpl implements ViewPostService {
 
         ViewPost view = requestDto.toEntity();
 
-        return new ViewPostDto.addResponse(viewRepository.save(view));
+        return new ViewPostDto.addResponse(viewPostRepository.save(view));
 
     }
+    @Override
+    @Transactional
+    public ViewPostDto.addResponse updateViewPost(Long theaterId, Long viewNo, ViewPostDto.updateRequest requestDto){
+        ViewPost viewPost = getViewPost(viewNo);
+
+        viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent());
+        return new ViewPostDto.addResponse(viewPost);
+
+    }
+
+    private ViewPost getViewPost(Long viewNo){ return viewPostRepository.findById(viewNo).orElseThrow(); }
 
     private User getUser(Long userId){
         return userRepository.findById(userId).orElseThrow();

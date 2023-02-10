@@ -40,6 +40,7 @@ public class ViewPostDto {
         private String title; // 제목
         private String content; // 내용
         private String createdAt;  // 작성일
+        private String editedAt;
 
         public addResponse(ViewPost view){
             this.userId = view.getUser().getUserId();
@@ -50,7 +51,19 @@ public class ViewPostDto {
             this.title = view.getTitle();
             this.content = view.getContent();
             this.createdAt = view.getCreatedAt().toString();
+            this.editedAt = view.getEditedAt().toString();
 
         }
     }
+
+    @Getter
+    @Setter
+    public static class updateRequest {
+        private String play;
+        private String seat;
+        private String title;
+        private String content;
+
+    }
+
 }
