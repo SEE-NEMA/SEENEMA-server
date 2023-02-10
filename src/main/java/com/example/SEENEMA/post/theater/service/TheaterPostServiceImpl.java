@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -31,6 +30,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     @Override
     @Transactional
     public TheaterPostDto.addResponse createTheaterPost(Long userId, TheaterPostDto.addRequest request){
+        // 공연장 후기 게시글 작성
         User user = getUser(userId);
         //String theaterName = request.getTitle().split(" + ",2)[0];
         //title = "[ 충무아트센터 + 그날들 ] 공연 후기 !~!"
@@ -51,6 +51,20 @@ public class TheaterPostServiceImpl implements TheaterPostService{
 
         return new TheaterPostDto.addResponse(theaterPostRepo.save(theaterPost));
     }
+    @Override
+    @Transactional
+    public List<TheaterPostDto.listResponse> listTheaterPost(){
+        // 공연장 후기 게시글 메인 페이지
+        List<TheaterPost> originPost = theaterPostRepo.findAll();
+        List<TheaterPostDto.listResponse> result = new ArrayList<>();
+
+        for(TheaterPost t : originPost){
+            TheaterPostDto.listResponse tmp = new TheaterPostDto.listResponse(t);
+            result.add(tmp);
+        }
+        return result;
+    }
+
 
     private User getUser(Long userId){
         return userRepo.findById(userId).get();
@@ -61,8 +75,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     private Theater getTheater(String theaterName){
         List<Theater> theaters = theaterRepo.findAll();
         for(Theater t:theaters){
-            if(t.getTheaterName().toString().equals(theaterName.toString())) {
-                //log.info(t.getTheaterName().toString());
+            if(t.getTheaterName().equals(theaterName)) {
                 return t;
             }
         }
@@ -70,7 +83,6 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     }
     private List<Tag> getTags(List<Tag> tags){
         List<Tag> tmp = tagRepo.findAll();
-        int index=0;
         for (Tag t : tmp){
             for(Tag ex : tags){
                 if(t.getTagId().equals(ex.getTagId()))

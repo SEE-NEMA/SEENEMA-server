@@ -6,10 +6,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,5 +21,11 @@ public class TheaterPostController {
     @PostMapping("/upload")
     public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestBody TheaterPostDto.addRequest request){
         return ResponseEntity.ok(service.createTheaterPost(2L, request));
+    }
+
+    @ApiOperation(value = "공연장 후기 게시물 메인 페이지")
+    @GetMapping("/")
+    public ResponseEntity<List<TheaterPostDto.listResponse>> mainTheaterPost(){
+        return ResponseEntity.ok(service.listTheaterPost());
     }
 }
