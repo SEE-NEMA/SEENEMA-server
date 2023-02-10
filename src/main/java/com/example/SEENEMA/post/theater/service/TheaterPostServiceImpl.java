@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,13 +33,8 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     public TheaterPostDto.addResponse createTheaterPost(Long userId, TheaterPostDto.addRequest request){
         // 공연장 후기 게시글 작성
         User user = getUser(userId);
-        //String theaterName = request.getTitle().split(" + ",2)[0];
-        //title = "[ 충무아트센터 + 그날들 ] 공연 후기 !~!"
 
-        String[] title = request.getTitle().split("\\+");
-        String[] title2 = title[0].split(" ",2);
-        String theaterName = title2[1];
-        theaterName=theaterName.trim();
+        String theaterName = findTheaterName(request.getTitle());
         Theater theater = getTheater(theaterName);
 
         List<Tag> tags = getTags(request.getTags());
@@ -67,15 +63,44 @@ public class TheaterPostServiceImpl implements TheaterPostService{
 
     @Override
     @Transactional
-    public TheaterPostDto.deleteResponse deleteTheaterPost(Long post_no){
+    public TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo){
         // 공연장 후기 게시글 삭제
-        theaterPostRepo.deleteById(post_no);
+        theaterPostRepo.deleteById(postNo);
         return null;
     }
 
+    @Override
+    @Transactional
+    public TheaterPostDto.addResponse editTheaterPost(Long userId, Long postNo, TheaterPostDto.addRequest request){
+        User user = getUser(userId);
+        String theaterName = findTheaterName(request.getTitle());
+        Theater theater = getTheater(theaterName);
+        List<Tag> tags = getTags(request.getTags());
+
+        TheaterPost t = getTheaterPost(postNo);
+        t.setEditedAt(LocalDateTime.now());
+        t.setTheater(theater);
+        t.setTags(tags);
+        t.setTitle(request.getTitle());
+        t.setContent(request.getContent());
+
+        request.setUser(user);
+        request.setTheater(theater);
+        request.setTags(tags);
+
+
+        return new TheaterPostDto.addResponse(theaterPostRepo.save(t));
+    }
 
     private User getUser(Long userId){
         return userRepo.findById(userId).get();
+    }
+    private String findTheaterName(String origin){
+        String[] title = origin.split("\\+");
+        String[] title2 = title[0].split(" ", 2);
+        String theaterName = title2[1];
+        theaterName = theaterName.trim();
+        return theaterName;
     }
     private Theater getTheater(Long theaterId){
         return theaterRepo.findById(theaterId).get();

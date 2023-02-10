@@ -34,4 +34,10 @@ public class TheaterPostController {
     public ResponseEntity<TheaterPostDto.deleteResponse> deleteTheaterPost(@PathVariable Long postNo){
         return ResponseEntity.ok(service.deleteTheaterPost(postNo));
     }
+
+    @ApiOperation(value = "공연장 후기 게시물 수정")
+    @PutMapping("/{postNo}")
+    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestBody TheaterPostDto.addRequest request){
+        return ResponseEntity.ok(service.editTheaterPost(2L, postNo, request));
+    }
 }

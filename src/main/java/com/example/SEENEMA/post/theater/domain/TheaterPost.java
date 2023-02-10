@@ -16,6 +16,7 @@ import java.util.Set;
 
 
 @Getter
+@Setter
 @Table(name = "POST_THEATER")
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)

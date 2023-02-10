@@ -1,6 +1,7 @@
 package com.example.SEENEMA.tag.domain;
 
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.persistence.*;
 import java.util.List;
@@ -19,7 +20,7 @@ public class Tag {
 
     @Column(nullable = false)
     private String tagName;
-
+    @JsonIgnore
     @ManyToMany(mappedBy = "tags")
-    List<TheaterPost> tag;
+    List<TheaterPost> theaterPosts;
 }
