@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 
 @Getter
@@ -35,6 +37,16 @@ public class TheaterPost {
     @Column(nullable = false)
     private String content; // 내용
 
+    //태그 기능
+    @ManyToMany
+    @JoinTable(
+            name="theater_post_tags",
+            joinColumns = @JoinColumn(name="post_no"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags;
+
+
     @CreatedDate // 생성일 자동화
     @Column(updatable = false)
     private LocalDateTime createdAt; // 작성 일시
@@ -44,11 +56,12 @@ public class TheaterPost {
     private LocalDateTime editedAt; // 최종 수정 일시
 
     @Builder
-    public TheaterPost(User user, Theater theater, String title, String content, LocalDateTime createdAt) {
+    public TheaterPost(User user, Theater theater, String title, String content, LocalDateTime createdAt, List<Tag> tags) {
         this.user = user;
         this.theater = theater;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
+        this.tags=tags;
     }
 }
