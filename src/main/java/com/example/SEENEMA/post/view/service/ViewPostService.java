@@ -10,9 +10,9 @@ import javax.swing.text.View;
 public interface ViewPostService {
 
     ViewPostDto.addResponse createViewPost(Long userId, Long theaterId, ViewPostDto.addRequest requestDto);
-
     ViewPostDto.addResponse updateViewPost(Long theaterId, Long viewNo, ViewPostDto.updateRequest requestDto);
-
     void deleteViewPost(Long viewNo);
+    ViewPostDto.detailResponse readViewPost(Long userId, Long viewNo);
+
 
 }

@@ -8,6 +8,8 @@ import lombok.*;
 @Getter
 @Setter
 public class ViewPostDto {
+
+    /** 게시글 등록을 처리할 Request 클래스 */
     @Getter
     @Setter
     public static class addRequest{
@@ -30,6 +32,19 @@ public class ViewPostDto {
         }
     }
 
+    /** 게시글 수정을 처리할 Request 클래스 */
+    @Getter
+    @Setter
+    public static class updateRequest {
+        private String play;
+        private String seat;
+        private String title;
+        private String content;
+
+    }
+
+    /** 게시글 정보를 리턴할 Response 클래스 */
+    /** Entity 클래스를 생성자 파라미터로 받아 데이터를 Dto로 변환하여 응답 */
     @Getter
     public static class addResponse{
         private Long userId; // 작성자 id
@@ -56,14 +71,17 @@ public class ViewPostDto {
         }
     }
 
+    /** 게시글 상세정보를 리턴할 Response 클래스 */
     @Getter
-    @Setter
-    public static class updateRequest {
-        private String play;
-        private String seat;
+    public static class detailResponse{
+        private String nickName;
         private String title;
         private String content;
 
+        public detailResponse(ViewPost view){
+            this.nickName = view.getUser().getNickname();
+            this.title = view.getTitle();
+            this.content = view.getContent();
+        }
     }
-
 }

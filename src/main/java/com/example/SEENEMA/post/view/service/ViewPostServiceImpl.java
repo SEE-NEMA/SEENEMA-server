@@ -39,7 +39,7 @@ public class ViewPostServiceImpl implements ViewPostService {
     public ViewPostDto.addResponse updateViewPost(Long theaterId, Long viewNo, ViewPostDto.updateRequest requestDto){
         ViewPost viewPost = getViewPost(viewNo);
 
-        viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent());
+        viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent()); // dto랑
         return new ViewPostDto.addResponse(viewPost);
 
     }
@@ -51,8 +51,17 @@ public class ViewPostServiceImpl implements ViewPostService {
         viewPostRepository.delete(viewPost);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public ViewPostDto.detailResponse readViewPost(Long userId, Long viewNo){
+        ViewPost viewPost = getViewPost(viewNo);
+        return new ViewPostDto.detailResponse(viewPost);
+    }
 
-    private ViewPost getViewPost(Long viewNo){ return viewPostRepository.findById(viewNo).orElseThrow(); }
+
+    private ViewPost getViewPost(Long viewNo){
+        return viewPostRepository.findById(viewNo).orElseThrow();
+    }
 
     private User getUser(Long userId){
         return userRepository.findById(userId).orElseThrow();
