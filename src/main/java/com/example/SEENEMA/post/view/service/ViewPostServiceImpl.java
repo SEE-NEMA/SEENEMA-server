@@ -14,14 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class   ViewPostServiceImpl implements ViewPostService {
-    private final ViewPostRepository viewRepository;
+public class ViewPostServiceImpl implements ViewPostService {
+    private final ViewPostRepository viewPostRepository;
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
 
     @Override
     @Transactional
-    public ViewPostDto.addResponse createView(Long userId, Long theaterId, ViewPostDto.addRequest requestDto){
+    public ViewPostDto.addResponse createViewPost(Long userId, Long theaterId, ViewPostDto.addRequest requestDto){
 
         User user = getUser(userId);
         Theater theater = getTheater(theaterId);
@@ -31,8 +31,36 @@ public class   ViewPostServiceImpl implements ViewPostService {
 
         ViewPost view = requestDto.toEntity();
 
-        return new ViewPostDto.addResponse(viewRepository.save(view));
+        return new ViewPostDto.addResponse(viewPostRepository.save(view));
 
+    }
+    @Override
+    @Transactional
+    public ViewPostDto.addResponse updateViewPost(Long theaterId, Long viewNo, ViewPostDto.updateRequest requestDto){
+        ViewPost viewPost = getViewPost(viewNo);
+
+        viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent()); // dto랑
+        return new ViewPostDto.addResponse(viewPost);
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteViewPost(Long viewNo){
+        ViewPost viewPost = getViewPost(viewNo);
+        viewPostRepository.delete(viewPost);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ViewPostDto.detailResponse readViewPost(Long userId, Long viewNo){
+        ViewPost viewPost = getViewPost(viewNo);
+        return new ViewPostDto.detailResponse(viewPost);
+    }
+
+
+    private ViewPost getViewPost(Long viewNo){
+        return viewPostRepository.findById(viewNo).orElseThrow();
     }
 
     private User getUser(Long userId){
