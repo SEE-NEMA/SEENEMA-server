@@ -65,11 +65,19 @@ public class ViewPostServiceImpl implements ViewPostService {
     }
 
     @Override
-    public List<ViewPostDto.seatListResponse> searchSeat(Long theaterId, String seatName){
-        return viewPostRepository.findByTheater_TheaterIdAndTitleContaining(theaterId,seatName).stream()
-                .map(ViewPostDto.seatListResponse::new)
+    public List<ViewPostDto.viewListResponse> getListByTheater(Long theaterId){
+        return viewPostRepository.findByTheater_TheaterId(theaterId).stream()
+                .map(ViewPostDto.viewListResponse::new)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ViewPostDto.viewListResponse> getListBySeat(Long theaterId, String seatName){
+        return viewPostRepository.findByTheater_TheaterIdAndTitleContaining(theaterId,seatName).stream()
+                .map(ViewPostDto.viewListResponse::new)
+                .collect(Collectors.toList());
+    }
+
 
     private ViewPost getViewPost(Long viewNo){
         return viewPostRepository.findById(viewNo).orElseThrow();

@@ -44,7 +44,14 @@ public class ViewPostController {
     }
     @ApiOperation(value="좌석 조회")
     @GetMapping("/{theaterId}/search")
-    public ResponseEntity searchBySeat(@PathVariable("theaterId") Long theaterId, @RequestParam(name="q") String seatName){
-        return ResponseEntity.ok(viewPostService. searchSeat(theaterId,seatName));
+    public ResponseEntity getListBySeat(@PathVariable("theaterId") Long theaterId, @RequestParam(name="q") String seatName){
+        return ResponseEntity.ok(viewPostService. getListBySeat(theaterId,seatName));
     }
+
+    @ApiOperation(value="공연장별 후기 조회")
+    @GetMapping("/{theaterId}")
+    public ResponseEntity getListByTheater(@PathVariable("theaterId") Long theaterId){
+        return ResponseEntity.ok(viewPostService. getListByTheater(theaterId));
+    }
+
 }

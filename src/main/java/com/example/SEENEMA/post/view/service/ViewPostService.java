@@ -13,6 +13,7 @@ public interface ViewPostService {
     ViewPostDto.detailResponse readViewPost(Long userId, Long viewNo);
     ViewPostDto.addResponse updateViewPost(Long theaterId, Long viewNo, ViewPostDto.updateRequest requestDto);
     void deleteViewPost(Long viewNo);
-    List<ViewPostDto.seatListResponse>  searchSeat(Long theaterId, String seatName);
+    List<ViewPostDto.viewListResponse>  getListBySeat(Long theaterId, String seatName);
+    List<ViewPostDto.viewListResponse>  getListByTheater(Long theaterId);
 
 }

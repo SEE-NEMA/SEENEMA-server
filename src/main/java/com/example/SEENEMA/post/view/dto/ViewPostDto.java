@@ -86,14 +86,14 @@ public class ViewPostDto {
         }
     }
 
-    /** 검색한 게시글(좌석) 목록을 리턴할 Response 클래스 */
+    /** 게시글 목록을 리턴할 Response 클래스 */
     @Getter
-    public static class seatListResponse{
+    public static class viewListResponse{
         private String nickName;
         private String title;
         private String createdAt;
 
-        public seatListResponse(ViewPost view){
+        public viewListResponse(ViewPost view){
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();
