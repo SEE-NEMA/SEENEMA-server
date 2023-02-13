@@ -44,7 +44,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         request.setTags(tags);
 
         TheaterPost theaterPost = request.toEntity();
-
+        theaterPost.setViewCount(1L);   // 조회수 초기값 = 1
         return new TheaterPostDto.addResponse(theaterPostRepo.save(theaterPost));
     }
     @Override
@@ -72,6 +72,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     @Override
     @Transactional
     public TheaterPostDto.addResponse editTheaterPost(Long userId, Long postNo, TheaterPostDto.addRequest request){
+        // 공연장 후기 게시글 수정
         User user = getUser(userId);
         String theaterName = findTheaterName(request.getTitle());
         Theater theater = getTheater(theaterName);
@@ -83,13 +84,16 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         t.setTags(tags);
         t.setTitle(request.getTitle());
         t.setContent(request.getContent());
-
-        request.setUser(user);
-        request.setTheater(theater);
-        request.setTags(tags);
-
+        t.setViewCount(t.getViewCount()+1L);
 
         return new TheaterPostDto.addResponse(theaterPostRepo.save(t));
+    }
+
+    @Override
+    public TheaterPostDto.addResponse searchTheaterPost(Long postNo){
+        TheaterPost t = getTheaterPost(postNo);
+        t.setViewCount(t.getViewCount()+1L);
+        return new TheaterPostDto.addResponse(t);
     }
 
     private User getUser(Long userId){

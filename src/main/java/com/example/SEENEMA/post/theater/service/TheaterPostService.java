@@ -11,4 +11,5 @@ public interface TheaterPostService {
     List<TheaterPostDto.listResponse> listTheaterPost();
     TheaterPostDto.deleteResponse deleteTheaterPost(Long post_no);
     TheaterPostDto.addResponse editTheaterPost(Long userId, Long postNo, TheaterPostDto.addRequest request);
+    TheaterPostDto.addResponse searchTheaterPost(Long postNo);
 }

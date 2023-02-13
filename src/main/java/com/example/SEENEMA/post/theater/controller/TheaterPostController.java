@@ -40,4 +40,10 @@ public class TheaterPostController {
     public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestBody TheaterPostDto.addRequest request){
         return ResponseEntity.ok(service.editTheaterPost(2L, postNo, request));
     }
+
+    @ApiOperation(value = "공연장 후기 게시글 조회")
+    @GetMapping("/{postNo}")
+    public ResponseEntity<TheaterPostDto.addResponse> searchTheaterPost(@PathVariable Long postNo){
+        return ResponseEntity.ok(service.searchTheaterPost(postNo));
+    }
 }
