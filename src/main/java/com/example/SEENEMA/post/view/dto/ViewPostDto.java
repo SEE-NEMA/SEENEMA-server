@@ -5,6 +5,7 @@ import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.post.view.domain.ViewPost;
 import lombok.*;
 
+
 @Getter
 @Setter
 public class ViewPostDto {
@@ -82,6 +83,20 @@ public class ViewPostDto {
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
             this.content = view.getContent();
+        }
+    }
+
+    /** 검색한 게시글(좌석) 목록을 리턴할 Response 클래스 */
+    @Getter
+    public static class seatListResponse{
+        private String nickName;
+        private String title;
+        private String createdAt;
+
+        public seatListResponse(ViewPost view){
+            this.nickName = view.getUser().getNickname();
+            this.title = view.getTitle();
+            this.createdAt = view.getCreatedAt().toString();
         }
     }
 }
