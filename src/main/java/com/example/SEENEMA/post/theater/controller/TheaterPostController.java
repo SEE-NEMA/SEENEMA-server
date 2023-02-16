@@ -43,7 +43,13 @@ public class TheaterPostController {
 
     @ApiOperation(value = "공연장 후기 게시글 조회")
     @GetMapping("/{postNo}")
-    public ResponseEntity<TheaterPostDto.addResponse> searchTheaterPost(@PathVariable Long postNo){
-        return ResponseEntity.ok(service.searchTheaterPost(postNo));
+    public ResponseEntity<TheaterPostDto.addResponse> readTheaterPost(@PathVariable Long postNo){
+        return ResponseEntity.ok(service.readTheaterPost(postNo));
+    }
+
+    @ApiOperation(value = "공연장 후기 게시글 검색")
+    @GetMapping("/search")
+    public ResponseEntity<List<TheaterPostDto.listResponse>> searchTheaterPost(@RequestParam(name="q") String title){
+        return ResponseEntity.ok(service.searchTheaterPost(title));
     }
 }

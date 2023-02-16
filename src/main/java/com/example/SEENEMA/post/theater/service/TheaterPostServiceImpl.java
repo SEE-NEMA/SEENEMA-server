@@ -90,10 +90,18 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     }
 
     @Override
-    public TheaterPostDto.addResponse searchTheaterPost(Long postNo){
+    public TheaterPostDto.addResponse readTheaterPost(Long postNo){
+        // 공연장 후기 게시글 조회
         TheaterPost t = getTheaterPost(postNo);
         t.setViewCount(t.getViewCount()+1L);
         return new TheaterPostDto.addResponse(t);
+    }
+
+    @Override
+    public List<TheaterPostDto.listResponse> searchTheaterPost(String title){
+        // 공연장 후기 게시글 검색
+        List<TheaterPostDto.listResponse> result =  findTheaterPostList(title);
+        return result;
     }
 
     private User getUser(Long userId){
@@ -136,5 +144,14 @@ public class TheaterPostServiceImpl implements TheaterPostService{
             }
         }
         return tags;
+    }
+    private List<TheaterPostDto.listResponse> findTheaterPostList(String title){
+        List<TheaterPost> originPost = theaterPostRepo.findAll();
+        List<TheaterPostDto.listResponse> result = new ArrayList<>();
+        for(TheaterPost t : originPost){
+            if(t.getTitle().contains(title))
+                result.add(new TheaterPostDto.listResponse(t));
+        }
+        return result;
     }
 }
