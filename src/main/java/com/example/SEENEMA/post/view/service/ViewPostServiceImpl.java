@@ -5,11 +5,16 @@ import com.example.SEENEMA.post.view.repository.ViewPostRepository;
 import com.example.SEENEMA.post.view.domain.ViewPost;
 import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.theater.repository.TheaterRepository;
+import com.example.SEENEMA.theater.service.TheaterServiceImpl;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -18,6 +23,7 @@ public class ViewPostServiceImpl implements ViewPostService {
     private final ViewPostRepository viewPostRepository;
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
+    private final TheaterServiceImpl theaterService;
 
     @Override
     @Transactional
@@ -32,8 +38,15 @@ public class ViewPostServiceImpl implements ViewPostService {
         ViewPost view = requestDto.toEntity();
 
         return new ViewPostDto.addResponse(viewPostRepository.save(view));
-
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ViewPostDto.detailResponse readViewPost(Long userId, Long viewNo){
+        ViewPost viewPost = getViewPost(viewNo);
+        return new ViewPostDto.detailResponse(viewPost);
+    }
+
     @Override
     @Transactional
     public ViewPostDto.addResponse updateViewPost(Long theaterId, Long viewNo, ViewPostDto.updateRequest requestDto){
@@ -52,10 +65,17 @@ public class ViewPostServiceImpl implements ViewPostService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public ViewPostDto.detailResponse readViewPost(Long userId, Long viewNo){
-        ViewPost viewPost = getViewPost(viewNo);
-        return new ViewPostDto.detailResponse(viewPost);
+    public List<ViewPostDto.viewListResponse> getListByTheater(Long theaterId){
+        return viewPostRepository.findByTheater_TheaterId(theaterId).stream()
+                .map(ViewPostDto.viewListResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ViewPostDto.viewListResponse> getListBySeat(Long theaterId, String seatName){
+        return viewPostRepository.findByTheater_TheaterIdAndTitleContaining(theaterId,seatName).stream()
+                .map(ViewPostDto.viewListResponse::new)
+                .collect(Collectors.toList());
     }
 
 

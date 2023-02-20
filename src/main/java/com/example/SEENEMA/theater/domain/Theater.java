@@ -16,4 +16,10 @@ public class Theater {
     @Column(nullable = false)
     private String theaterName;
 
+
+    @Builder
+    public Theater(Long theaterId, String theaterName) {
+        this.theaterId = theaterId;
+        this.theaterName = theaterName;
+    }
 }
