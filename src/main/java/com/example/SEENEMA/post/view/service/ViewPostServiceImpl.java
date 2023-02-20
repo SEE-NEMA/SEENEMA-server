@@ -5,7 +5,6 @@ import com.example.SEENEMA.post.view.repository.ViewPostRepository;
 import com.example.SEENEMA.post.view.domain.ViewPost;
 import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.theater.repository.TheaterRepository;
-import com.example.SEENEMA.theater.service.TheaterServiceImpl;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.user.repository.UserRepository;
 
@@ -23,7 +22,6 @@ public class ViewPostServiceImpl implements ViewPostService {
     private final ViewPostRepository viewPostRepository;
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
-    private final TheaterServiceImpl theaterService;
 
     @Override
     @Transactional
@@ -42,30 +40,33 @@ public class ViewPostServiceImpl implements ViewPostService {
 
     @Override
     @Transactional(readOnly = true)
-    public ViewPostDto.detailResponse readViewPost(Long userId, Long viewNo){
-        ViewPost viewPost = getViewPost(viewNo);
+    public ViewPostDto.detailResponse readViewPost(Long userId, Long theaterId, String title, Long viewNo){
+
+        ViewPost viewPost = detailViewPost(theaterId,title,viewNo);
         return new ViewPostDto.detailResponse(viewPost);
     }
 
     @Override
     @Transactional
-    public ViewPostDto.addResponse updateViewPost(Long theaterId, Long viewNo, ViewPostDto.updateRequest requestDto){
-        ViewPost viewPost = getViewPost(viewNo);
+    public ViewPostDto.addResponse updateViewPost(Long theaterId,String title,Long viewNo, ViewPostDto.updateRequest requestDto){
 
-        viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent()); // dto랑
+        ViewPost viewPost = detailViewPost(theaterId,title,viewNo);
+        viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent());
+
         return new ViewPostDto.addResponse(viewPost);
-
     }
 
     @Override
     @Transactional
     public void deleteViewPost(Long viewNo){
+
         ViewPost viewPost = getViewPost(viewNo);
         viewPostRepository.delete(viewPost);
     }
 
     @Override
     public List<ViewPostDto.viewListResponse> getListByTheater(Long theaterId){
+
         return viewPostRepository.findByTheater_TheaterId(theaterId).stream()
                 .map(ViewPostDto.viewListResponse::new)
                 .collect(Collectors.toList());
@@ -73,11 +74,13 @@ public class ViewPostServiceImpl implements ViewPostService {
 
     @Override
     public List<ViewPostDto.viewListResponse> getListBySeat(Long theaterId, String seatName){
+
         return viewPostRepository.findByTheater_TheaterIdAndTitleContaining(theaterId,seatName).stream()
                 .map(ViewPostDto.viewListResponse::new)
                 .collect(Collectors.toList());
     }
 
+    private ViewPost detailViewPost(Long theaterId, String title, Long viewNo) { return viewPostRepository.findByTheater_TheaterIdAndTitleAndViewNo(theaterId,title,viewNo); }
 
     private ViewPost getViewPost(Long viewNo){
         return viewPostRepository.findById(viewNo).orElseThrow();
