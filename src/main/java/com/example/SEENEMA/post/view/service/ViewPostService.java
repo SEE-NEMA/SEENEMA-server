@@ -12,7 +12,7 @@ public interface ViewPostService {
     ViewPostDto.addResponse createViewPost(Long userId, Long theaterId, ViewPostDto.addRequest requestDto);
     ViewPostDto.detailResponse readViewPost(Long userId, Long theaterId, String title, Long viewNo);
     ViewPostDto.addResponse updateViewPost(Long theaterId, String title, Long viewNo, ViewPostDto.updateRequest requestDto);
-    void deleteViewPost(Long viewNo);
+    void deleteViewPost(Long theaterId, String title, Long viewNo);
 
     List<ViewPostDto.viewListResponse>  getListBySeat(Long theaterId, String seatName);
     List<ViewPostDto.viewListResponse>  getListByTheater(Long theaterId);

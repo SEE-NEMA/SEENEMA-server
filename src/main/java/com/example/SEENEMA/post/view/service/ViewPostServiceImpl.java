@@ -42,7 +42,7 @@ public class ViewPostServiceImpl implements ViewPostService {
     @Transactional(readOnly = true)
     public ViewPostDto.detailResponse readViewPost(Long userId, Long theaterId, String title, Long viewNo){
 
-        ViewPost viewPost = detailViewPost(theaterId,title,viewNo);
+        ViewPost viewPost = getViewPost(theaterId,title,viewNo);
         return new ViewPostDto.detailResponse(viewPost);
     }
 
@@ -50,7 +50,7 @@ public class ViewPostServiceImpl implements ViewPostService {
     @Transactional
     public ViewPostDto.addResponse updateViewPost(Long theaterId,String title,Long viewNo, ViewPostDto.updateRequest requestDto){
 
-        ViewPost viewPost = detailViewPost(theaterId,title,viewNo);
+        ViewPost viewPost = getViewPost(theaterId,title,viewNo);
         viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent());
 
         return new ViewPostDto.addResponse(viewPost);
@@ -58,9 +58,9 @@ public class ViewPostServiceImpl implements ViewPostService {
 
     @Override
     @Transactional
-    public void deleteViewPost(Long viewNo){
+    public void deleteViewPost(Long theaterId, String title, Long viewNo){
 
-        ViewPost viewPost = getViewPost(viewNo);
+        ViewPost viewPost = getViewPost(theaterId, title, viewNo);
         viewPostRepository.delete(viewPost);
     }
 
@@ -80,11 +80,7 @@ public class ViewPostServiceImpl implements ViewPostService {
                 .collect(Collectors.toList());
     }
 
-    private ViewPost detailViewPost(Long theaterId, String title, Long viewNo) { return viewPostRepository.findByTheater_TheaterIdAndTitleAndViewNo(theaterId,title,viewNo); }
-
-    private ViewPost getViewPost(Long viewNo){
-        return viewPostRepository.findById(viewNo).orElseThrow();
-    }
+    private ViewPost getViewPost(Long theaterId, String title, Long viewNo) { return viewPostRepository.findByTheater_TheaterIdAndTitleAndViewNo(theaterId,title,viewNo); }
 
     private User getUser(Long userId){
         return userRepository.findById(userId).orElseThrow();
@@ -93,4 +89,5 @@ public class ViewPostServiceImpl implements ViewPostService {
     private Theater getTheater(Long theaterId){
         return theaterRepository.findById(theaterId).orElseThrow();
     }
+
 }

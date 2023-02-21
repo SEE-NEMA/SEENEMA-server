@@ -38,7 +38,7 @@ public class ViewPostController {
     @ApiOperation(value = "시야 리뷰 상세화면에서 삭제")
     @DeleteMapping("/{theaterId}/{title}/search")
     public ResponseEntity deleteViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("title") String title, @RequestParam(name="q") Long viewNo) {
-        viewPostService.deleteViewPost(viewNo);
+        viewPostService.deleteViewPost(theaterId, title, viewNo);
         return ResponseEntity.ok(ResponseMessage.DELETE.getMsg());
     }
 
@@ -53,4 +53,5 @@ public class ViewPostController {
     public ResponseEntity getListByTheater(@PathVariable("theaterId") Long theaterId){
         return ResponseEntity.ok(viewPostService. getListByTheater(theaterId));
     }
+
 }
