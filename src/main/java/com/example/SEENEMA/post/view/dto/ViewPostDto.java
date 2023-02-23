@@ -45,7 +45,6 @@ public class ViewPostDto {
     }
 
     /** 게시글 정보를 리턴할 Response 클래스 */
-    /** Entity 클래스를 생성자 파라미터로 받아 데이터를 Dto로 변환하여 응답 */
     @Getter
     public static class addResponse{
         private Long userId; // 작성자 id
