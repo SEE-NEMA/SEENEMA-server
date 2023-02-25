@@ -1,5 +1,7 @@
 package com.example.SEENEMA.post.theater.dto;
 
+import com.example.SEENEMA.comment.domain.Comment;
+import com.example.SEENEMA.comment.dto.CommentDto;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
 import com.example.SEENEMA.tag.domain.Tag;
 import com.example.SEENEMA.user.domain.User;
@@ -34,6 +36,7 @@ public class TheaterPostDto {
     }
 
     @Getter
+    @Setter
     public static class addResponse{ // 게시글 등록 결과
         private Long userId;        // 작성자 id
         private String nickName;    // 작성자 닉네임
@@ -44,6 +47,7 @@ public class TheaterPostDto {
         private String editedAt;    // 게시글 수정일
         private List<Tag> tags;     // 게시글 태그
         private Long viewCount;    // 조회수
+        private List<CommentDto.readComment> comments; // 댓글 목록
 
         public addResponse(TheaterPost theaterPost){
             this.userId = theaterPost.getUser().getUserId();
@@ -54,7 +58,7 @@ public class TheaterPostDto {
             this.createdAt = theaterPost.getCreatedAt().toString();
             this.editedAt = theaterPost.getEditedAt().toString();
             this.tags = theaterPost.getTags();
-            this.viewCount=theaterPost.getViewCount();
+            this.viewCount = theaterPost.getViewCount();
         }
     }
     @Getter

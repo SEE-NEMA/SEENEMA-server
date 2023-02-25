@@ -1,5 +1,8 @@
 package com.example.SEENEMA.post.theater.service;
 
+import com.example.SEENEMA.comment.domain.Comment;
+import com.example.SEENEMA.comment.dto.CommentDto;
+import com.example.SEENEMA.comment.repository.CommentRepository;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -27,6 +31,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     private final UserRepository userRepo;
     private final TheaterRepository theaterRepo;
     private final TagRepository tagRepo;
+    private final CommentRepository commentRepo;
 
     @Override
     @Transactional
@@ -73,7 +78,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     @Transactional
     public TheaterPostDto.addResponse editTheaterPost(Long userId, Long postNo, TheaterPostDto.addRequest request){
         // 공연장 후기 게시글 수정
-        User user = getUser(userId);
+        //User user = getUser(userId);
         String theaterName = findTheaterName(request.getTitle());
         Theater theater = getTheater(theaterName);
         List<Tag> tags = getTags(request.getTags());
@@ -86,15 +91,25 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         t.setContent(request.getContent());
         t.setViewCount(t.getViewCount()+1L);
 
-        return new TheaterPostDto.addResponse(theaterPostRepo.save(t));
+        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(theaterPostRepo.save(t));
+        // 댓글 가져오기
+        List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
+        response.setComments(comments);
+        return response;
     }
 
     @Override
     public TheaterPostDto.addResponse readTheaterPost(Long postNo){
         // 공연장 후기 게시글 조회
         TheaterPost t = getTheaterPost(postNo);
+        log.info(t.getTags().toString());
         t.setViewCount(t.getViewCount()+1L);
-        return new TheaterPostDto.addResponse(t);
+        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
+
+        // 댓글 가져오기
+        List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
+        response.setComments(comments);
+       return response;
     }
 
     @Override
@@ -151,6 +166,21 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         for(TheaterPost t : originPost){
             if(t.getTitle().contains(title))
                 result.add(new TheaterPostDto.listResponse(t));
+        }
+        return result;
+    }
+    // postNo에 해당하는 댓글들 반환
+    private List<CommentDto.readComment> findCommentByPostNo(Long post_no){
+        List<Comment> allComment = commentRepo.findAll();
+        List<CommentDto.readComment> result = new ArrayList<>();
+        for(Comment c : allComment){
+            if(c.getTheaterPost().getPostNo() == post_no){
+                CommentDto.readComment tmp = new CommentDto.readComment(c);
+                result.add(tmp);
+                //log.info(tmp.getNickname());
+                //log.info(tmp.getContent());
+                //log.info(tmp.getCreatedAt());
+            }
         }
         return result;
     }
