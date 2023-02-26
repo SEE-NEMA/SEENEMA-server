@@ -25,8 +25,11 @@ dependencies {
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 }
 
-/*
 tasks.named('test') {
 	useJUnitPlatform()
 }
- */
+
+// ci·cd
+jar {
+	enabled = false
+}
