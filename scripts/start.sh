@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 PROJECT_ROOT="/home/ec2-user/build"
 JAR_FILE="$PROJECT_ROOT/spring-webapp.jar"
 
