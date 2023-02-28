@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Id;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -119,6 +120,48 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         return result;
     }
 
+    @Override
+    public TheaterPostDto.addResponse writeCommentTheaterPost(Long userId, Long postNo, CommentDto.addRequest request){
+        // 공연장 후기 게시글 댓글 작성
+        TheaterPost t = getTheaterPost(postNo);
+        log.info(t.getTags().toString());
+        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
+
+        // 댓글 작성
+        request.setUser(getUser(userId));
+        request.setTheaterPost(getTheaterPost(postNo));
+        Comment comment = request.toEntity();
+        commentRepo.save(comment);
+
+        response.setComments(findCommentByPostNo(postNo));
+        return response;
+    }
+
+    @Override
+    public TheaterPostDto.addResponse editCommentTheaterPost(Long userId, Long postNo, Long commentId, CommentDto.addRequest request){
+        // 공연장 후기 게시글 댓글 수정
+        Comment comment = commentRepo.findById(commentId).get();
+        comment.setContent(request.getContent());
+        commentRepo.save(comment);
+
+
+        TheaterPost t = getTheaterPost(postNo);
+        log.info(t.getTags().toString());
+        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
+        // 댓글 가져오기
+        List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
+        response.setComments(comments);
+        return response;
+    }
+
+    @Override
+    public TheaterPostDto.addResponse deleteCommentTheaterPost(Long postNo, Long commentId){
+        commentRepo.deleteById(commentId);
+        return readTheaterPost(postNo);
+    }
+
+
+
     private User getUser(Long userId){
         return userRepo.findById(userId).get();
     }
@@ -184,4 +227,5 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         }
         return result;
     }
+
 }
