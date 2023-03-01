@@ -1,5 +1,8 @@
 package com.example.SEENEMA.post.theater.service;
 
+import com.example.SEENEMA.comment.domain.Comment;
+import com.example.SEENEMA.comment.dto.CommentDto;
+import com.example.SEENEMA.comment.repository.CommentRepository;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
@@ -13,10 +16,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Id;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -27,18 +32,15 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     private final UserRepository userRepo;
     private final TheaterRepository theaterRepo;
     private final TagRepository tagRepo;
+    private final CommentRepository commentRepo;
 
     @Override
     @Transactional
     public TheaterPostDto.addResponse createTheaterPost(Long userId, TheaterPostDto.addRequest request){
+        // 공연장 후기 게시글 작성
         User user = getUser(userId);
-        //String theaterName = request.getTitle().split(" + ",2)[0];
-        //title = "[ 충무아트센터 + 그날들 ] 공연 후기 !~!"
 
-        String[] title = request.getTitle().split("\\+");
-        String[] title2 = title[0].split(" ",2);
-        String theaterName = title2[1];
-        theaterName=theaterName.trim();
+        String theaterName = findTheaterName(request.getTitle());
         Theater theater = getTheater(theaterName);
 
         List<Tag> tags = getTags(request.getTags());
@@ -48,12 +50,127 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         request.setTags(tags);
 
         TheaterPost theaterPost = request.toEntity();
-
+        theaterPost.setViewCount(1L);   // 조회수 초기값 = 1
         return new TheaterPostDto.addResponse(theaterPostRepo.save(theaterPost));
     }
+    @Override
+    @Transactional
+    public List<TheaterPostDto.listResponse> listTheaterPost(){
+        // 공연장 후기 게시글 메인 페이지
+        List<TheaterPost> originPost = theaterPostRepo.findAll();
+        List<TheaterPostDto.listResponse> result = new ArrayList<>();
+
+        for(TheaterPost t : originPost){
+            TheaterPostDto.listResponse tmp = new TheaterPostDto.listResponse(t);
+            result.add(tmp);
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo){
+        // 공연장 후기 게시글 삭제
+        theaterPostRepo.deleteById(postNo);
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public TheaterPostDto.addResponse editTheaterPost(Long userId, Long postNo, TheaterPostDto.addRequest request){
+        // 공연장 후기 게시글 수정
+        //User user = getUser(userId);
+        String theaterName = findTheaterName(request.getTitle());
+        Theater theater = getTheater(theaterName);
+        List<Tag> tags = getTags(request.getTags());
+
+        TheaterPost t = getTheaterPost(postNo);
+        t.setEditedAt(LocalDateTime.now());
+        t.setTheater(theater);
+        t.setTags(tags);
+        t.setTitle(request.getTitle());
+        t.setContent(request.getContent());
+        t.setViewCount(t.getViewCount()+1L);
+
+        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(theaterPostRepo.save(t));
+        // 댓글 가져오기
+        List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
+        response.setComments(comments);
+        return response;
+    }
+
+    @Override
+    public TheaterPostDto.addResponse readTheaterPost(Long postNo){
+        // 공연장 후기 게시글 조회
+        TheaterPost t = getTheaterPost(postNo);
+        log.info(t.getTags().toString());
+        t.setViewCount(t.getViewCount()+1L);
+        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
+
+        // 댓글 가져오기
+        List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
+        response.setComments(comments);
+       return response;
+    }
+
+    @Override
+    public List<TheaterPostDto.listResponse> searchTheaterPost(String title){
+        // 공연장 후기 게시글 검색
+        List<TheaterPostDto.listResponse> result =  findTheaterPostList(title);
+        return result;
+    }
+
+    @Override
+    public TheaterPostDto.addResponse writeCommentTheaterPost(Long userId, Long postNo, CommentDto.addRequest request){
+        // 공연장 후기 게시글 댓글 작성
+        TheaterPost t = getTheaterPost(postNo);
+        log.info(t.getTags().toString());
+        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
+
+        // 댓글 작성
+        request.setUser(getUser(userId));
+        request.setTheaterPost(getTheaterPost(postNo));
+        Comment comment = request.toEntity();
+        commentRepo.save(comment);
+
+        response.setComments(findCommentByPostNo(postNo));
+        return response;
+    }
+
+    @Override
+    public TheaterPostDto.addResponse editCommentTheaterPost(Long userId, Long postNo, Long commentId, CommentDto.addRequest request){
+        // 공연장 후기 게시글 댓글 수정
+        Comment comment = commentRepo.findById(commentId).get();
+        comment.setContent(request.getContent());
+        commentRepo.save(comment);
+
+
+        TheaterPost t = getTheaterPost(postNo);
+        log.info(t.getTags().toString());
+        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
+        // 댓글 가져오기
+        List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
+        response.setComments(comments);
+        return response;
+    }
+
+    @Override
+    public TheaterPostDto.addResponse deleteCommentTheaterPost(Long postNo, Long commentId){
+        commentRepo.deleteById(commentId);
+        return readTheaterPost(postNo);
+    }
+
+
 
     private User getUser(Long userId){
         return userRepo.findById(userId).get();
+    }
+    private String findTheaterName(String origin){
+        String[] title = origin.split("\\+");
+        String[] title2 = title[0].split(" ", 2);
+        String theaterName = title2[1];
+        theaterName = theaterName.trim();
+        return theaterName;
     }
     private Theater getTheater(Long theaterId){
         return theaterRepo.findById(theaterId).get();
@@ -61,8 +178,16 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     private Theater getTheater(String theaterName){
         List<Theater> theaters = theaterRepo.findAll();
         for(Theater t:theaters){
-            if(t.getTheaterName().toString().equals(theaterName.toString())) {
-                //log.info(t.getTheaterName().toString());
+            if(t.getTheaterName().equals(theaterName)) {
+                return t;
+            }
+        }
+        return null;
+    }
+    private TheaterPost getTheaterPost(Long post_no){
+        List<TheaterPost> theaterPost = theaterPostRepo.findAll();
+        for(TheaterPost t:theaterPost){
+            if(t.getPostNo().equals(post_no)){
                 return t;
             }
         }
@@ -70,7 +195,6 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     }
     private List<Tag> getTags(List<Tag> tags){
         List<Tag> tmp = tagRepo.findAll();
-        int index=0;
         for (Tag t : tmp){
             for(Tag ex : tags){
                 if(t.getTagId().equals(ex.getTagId()))
@@ -79,4 +203,29 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         }
         return tags;
     }
+    private List<TheaterPostDto.listResponse> findTheaterPostList(String title){
+        List<TheaterPost> originPost = theaterPostRepo.findAll();
+        List<TheaterPostDto.listResponse> result = new ArrayList<>();
+        for(TheaterPost t : originPost){
+            if(t.getTitle().contains(title))
+                result.add(new TheaterPostDto.listResponse(t));
+        }
+        return result;
+    }
+    // postNo에 해당하는 댓글들 반환
+    private List<CommentDto.readComment> findCommentByPostNo(Long post_no){
+        List<Comment> allComment = commentRepo.findAll();
+        List<CommentDto.readComment> result = new ArrayList<>();
+        for(Comment c : allComment){
+            if(c.getTheaterPost().getPostNo() == post_no){
+                CommentDto.readComment tmp = new CommentDto.readComment(c);
+                result.add(tmp);
+                //log.info(tmp.getNickname());
+                //log.info(tmp.getContent());
+                //log.info(tmp.getCreatedAt());
+            }
+        }
+        return result;
+    }
+
 }
