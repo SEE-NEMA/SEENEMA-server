@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ "ci/cd" ]
 
-# 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: seenema-github-actions-s3-bucket
@@ -34,14 +33,12 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
+      # (3) Gradle build (Test 제외)
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-#      # (3) Gradle build (Test 제외)
-#      - name: Build with Gradle
-#        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
-#        with:
-#          arguments: clean build -x test
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
 
       # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
       - name: Configure AWS credentials
