@@ -54,4 +54,10 @@ public class ViewPostController {
         return ResponseEntity.ok(viewPostService. getListByTheater(theaterId));
     }
 
+    /** 배포 테스트용 api */
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
+
 }
