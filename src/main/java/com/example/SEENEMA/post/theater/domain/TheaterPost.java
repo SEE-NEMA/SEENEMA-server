@@ -3,6 +3,7 @@ package com.example.SEENEMA.post.theater.domain;
 import com.example.SEENEMA.tag.domain.Tag;
 import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.user.domain.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 
 @Getter
+@Setter
 @Table(name = "POST_THEATER")
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
@@ -36,6 +38,9 @@ public class TheaterPost {
     private String title; // 제목
     @Column(nullable = false)
     private String content; // 내용
+    @Column
+    private Long viewCount;    // 조회수
+
 
     //태그 기능
     @ManyToMany
@@ -63,5 +68,6 @@ public class TheaterPost {
         this.content = content;
         this.createdAt = createdAt;
         this.tags=tags;
+        this.viewCount= 0L;
     }
 }
