@@ -13,27 +13,44 @@ import org.springframework.stereotype.Service;
 import org.jsoup.nodes.Document;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class MainPageServiceImpl implements MainPageService{
-    private final String playDBRanking = "http://www.playdb.co.kr/ranking/Ticket/TPBoxOffice.asp?KindOfGoods=01011&Flag=D";
+    private final String playDBRanking = "http://www.playdb.co.kr/ranking/TotalRanking.asp";
     @Override
-    public MainPageDto.readRanking readRanking() {
+    public List<MainPageDto.readRanking> readRanking() {
         // 타겟 사이트에 연결 후 html 파일 읽어오기
         Connection connection = Jsoup.connect(playDBRanking);
+        List<MainPageDto.readRanking> response = new ArrayList<>();
         try{
             Document doc = connection.get();
-            MainPageDto.readRanking response = getRankString(doc);
+            response = getRankString(doc);
         }catch(IOException e){
         }
-        return null;
+        return response;
     }
 
     // 랭킹 정보 읽어온 후, 알맞게 MainPageDto.readRanking으로 변환 후 return
-    private MainPageDto.readRanking getRankString(Document doc){
+    // Long rank, String title
+    private List<MainPageDto.readRanking> getRankString(Document doc){
+        int index = 0;
+        Elements divBody = doc.select("div.container1 table tbody tr td table tbody tr td");
+        Element musicalRankTD = null, concertRankTD = null;
+        // 뮤지컬, 콘서트 랭킹 td 뽑아내기
+        for(Element e : divBody){
+            if(index == 0) musicalRankTD = e;
+            else if(index == 2) concertRankTD = e;
+            index++;
+        }
+
+        if(musicalRankTD != null){
+
+        }
 
         return null;
     }

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -19,7 +21,7 @@ public class MainPageController {
     private Long uerId = 2L;    // 로그인 기능없어서 임시로 만들어놓은 userId
     @ApiOperation(value = "SEE-NEMA 메인페이지")
     @GetMapping("/")
-    public ResponseEntity<MainPageDto.readRanking> readRanking(){
+    public ResponseEntity<List<MainPageDto.readRanking>> readRanking(){
         return ResponseEntity.ok(service.readRanking());
     }
 }
