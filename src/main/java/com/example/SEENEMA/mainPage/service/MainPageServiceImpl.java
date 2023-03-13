@@ -21,16 +21,19 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class MainPageServiceImpl implements MainPageService{
-    private final String naverMusicalRanking = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=%EB%AE%A4%EC%A7%80%EC%BB%AC+%EB%9E%AD%ED%82%B9";
-    private final String naverConcertRanking = "https://search.naver.com/search.naver?where=nexearch&sm=tab_etc&qvt=0&query=%EB%8C%80%EC%A4%91%EC%9D%8C%EC%95%85%20%EA%B3%B5%EC%97%B0%20%EC%98%88%EB%A7%A4%ED%98%84%ED%99%A9";
+    private final String interparkMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
+    private final String interparkConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pCate=&pType=D&pDate=20230314";
     @Override
     public List<List<MainPageDto.readRanking>> readRanking() {
         // 타겟 사이트에 연결 후 html 파일 읽어오기
-        Connection connection = Jsoup.connect(naverMusicalRanking);
-        List<MainPageDto.readRanking> response = new ArrayList<>();
+        Connection musicalConnection = Jsoup.connect(interparkMusical);
+        Connection concertConnection = Jsoup.connect(interparkConcert);
+        List<List<MainPageDto.readRanking>> response = new ArrayList<>();
         try{
-            Document doc = connection.get();
-            response = getRankString(doc);
+            Document doc = musicalConnection.get();
+            response.add(getRankList(doc, 1));  // 뮤지컬 랭킹 읽기 및 add
+            doc = concertConnection.get();
+            response.add(getRankList(doc, 0));  // 콘서트 랭킹 읽기 및 add
         }catch(IOException e){
         }
         return response;
