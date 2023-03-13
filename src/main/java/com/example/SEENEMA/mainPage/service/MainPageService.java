@@ -7,5 +7,5 @@ import java.util.List;
 
 @Service
 public interface MainPageService {
-    List<MainPageDto.readRanking> readRanking();
+    List<List<MainPageDto.readRanking>> readRanking();
 }

@@ -21,7 +21,7 @@ public class MainPageController {
     private Long uerId = 2L;    // 로그인 기능없어서 임시로 만들어놓은 userId
     @ApiOperation(value = "SEE-NEMA 메인페이지")
     @GetMapping("/")
-    public ResponseEntity<List<MainPageDto.readRanking>> readRanking(){
+    public ResponseEntity<List<List<MainPageDto.readRanking>>> readRanking(){
         return ResponseEntity.ok(service.readRanking());
     }
 }
