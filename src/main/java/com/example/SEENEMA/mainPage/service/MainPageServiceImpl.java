@@ -21,11 +21,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class MainPageServiceImpl implements MainPageService{
-    private final String playDBRanking = "http://www.playdb.co.kr/ranking/TotalRanking.asp";
+    private final String naverMusicalRanking = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=%EB%AE%A4%EC%A7%80%EC%BB%AC+%EB%9E%AD%ED%82%B9";
+    private final String naverConcertRanking = "https://search.naver.com/search.naver?where=nexearch&sm=tab_etc&qvt=0&query=%EB%8C%80%EC%A4%91%EC%9D%8C%EC%95%85%20%EA%B3%B5%EC%97%B0%20%EC%98%88%EB%A7%A4%ED%98%84%ED%99%A9";
     @Override
     public List<MainPageDto.readRanking> readRanking() {
         // 타겟 사이트에 연결 후 html 파일 읽어오기
-        Connection connection = Jsoup.connect(playDBRanking);
+        Connection connection = Jsoup.connect(naverMusicalRanking);
         List<MainPageDto.readRanking> response = new ArrayList<>();
         try{
             Document doc = connection.get();
@@ -39,16 +40,22 @@ public class MainPageServiceImpl implements MainPageService{
     // Long rank, String title
     private List<MainPageDto.readRanking> getRankString(Document doc){
         int index = 0;
-        Elements divBody = doc.select("div.container1 table tbody tr td table tbody tr td");
+        Elements divBody = doc.select("div.container1 table tbody tr td table tbody tr td"); // 마지막 td 지워야할 수도?
         Element musicalRankTD = null, concertRankTD = null;
         // 뮤지컬, 콘서트 랭킹 td 뽑아내기
         for(Element e : divBody){
             if(index == 0) musicalRankTD = e;
-            else if(index == 2) concertRankTD = e;
+            else if(index == 2) {
+                concertRankTD = e;
+                break;
+            }
             index++;
         }
 
         if(musicalRankTD != null){
+
+        }
+        if(concertRankTD != null){
 
         }
 
