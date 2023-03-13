@@ -58,7 +58,13 @@ public class MainPageServiceImpl implements MainPageService{
         if(concertRankTD != null){
 
         }
-
         return null;
+    }
+    // web-crawling 해온 title에서 불필요한 문구 제거 후 제목만 넘김.
+    private String realTitle(String origin){
+        if(!origin.contains("〈")) return origin;
+        String[] tmp = origin.split("〈|〉");
+        String result = tmp[1];
+        return result;
     }
 }
