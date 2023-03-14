@@ -23,6 +23,9 @@ dependencies {
 
     // swagger dependency
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+	// Jsoup for web-crawling
+	implementation 'org.jsoup:jsoup:1.15.4'
 }
 
 tasks.named('test') {
