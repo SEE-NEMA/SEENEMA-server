@@ -24,16 +24,19 @@ public class MainPageServiceImpl implements MainPageService{
     private final String interparkMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
     private final String interparkConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pCate=&pType=D&pDate=20230314";
     @Override
-    public List<List<MainPageDto.readRanking>> readRanking() {
+    public MainPageDto.reasponseDTO readRanking() {
         // 타겟 사이트에 연결 후 html 파일 읽어오기
         Connection musicalConnection = Jsoup.connect(interparkMusical);
         Connection concertConnection = Jsoup.connect(interparkConcert);
-        List<List<MainPageDto.readRanking>> response = new ArrayList<>();
+        //List<List<MainPageDto.readRanking>> response = new ArrayList<>();
+        MainPageDto.reasponseDTO response = new MainPageDto.reasponseDTO();
         try{
             Document doc = musicalConnection.get();
-            response.add(getRankList(doc, 1));  // 뮤지컬 랭킹 읽기 및 add
+            List<MainPageDto.readRanking> musicalRank = getRankList(doc, 1);    // 뮤지컬 랭킹 읽기 및 add
+            response.setMusicalRank(musicalRank);
             doc = concertConnection.get();
-            response.add(getRankList(doc, 0));  // 콘서트 랭킹 읽기 및 add
+            List<MainPageDto.readRanking> concertRank = getRankList(doc, 0);     // 콘서트 랭킹 읽기 및 add
+            response.setConcertRank(concertRank);
         }catch(IOException e){
         }
         return response;
@@ -56,11 +59,10 @@ public class MainPageServiceImpl implements MainPageService{
         }
         return null;
     }
-    // web-crawling 해온 뮤지컬 랭킹의 title에서 불필요한 문구 제거 후 제목만 넘김.
+    // web-crawling 해온 뮤지컬 랭킹의 title에서 불필요한 문구(앞에 뮤지컬 적혀있는거) 제거 후 제목만 넘김.
     private String realTitle(String origin){
-        if(!origin.contains("〈")) return origin;
-        String[] tmp = origin.split("〈|〉");
-        String result = tmp[1];
+        String[] tmp = origin.split(" ", 2);
+        String result = tmp[1].trim();
         return result;
     }
 }
