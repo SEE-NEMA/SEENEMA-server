@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public interface MainPageService {
-    List<List<MainPageDto.readRanking>> readRanking();
+    MainPageDto.reasponseDTO readRanking();
     List<PlayDto.musicalList> getMusicalList();
 
 
