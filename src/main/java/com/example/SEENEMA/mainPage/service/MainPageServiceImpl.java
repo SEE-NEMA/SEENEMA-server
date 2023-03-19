@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 public class MainPageServiceImpl implements MainPageService {
     private final String interparkMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
     private final String interparkConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pCate=&pType=D&pDate=20230314";
-    private final String playdbMusicalList = "http://www.playdb.co.kr/playdb/playdblist.asp?sReqMainCategory=000001&sReqSubCategory=&sReqDistrict=&sReqTab=2&sPlayType=2&sStartYear=&sSelectType=1";
+    private final String playdbMusicals= "http://www.playdb.co.kr/playdb/playdblist.asp";
     private final MusicalRepository musicalRepository;
-
+    private final int MAX_PAGE = 10;
 
     /** 공연 랭킹 크롤링 */
     @Override
@@ -81,42 +81,56 @@ public class MainPageServiceImpl implements MainPageService {
     public List<PlayDto.musicalList> getMusicals() {
 
         List<PlayDto.musicalList> musicalList = new ArrayList<>();
-        Connection conn = Jsoup.connect(playdbMusicalList);
 
-        try{
-            Document doc = conn.get();
-            Elements rows = doc.select("div.container1 > table > tbody > tr:nth-child(11) > td > table > tbody > tr:nth-child(n+3):nth-child(odd) > td > table > tbody > tr > td[width=\"493\"]");
+        for (int page = 1; page <= MAX_PAGE; page++) {
+            Connection conn = Jsoup.connect(playdbMusicals)
+                    .data("Page", String.valueOf(page))
+                    .data("sReqMainCategory", "000001")
+                    .data("sReqSubCategory", "")
+                    .data("sReqDistrict", "")
+                    .data("sReqTab", "2")
+                    .data("sPlayType", "2")
+                    .data("sStartYear", "")
+                    .data("sSelectType", "1");
 
-            for (Element row : rows) {
-                PlayDto.musicalList musical = new PlayDto.musicalList();
+            try {
+                Document doc = conn.get();
+                Elements rows = doc.select("div.container1 > table > tbody > tr:nth-child(11) > td > table > tbody > tr:nth-child(n+3):nth-child(odd) > td > table > tbody > tr > td[width=\"493\"]");
 
-                musical.setImgUrl(row.selectFirst("td[width=\"90\"] img").attr("src"));
-                musical.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
-                musical.setGenre(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>")[0].replaceAll("세부장르 : ", "").trim());
-                musical.setDate(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>")[1].replaceAll("일시 : ", "").trim());
-                musical.setPlace(Jsoup.parse(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) >td ").html().split("<br>")[2]).text().replaceAll("장소 : ", ""));
+                for (Element row : rows) {
+                    PlayDto.musicalList musical = new PlayDto.musicalList();
 
-                String[] parts =  row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
-                String cast = null;
-                if (parts.length >= 4) { // 출연 정보가 있는 경우
-                    String castText = parts[3].replace("출연 : ", ""); // "출연 : " 문자열 제거
-                    Elements castElements = Jsoup.parse(castText).select("a:not(:first-child)"); // 첫번째 a 태그 제외한 모든 a 태그 요소 가져오기
-                    cast = castElements.isEmpty() ? null : castElements.stream().map(e -> e.text()).collect(Collectors.joining(","));
+                    musical.setImgUrl(row.selectFirst("td[width=\"90\"] img").attr("src"));
+                    musical.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
+                    musical.setGenre(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>")[0].replaceAll("세부장르 : ", "").trim());
+                    musical.setDate(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>")[1].replaceAll("일시 : ", "").trim());
+                    musical.setPlace(Jsoup.parse(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) >td ").html().split("<br>")[2]).text().replaceAll("장소 : ", ""));
+
+                    String[] parts =  row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
+                    String cast = null;
+                    if (parts.length >= 4) { // 출연 정보가 있는 경우
+                        String castText = parts[3].replace("출연 : ", ""); // "출연 : " 문자열 제거
+                        Elements castElements = Jsoup.parse(castText).select("a:not(:first-child)"); // 첫번째 a 태그 제외한 모든 a 태그 요소 가져오기
+                        cast = castElements.isEmpty() ? null : castElements.stream().map(e -> e.text()).collect(Collectors.joining(","));
+                    }
+                    musical.setCast(cast);
+
+                    String detailUrl = null;
+                    if (parts.length >= 4) { // detail url이 있는 경우
+                        detailUrl = Jsoup.parse(parts[3]).select("a:last-child").attr("href");
+                    }
+                    musical.setDetailUrl(detailUrl);
+
+                    musicalList.add(musical);
                 }
-                musical.setCast(cast);
-
-                String detailUrl = null;
-                if (parts.length >= 4) { // detail url이 있는 경우
-                    detailUrl = Jsoup.parse(parts[3]).select("a:last-child").attr("href");
-                }
-                musical.setDetailUrl(detailUrl);
-                musicalList.add(musical);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }catch (IOException e) {
-            e.printStackTrace();
         }
         return musicalList;
     }
+
+    // db 저장
     public void saveMusicals(List<PlayDto.musicalList> musicalList) {
         for (PlayDto.musicalList musical : musicalList) {
             if (!musicalRepository.findByTitleAndDateAndPlace(musical.getTitle(),musical.getDate(),musical.getPlace()).isEmpty()) {
@@ -136,7 +150,8 @@ public class MainPageServiceImpl implements MainPageService {
         }
     }
 
-    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000) // 24시간마다 실행
+    // 24시간마다 갱신
+    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
     public void scheduledMusicals() {
         List<PlayDto.musicalList> musicalList = getMusicals();
         saveMusicals(musicalList);
