@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public interface MainPageService {
     MainPageDto.reasponseDTO readRanking();
-    List<PlayDto.musicalList> getMusicalList();
+    List<PlayDto.musicalList> getMusicals();
 
 
 }

@@ -29,8 +29,8 @@ public class MainPageController {
     }
     @ApiOperation(value = "뮤지컬 정보 페이지")
     @GetMapping("/musicals")
-    public ResponseEntity<List<PlayDto.musicalList>> getMusicalList(){
-        return ResponseEntity.ok(service.getMusicalList());
+    public ResponseEntity<List<PlayDto.musicalList>> getMusicals(){
+        return ResponseEntity.ok(service.getMusicals());
     }
 
 }

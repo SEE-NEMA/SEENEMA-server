@@ -13,31 +13,36 @@ public class Musical {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long no;
 
-    @Column(name = "musical_id")
-    private String musicalId;
-    @Column(name = "img_url")
-    private String imgUrl;
-
     @Column(name = "title")
     private String title;
 
-    @Column(name = "start_date", columnDefinition = "DATE")
-    private LocalDate startDate;
+    @Column(name = "genre")
+    private String genre;
 
-    @Column(name = "end_date", columnDefinition = "DATE")
-    private LocalDate endDate;
+    @Column(name = "date")
+    private String date;
 
     @Column(name = "place")
     private String place;
 
+    @Column(name = "cast")
+    private String cast;
+
+    @Column(name = "img_url")
+    private String imgUrl;
+
+    @Column(name="detail_url")
+    private String detailUrl;
+
     @Builder
-    public Musical(Long no, String musicalId, String imgUrl, String title, LocalDate startDate, LocalDate endDate, String place) {
+    public Musical(Long no, String title, String genre, String date, String place, String cast, String imgUrl, String detailUrl) {
         this.no = no;
-        this.musicalId = musicalId;
-        this.imgUrl = imgUrl;
         this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.genre = genre;
+        this.date = date;
         this.place = place;
+        this.cast = cast;
+        this.imgUrl = imgUrl;
+        this.detailUrl = detailUrl;
     }
 }
