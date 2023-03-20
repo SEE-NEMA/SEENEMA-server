@@ -7,5 +7,5 @@ import java.util.List;
 
 @Service
 public interface MainPageService {
-   MainPageDto.reasponseDTO readRanking();
+   MainPageDto.responseDTO readRanking();
 }

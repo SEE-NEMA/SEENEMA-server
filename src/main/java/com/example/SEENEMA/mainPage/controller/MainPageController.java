@@ -20,7 +20,7 @@ public class MainPageController {
     private MainPageServiceImpl service;
     @ApiOperation(value = "SEE-NEMA 메인페이지")
     @GetMapping("/")
-    public ResponseEntity<MainPageDto.reasponseDTO> readRanking(){
+    public ResponseEntity<MainPageDto.responseDTO> readRanking(){
         return ResponseEntity.ok(service.readRanking());
     }
 }
