@@ -15,7 +15,7 @@ public class MainPageDto {
     }
     @Getter
     @Setter
-    public static class reasponseDTO{
+    public static class responseDTO{
         private List<readRanking> musicalRank;
         private List<readRanking> concertRank;
     }
