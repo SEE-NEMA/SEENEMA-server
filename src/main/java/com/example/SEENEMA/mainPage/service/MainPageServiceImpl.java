@@ -77,7 +77,7 @@ public class MainPageServiceImpl implements MainPageService {
 
     /** 뮤지컬 크롤링 */
     @Override
-    public List<PlayDto.musicalList> getMusicals() {
+    public List<PlayDto.musicalList> getMusicalList() {
 
         List<PlayDto.musicalList> musicalList = new ArrayList<>();
 
@@ -149,6 +149,7 @@ public class MainPageServiceImpl implements MainPageService {
         }
     }
 
+    // 종료된 뮤지컬 삭제
     public void deleteMusicals() {
         List<Musical> musicals = musicalRepository.findAll();
         for (Musical musical : musicals) {
@@ -171,8 +172,18 @@ public class MainPageServiceImpl implements MainPageService {
     // 24시간마다 갱신
     @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
     public void scheduledMusicals() {
-        List<PlayDto.musicalList> musicalList = getMusicals();
+        List<PlayDto.musicalList> musicalList = getMusicalList();
         saveMusicals(musicalList);
         deleteMusicals();
+    }
+
+    /** 뮤지컬 상세 정보 */
+    public PlayDto.musicalInfo getMusicalInfo(Long no){
+        Musical musical = getMusical(no);
+        return new PlayDto.musicalInfo(musical);
+    }
+
+    private Musical getMusical(Long no){
+        return musicalRepository.findById(no).orElseThrow();
     }
 }
