@@ -11,14 +11,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor // 생성자 주입
-@RequestMapping("/api/v1/view-review")
+@RequestMapping("/api/v1")
 public class TheaterController {
 
     private final TheaterServiceImpl theaterService;
 
     @ApiOperation(value="공연장 조회")
-    @GetMapping("/search")
+    @GetMapping("/view-review/search")
     public ResponseEntity searchTheater(@RequestParam(name="q") String theaterName){
         return ResponseEntity.ok(theaterService. searchTheater(theaterName));
+    }
+
+    @ApiOperation(value="공연장 정보")
+    @GetMapping("/theaters")
+    public ResponseEntity getTheater(){
+        return ResponseEntity.ok(theaterService.getTheater());
     }
 }
