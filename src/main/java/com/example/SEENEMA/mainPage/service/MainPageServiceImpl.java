@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.jsoup.nodes.Document;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -146,10 +149,30 @@ public class MainPageServiceImpl implements MainPageService {
         }
     }
 
+    public void deleteMusicals() {
+        List<Musical> musicals = musicalRepository.findAll();
+        for (Musical musical : musicals) {
+            String[] dates = musical.getDate().split(" ~ ");
+            if (dates.length != 2) {
+                continue; // yyyy.mm.dd 형식이 아닌 데이터는 삭제하지 않음
+            }
+            String endDateString = dates[1];
+            try {
+                LocalDate endDate = LocalDate.parse(endDateString, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+                if (endDate.isBefore(LocalDate.now())) {
+                    musicalRepository.delete(musical);
+                }
+            } catch (DateTimeParseException e) {
+                // yyyy.mm.dd 형식으로 파싱할 수 없는 데이터는 삭제하지 않음
+            }
+        }
+    }
+
     // 24시간마다 갱신
     @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
     public void scheduledMusicals() {
         List<PlayDto.musicalList> musicalList = getMusicals();
         saveMusicals(musicalList);
+        deleteMusicals();
     }
 }
