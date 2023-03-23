@@ -12,8 +12,11 @@ public class TheaterDto {
     /** 검색한 공연장을 리턴할 Response 클래스 */
     @Getter
     public static class theaterResponse{
+        private Long theaterId;
         private String theaterName;
+
         public theaterResponse(Theater theater){
+            this.theaterId = theater.getTheaterId();
             this.theaterName = theater.getTheaterName();
         }
     }
