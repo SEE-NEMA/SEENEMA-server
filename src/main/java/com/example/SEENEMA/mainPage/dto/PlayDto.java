@@ -18,17 +18,13 @@ public class PlayDto {
         private String imgUrl;
         private String detailUrl;
 
-
-        public musicalList(Musical musical){
-            this.title = musical.getTitle();
-            this.genre = musical.getGenre();
-            this.date = musical.getDate();
-            this.place = musical.getPlace();
-            this.cast = musical.getCast();
-            this.imgUrl = musical.getImgUrl();
-            this.detailUrl = musical.getDetailUrl();
+        public musicalList(String imgUrl, String title, String place) {
+            this.title = title;
+            this.imgUrl = imgUrl;
+            this.place = place;
         }
     }
+
     @Getter
     @Setter
     @NoArgsConstructor

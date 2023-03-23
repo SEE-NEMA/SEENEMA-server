@@ -75,9 +75,11 @@ public class MainPageServiceImpl implements MainPageService {
     // 뮤지컬 <> 외에도 제목 양식이 존재하기 때문에 오류방생 -> 기능 삭제
 
 
-    /** 뮤지컬 크롤링 */
+    /**** 뮤지컬 크롤링 ****/
+
+    /** 뮤지컬 목록 **/
     @Override
-    public List<PlayDto.musicalList> getMusicalList() {
+    public List<PlayDto.musicalList> getMusicals() {
 
         List<PlayDto.musicalList> musicalList = new ArrayList<>();
 
@@ -129,7 +131,7 @@ public class MainPageServiceImpl implements MainPageService {
         return musicalList;
     }
 
-    // db 저장
+    /** db 저장 */
     public void saveMusicals(List<PlayDto.musicalList> musicalList) {
         for (PlayDto.musicalList musical : musicalList) {
             if (!musicalRepository.findByTitleAndDateAndPlace(musical.getTitle(),musical.getDate(),musical.getPlace()).isEmpty()) {
@@ -149,7 +151,7 @@ public class MainPageServiceImpl implements MainPageService {
         }
     }
 
-    // 종료된 뮤지컬 삭제
+    /** 종료된 뮤지컬 삭제 */
     public void deleteMusicals() {
         List<Musical> musicals = musicalRepository.findAll();
         for (Musical musical : musicals) {
@@ -169,15 +171,21 @@ public class MainPageServiceImpl implements MainPageService {
         }
     }
 
-    // 24시간마다 갱신
+    /** 24시간마다 갱신 */
     @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
     public void scheduledMusicals() {
-        List<PlayDto.musicalList> musicalList = getMusicalList();
+        List<PlayDto.musicalList> musicalList = getMusicals();
         saveMusicals(musicalList);
         deleteMusicals();
     }
 
-    /** 뮤지컬 상세 정보 */
+    /** 뮤지컬 목록에 title,place,imgurl만 출력*/
+    public List<PlayDto.musicalList> getMusicalList(){
+        List<Musical> musicals = musicalRepository.findAll();
+        return musicals.stream().map(musical -> new PlayDto.musicalList(musical.getImgUrl(), musical.getTitle(), musical.getPlace())).collect(Collectors.toList());
+    }
+
+    /** 뮤지컬 상세 정보*/
     public PlayDto.musicalInfo getMusicalInfo(Long no){
         Musical musical = getMusical(no);
         return new PlayDto.musicalInfo(musical);
