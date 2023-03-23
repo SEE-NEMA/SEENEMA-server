@@ -39,13 +39,13 @@ public class MainPageController {
         return ResponseEntity.ok(service.getMusicalInfo(no));
     }
 
-    @ApiOperation(value = "뮤지컬 목록")
+    @ApiOperation(value = "콘서트 목록")
     @GetMapping("/concerts")
     public ResponseEntity<List<PlayDto.concertList>> getConcertList() {
         return ResponseEntity.ok(service.getConcertList());
     }
 
-    @ApiOperation(value = "뮤지컬 상세정보")
+    @ApiOperation(value = "콘서트 상세정보")
     @GetMapping("/concerts/{no}")
     public ResponseEntity<PlayDto.concertInfo> getConcertInfo(@PathVariable("no") Long no){
         return ResponseEntity.ok(service.getConcertInfo(no));
