@@ -10,5 +10,6 @@ import java.util.List;
 public interface MainPageService {
     MainPageDto.responseDTO readRanking();
     List<PlayDto.musicalList> getMusicals();
+    List<PlayDto.concertList> getConcerts();
 
 }
