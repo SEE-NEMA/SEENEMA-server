@@ -2,7 +2,6 @@ package com.example.SEENEMA.mainPage.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.List;
 
 @Getter

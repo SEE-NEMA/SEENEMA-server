@@ -17,4 +17,15 @@ public class TheaterDto {
             this.theaterName = theater.getTheaterName();
         }
     }
+
+    @Getter
+    public static class theaterList{
+        private String theaterName;
+        private String detailUrl;
+
+        public theaterList(Theater theater) {
+            this.theaterName = theater.getTheaterName();
+            this.detailUrl = theater.getDetailUrl();
+        }
+    }
 }
