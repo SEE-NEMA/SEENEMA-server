@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MainPageServiceImpl implements MainPageService {
     private final String interparkMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
-    private final String interparkConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pCate=&pType=D&pDate=20230314";
+    private final String interparkConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pCate=&pType=D";
     private final String playdbURL= "http://www.playdb.co.kr/playdb/playdblist.asp";
     private final MusicalRepository musicalRepository;
     private final ConcertRepository concertRepository;
