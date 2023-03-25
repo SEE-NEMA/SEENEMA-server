@@ -106,22 +106,25 @@ public class MainPageServiceImpl implements MainPageService {
 
                     musical.setImgUrl(row.selectFirst("td[width=\"90\"] img").attr("src"));
                     musical.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
-                    musical.setGenre(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>")[0].replaceAll("세부장르 : ", "").trim());
-                    musical.setDate(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>")[1].replaceAll("일시 : ", "").trim());
-                    musical.setPlace(Jsoup.parse(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) >td ").html().split("<br>")[2]).text().replaceAll("장소 : ", ""));
 
-                    String[] parts =  row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
+                    String[] parts = row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
+
+                    musical.setGenre(parts[0].replaceAll("세부장르 : ", "").trim());
+                    musical.setDate(parts[1].replaceAll("일시 : ", "").trim());
+                    musical.setPlace(Jsoup.parse(parts[2]).text().replaceAll("장소 : ", ""));
+
                     String cast = null;
                     if (parts.length >= 4) { // 출연 정보가 있는 경우
-                        String castText = parts[3].replace("출연 : ", ""); // "출연 : " 문자열 제거
-                        Elements castElements = Jsoup.parse(castText).select("a:not(:first-child)"); // 첫번째 a 태그 제외한 모든 a 태그 요소 가져오기
-                        cast = castElements.isEmpty() ? null : castElements.stream().map(e -> e.text()).collect(Collectors.joining(","));
+                        String castText = parts[3].replaceFirst("출연\\s*:\\s*", ""); // "출연 : " 문자열 제거
+                        Elements castElements = Jsoup.parse(castText).select("a");
+                        cast = castElements.isEmpty() ? null : castElements.stream().map(e -> e.text()).collect(Collectors.joining(", "));
                     }
                     musical.setCast(cast);
 
                     String detailUrl = null;
                     if (parts.length >= 4) { // detail url이 있는 경우
-                        detailUrl = Jsoup.parse(parts[3]).select("a:last-child").attr("href");
+                        Element aElement = row.selectFirst("a:has(img)");
+                        detailUrl = aElement != null ? aElement.attr("href") : null;
                     }
                     musical.setDetailUrl(detailUrl);
 
@@ -208,48 +211,54 @@ public class MainPageServiceImpl implements MainPageService {
         List<PlayDto.concertList> concertList = new ArrayList<>();
 
         for (int page = 1; page <= MAX_PAGE; page++) {
-            Connection conn = Jsoup.connect(playdbURL)
-                    .data("Page", String.valueOf(page))
-                    .data("sReqMainCategory", "000003")
-                    .data("sReqSubCategory", "")
-                    .data("sReqDistrict", "")
-                    .data("sReqTab", "2")
-                    .data("sPlayType", "3")
-                    .data("sStartYear", "")
-                    .data("sSelectType", "1");
+            for (String sPlayType : new String[]{"2", "3"}) {
+                Connection conn = Jsoup.connect(playdbURL)
+                        .data("Page", String.valueOf(page))
+                        .data("sReqMainCategory", "000003")
+                        .data("sReqSubCategory", "")
+                        .data("sReqDistrict", "")
+                        .data("sReqTab", "2")
+                        .data("sPlayType", sPlayType)
+                        .data("sStartYear", "")
+                        .data("sSelectType", "1");
 
-            try {
-                Document doc = conn.get();
-                Elements rows = doc.select("div.container1 > table > tbody > tr:nth-child(11) > td > table > tbody > tr:nth-child(n+3):nth-child(odd) > td > table > tbody > tr > td[width=\"493\"]");
 
-                for (Element row : rows) {
-                    PlayDto.concertList concert = new PlayDto.concertList();
+                try {
+                    Document doc = conn.get();
+                    Elements rows = doc.select("div.container1 > table > tbody > tr:nth-child(11) > td > table > tbody > tr:nth-child(n+3):nth-child(odd) > td > table > tbody > tr > td[width=\"493\"]");
 
-                    concert.setImgUrl(row.selectFirst("td[width=\"90\"] img").attr("src"));
-                    concert.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
-                    concert.setGenre(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>")[0].replaceAll("세부장르 : ", "").trim());
-                    concert.setDate(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>")[1].replaceAll("일시 : ", "").trim());
-                    concert.setPlace(Jsoup.parse(row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) >td ").html().split("<br>")[2]).text().replaceAll("장소 : ", ""));
+                    for (Element row : rows) {
+                        PlayDto.concertList concert = new PlayDto.concertList();
 
-                    String[] parts =  row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
-                    String cast = null;
-                    if (parts.length >= 4) { // 출연 정보가 있는 경우
-                        String castText = parts[3].replace("출연 : ", ""); // "출연 : " 문자열 제거
-                        Elements castElements = Jsoup.parse(castText).select("a:not(:first-child)"); // 첫번째 a 태그 제외한 모든 a 태그 요소 가져오기
-                        cast = castElements.isEmpty() ? null : castElements.stream().map(e -> e.text()).collect(Collectors.joining(","));
+                        concert.setImgUrl(row.selectFirst("td[width=\"90\"] img").attr("src"));
+                        concert.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
+
+                        String[] parts = row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
+
+                        concert.setGenre(parts[0].replaceAll("세부장르 : ", "").trim());
+                        concert.setDate(parts[1].replaceAll("일시 : ", "").trim());
+                        concert.setPlace(Jsoup.parse(parts[2]).text().replaceAll("장소 : ", ""));
+
+                        String cast = null;
+                        if (parts.length >= 4) { // 출연 정보가 있는 경우
+                            String castText = parts[3].replaceFirst("출연\\s*:\\s*", ""); // "출연 : " 문자열 제거
+                            Elements castElements = Jsoup.parse(castText).select("a");
+                            cast = castElements.isEmpty() ? null : castElements.stream().map(e -> e.text()).collect(Collectors.joining(", "));
+                        }
+                        concert.setCast(cast);
+
+                        String detailUrl = null;
+                        if (parts.length >= 4) { // detail url이 있는 경우
+                            Element aElement = row.selectFirst("a:has(img)");
+                            detailUrl = aElement != null ? aElement.attr("href") : null;
+                        }
+                        concert.setDetailUrl(detailUrl);
+
+                        concertList.add(concert);
                     }
-                    concert.setCast(cast);
-
-                    String detailUrl = null;
-                    if (parts.length >= 4) { // detail url이 있는 경우
-                        detailUrl = Jsoup.parse(parts[3]).select("a:last-child").attr("href");
-                    }
-                    concert.setDetailUrl(detailUrl);
-
-                    concertList.add(concert);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
         return concertList;
