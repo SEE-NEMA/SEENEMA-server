@@ -24,21 +24,21 @@ public class ViewPostController {
     }
 
     @ApiOperation(value="시야 리뷰 상세화면")
-    @GetMapping("/{theaterId}/{title}/search")
-    public ResponseEntity readViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("title") String title, @RequestParam(name="q") Long viewNo){
-        return ResponseEntity.ok(viewPostService.readViewPost(userId,theaterId,title,viewNo));
+    @GetMapping("/{theaterId}/{viewNo}")
+    public ResponseEntity readViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo){
+        return ResponseEntity.ok(viewPostService.readViewPost(userId,theaterId,viewNo));
     }
 
     @ApiOperation(value = " 시야 리뷰 상세화면에서 수정")
-    @PutMapping("/{theaterId}/{title}/search")
-    public ResponseEntity<ViewPostDto.addResponse> updateViewPost (@PathVariable("theaterId") Long theaterId, @PathVariable("title") String title, @RequestParam(name="q") Long viewNo, @RequestBody ViewPostDto.updateRequest viewDto){
-        return ResponseEntity.ok(viewPostService.updateViewPost(theaterId,title,viewNo,viewDto));
+    @PutMapping("/{theaterId}/{viewNo}")
+    public ResponseEntity<ViewPostDto.addResponse> updateViewPost (@PathVariable("theaterId") Long theaterId,@PathVariable("viewNo") Long viewNo, @RequestBody ViewPostDto.updateRequest viewDto){
+        return ResponseEntity.ok(viewPostService.updateViewPost(theaterId,viewNo,viewDto));
     }
 
     @ApiOperation(value = "시야 리뷰 상세화면에서 삭제")
-    @DeleteMapping("/{theaterId}/{title}/search")
-    public ResponseEntity deleteViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("title") String title, @RequestParam(name="q") Long viewNo) {
-        viewPostService.deleteViewPost(theaterId, title, viewNo);
+    @DeleteMapping("/{theaterId}/{viewNo}")
+    public ResponseEntity deleteViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo) {
+        viewPostService.deleteViewPost(theaterId, viewNo);
         return ResponseEntity.ok(ResponseMessage.DELETE.getMsg());
     }
 
