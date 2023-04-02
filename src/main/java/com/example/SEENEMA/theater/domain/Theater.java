@@ -16,10 +16,14 @@ public class Theater {
     @Column(nullable = false)
     private String theaterName;
 
+    @Column(name="detail_url")
+    private String detailUrl;
+
 
     @Builder
-    public Theater(Long theaterId, String theaterName) {
+    public Theater(Long theaterId, String theaterName, String detailUrl) {
         this.theaterId = theaterId;
         this.theaterName = theaterName;
+        this.detailUrl = detailUrl;
     }
 }
