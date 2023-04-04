@@ -19,10 +19,11 @@ public class PlayDto {
         private String imgUrl;
         private String detailUrl;
 
-        public musicalList(String imgUrl, String title, String place) {
+        public musicalList(String imgUrl, String title, String place, String date) {
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
+            this.date = date;
         }
     }
 
@@ -62,10 +63,11 @@ public class PlayDto {
         private String imgUrl;
         private String detailUrl;
 
-        public concertList(String imgUrl, String title, String place) {
+        public concertList(String imgUrl, String title, String place, String date) {
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
+            this.date = date;
         }
     }
 
