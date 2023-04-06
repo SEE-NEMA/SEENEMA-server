@@ -18,25 +18,6 @@ public class AuthController {
     private final UserRepository repo;
     private final JwtTokenProvider provider;
     private final PasswordEncoder passwordEncoder;
-
-//    public ResponseEntity<String> signup(@RequestBody User user){
-//        String token = provider.createToken();
-//        return ResponseEntity.ok(token);
-//    }
-
-
-//    @ApiOperation("회원가입")
-//    @PostMapping("/join2")
-//    public Long join2(@RequestBody UserDto.RequestJoinUser request){
-//        return repo.save(User.builder()
-//                .email(request.getEmail())
-//                .password(passwordEncoder.encode(request.getPassword()))
-//                .nickname(request.getNickname())
-//                .roles(Collections.singletonList("ROLE_USER"))
-//                .build()).getUserId();
-//    }
-
-
     @ApiOperation("회원가입 테스트")
     @PostMapping("/join")
     public Long join(@RequestBody Map<String, String> user){

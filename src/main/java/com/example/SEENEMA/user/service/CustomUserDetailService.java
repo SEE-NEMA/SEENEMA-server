@@ -1,4 +1,4 @@
-package com.example.SEENEMA.test.service;
+package com.example.SEENEMA.user.service;
 
 import com.example.SEENEMA.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
