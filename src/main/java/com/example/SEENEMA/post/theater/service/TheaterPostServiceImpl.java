@@ -71,6 +71,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     @Transactional
     public TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo){
         // 공연장 후기 게시글 삭제
+        deleteCommentByPostNo(postNo);
         theaterPostRepo.deleteById(postNo);
         return null;
     }
@@ -156,6 +157,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
 
     @Override
     public TheaterPostDto.addResponse deleteCommentTheaterPost(Long postNo, Long commentId){
+        //댓글 삭제
         commentRepo.deleteById(commentId);
         return readTheaterPost(postNo);
     }
@@ -227,5 +229,12 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         }
         return result;
     }
-
+    // postNo의 댓글 삭제
+    private void deleteCommentByPostNo(Long post_no){
+        List<Comment> allComment = commentRepo.findAll();
+        for(Comment c : allComment){
+            if(c.getTheaterPost().getPostNo() == post_no)
+                commentRepo.delete(c);
+        }
+    }
 }

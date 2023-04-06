@@ -1,11 +1,13 @@
 package com.example.SEENEMA.theater.service;
 
+import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.theater.dto.TheaterDto;
 import com.example.SEENEMA.theater.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,5 +23,16 @@ public class TheaterServiceImpl implements TheaterService{
         return theaterRepository.findByTheaterNameContaining(theaterName).stream()
                 .map(TheaterDto.theaterResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TheaterDto.theaterList> getTheater() {
+        List<Theater> theaters = theaterRepository.findAll();
+        List<TheaterDto.theaterList> theaterLists = new ArrayList<>();
+        for (Theater theater : theaters) {
+            TheaterDto.theaterList theaterList = new TheaterDto.theaterList(theater);
+            theaterLists.add(theaterList);
+        }
+        return theaterLists;
     }
 }

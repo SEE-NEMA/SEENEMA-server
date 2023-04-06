@@ -74,11 +74,13 @@ public class ViewPostDto {
     /** 게시글 상세정보를 리턴할 Response 클래스 */
     @Getter
     public static class detailResponse{
+        private Long viewNo;
         private String nickName;
         private String title;
         private String content;
 
         public detailResponse(ViewPost view){
+            this.viewNo = view.getViewNo();
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
             this.content = view.getContent();
@@ -88,11 +90,13 @@ public class ViewPostDto {
     /** 게시글 목록을 리턴할 Response 클래스 */
     @Getter
     public static class viewListResponse{
+        private Long viewNo;
         private String nickName;
         private String title;
         private String createdAt;
 
         public viewListResponse(ViewPost view){
+            this.viewNo = view.getViewNo();
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();
