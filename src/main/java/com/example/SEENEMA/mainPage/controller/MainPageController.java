@@ -50,8 +50,4 @@ public class MainPageController {
     }
 
 
-    @PostMapping("/test/resource")
-    public String testAPI(){
-        return "hi";
-    }
 }

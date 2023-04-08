@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/user")
 public class UserController {
     private final UserRepository repo;
     private final JwtTokenProvider provider;
@@ -27,8 +28,12 @@ public class UserController {
     public String join(@RequestBody Map<String, String> user){
         // 아이디(email), 비밀번호 양식 확인 필요
         String id = user.get("email");
-        if(repo.findByEmail(id) != null){   // 이미 존재하는 id
-            return "아이디 중복";
+//        if(repo.findByEmail(id) != null){   // 이미 존재하는 id
+//            return "아이디 중복";
+//        }
+        List<User> userList = repo.findAll();
+        for(User u : userList){
+            if(u.getEmail().equals(id)) return "아이디 중복";
         }
 
         repo.save(User.builder()
@@ -49,6 +54,11 @@ public class UserController {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
         return provider.createToken(member.getUsername(), member.getRoles());
+    }
+
+    @PostMapping("/test/resource")
+    public String testAPI(){
+        return "hi";
     }
 //
 //    @ApiOperation("로그아웃")
