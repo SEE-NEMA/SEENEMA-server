@@ -17,15 +17,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
 	annotationProcessor('org.projectlombok:lombok:1.18.22')
 
-    // swagger dependency
-	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-
-	// Jsoup for web-crawling
-	implementation 'org.jsoup:jsoup:1.15.4'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0' // swagger dependency
+	implementation 'org.jsoup:jsoup:1.15.4' // Jsoup for web-crawling
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {
