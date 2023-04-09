@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,6 +36,11 @@ public class User implements UserDetails {
     @CollectionTable(name = "USER_ROLES")
 //    @Builder.Default
     private List<String> roles = new ArrayList<>();
+
+    @Column
+    private String provider;// 무슨 Oauth?
+    @Column
+    private String providerId;// 해당 oauth의 key
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
