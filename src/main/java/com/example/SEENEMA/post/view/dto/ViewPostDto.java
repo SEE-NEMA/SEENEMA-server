@@ -1,9 +1,12 @@
 package com.example.SEENEMA.post.view.dto;
 
+import com.example.SEENEMA.post.view.domain.Image;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.post.view.domain.ViewPost;
 import lombok.*;
+
+import java.util.List;
 
 
 @Getter
@@ -20,6 +23,7 @@ public class ViewPostDto {
         private String seat; // 좌석
         private String title; // 제목
         private String content; // 내용
+        private List<Image> image; // 이미지 url
 
         public ViewPost toEntity(){
             return ViewPost.builder()
@@ -29,8 +33,10 @@ public class ViewPostDto {
                     .seat(seat)
                     .title(title)
                     .content(content)
+                    .image(image)
                     .build();
         }
+
     }
 
     /** 게시글 수정을 처리할 Request 클래스 */
@@ -54,8 +60,9 @@ public class ViewPostDto {
         private String seat; // 좌석
         private String title; // 제목
         private String content; // 내용
+        private List<Image> image;
         private String createdAt;  // 작성일
-        private String editedAt;
+        private String editedAt; // 수정일
 
         public addResponse(ViewPost view){
             this.userId = view.getUser().getUserId();
@@ -65,6 +72,7 @@ public class ViewPostDto {
             this.seat = view.getSeat();
             this.title = view.getTitle();
             this.content = view.getContent();
+            this.image = view.getImage();
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
 
@@ -78,12 +86,14 @@ public class ViewPostDto {
         private String nickName;
         private String title;
         private String content;
+        private List<Image> image;
 
         public detailResponse(ViewPost view){
             this.viewNo = view.getViewNo();
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
             this.content = view.getContent();
+            this.image = view.getImage();
         }
     }
 

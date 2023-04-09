@@ -1,6 +1,8 @@
 package com.example.SEENEMA.post.view.service;
 
+import com.example.SEENEMA.post.view.domain.Image;
 import com.example.SEENEMA.post.view.dto.ViewPostDto;
+import com.example.SEENEMA.post.view.repository.ImageRepository;
 import com.example.SEENEMA.post.view.repository.ViewPostRepository;
 import com.example.SEENEMA.post.view.domain.ViewPost;
 import com.example.SEENEMA.theater.domain.Theater;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +25,7 @@ public class ViewPostServiceImpl implements ViewPostService {
     private final ViewPostRepository viewPostRepository;
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
+    private final ImageRepository imageRepository;
 
     @Override
     @Transactional
@@ -29,14 +33,35 @@ public class ViewPostServiceImpl implements ViewPostService {
 
         User user = getUser(userId);
         Theater theater = getTheater(theaterId);
+        List<Image> images = getImage(requestDto.getImage());
 
         requestDto.setUser(user);
         requestDto.setTheater(theater);
+        requestDto.setImage(images);
 
         ViewPost view = requestDto.toEntity();
 
+        // ViewPost 엔티티에 저장된 Image 엔티티들을 영속화
+        List<Image> persistedImages = new ArrayList<>();
+        for(Image image : images) {
+            persistedImages.add(imageRepository.save(image));
+        }
+        view.setImage(persistedImages);
+
         return new ViewPostDto.addResponse(viewPostRepository.save(view));
     }
+
+//        ViewPost view = ViewPost.builder()
+//                .user(user)
+//                .theater(theater)
+//                .play(requestDto.getPlay())
+//                .seat(requestDto.getSeat())
+//                .title(requestDto.getTitle())
+//                .content(requestDto.getContent())
+//                .imgUrl(requestDto.getImgUrl()) // imgUrl 값을 설정해줌
+//                .build();
+
+
 
     @Override
     @Transactional(readOnly = true)
@@ -89,5 +114,14 @@ public class ViewPostServiceImpl implements ViewPostService {
     private Theater getTheater(Long theaterId){
         return theaterRepository.findById(theaterId).orElseThrow();
     }
-
+    private List<Image> getImage(List<Image> images){
+        List<Image> tmp = imageRepository.findAll();
+        for (Image a : tmp){
+            for(Image i : images){
+                if(a.getImgUrl().equals(i.getImgUrl()))
+                    i.setImgUrl(a.getImgUrl());
+            }
+        }
+        return images;
+    }
 }
