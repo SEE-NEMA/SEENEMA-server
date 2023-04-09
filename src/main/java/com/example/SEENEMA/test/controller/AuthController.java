@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/test1")
+@RequestMapping("/api/v1/test")
 public class AuthController {
     private final UserRepository repo;
     private final JwtTokenProvider provider;
