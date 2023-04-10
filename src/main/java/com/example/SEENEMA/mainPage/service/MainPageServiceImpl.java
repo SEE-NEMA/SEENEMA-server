@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MainPageServiceImpl implements MainPageService {
     private final String interparkMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
-    private final String interparkConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pCate=&pType=D";
+    private final String interparkConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pType=D&pCate=01003";
     private final String playdbURL= "http://www.playdb.co.kr/playdb/playdblist.asp";
     private final MusicalRepository musicalRepository;
     private final ConcertRepository concertRepository;
@@ -43,14 +43,13 @@ public class MainPageServiceImpl implements MainPageService {
         // 타겟 사이트에 연결 후 html 파일 읽어오기
         Connection musicalConnection = Jsoup.connect(interparkMusical);
         Connection concertConnection = Jsoup.connect(interparkConcert);
-        //List<List<MainPageDto.readRanking>> response = new ArrayList<>();
         MainPageDto.responseDTO response = new MainPageDto.responseDTO();
         try{
             Document doc = musicalConnection.get();
-            List<MainPageDto.readRanking> musicalRank = getRankList(doc, 1);    // 뮤지컬 랭킹 읽기 및 add
+            List<MainPageDto.readRanking> musicalRank = getRankList(doc);    // 뮤지컬 랭킹 읽기 및 add
             response.setMusicalRank(musicalRank);
             doc = concertConnection.get();
-            List<MainPageDto.readRanking> concertRank = getRankList(doc, 0);     // 콘서트 랭킹 읽기 및 add
+            List<MainPageDto.readRanking> concertRank = getRankList(doc);     // 콘서트 랭킹 읽기 및 add
             response.setConcertRank(concertRank);
         }catch(IOException e){
         }
@@ -59,23 +58,20 @@ public class MainPageServiceImpl implements MainPageService {
 
     // 랭킹 정보 읽어온 후, 알맞게 MainPageDto.readRanking으로 변환 후 return
     // int rank, String title
-    private List<MainPageDto.readRanking> getRankList(Document doc, int isMusical){ // if isMusical == 1 -> true
+    private List<MainPageDto.readRanking> getRankList(Document doc){ // if isMusical == 1 -> true
         Elements divClass = doc.select("td.prds");
         List<MainPageDto.readRanking> result = new ArrayList<>(); // 함수 return 값
         for(Element e : divClass){
             MainPageDto.readRanking tmp = new MainPageDto.readRanking();
             int rank = Integer.parseInt(e.select("div.ranks i").text());
             String title = e.select("div.prdInfo a b").text();
-            //if(isMusical == 1) title = realTitle(title); // 뮤지컬 랭킹만 / 위의 title에서 <>안의 제목만 가져와야함.;
             tmp.setRank(rank);
             tmp.setTitle(title);
             result.add(tmp);
-            if(rank == 10) return result;   // 1-10위 정보만 필요
+            if(rank >= 10) return result;   // 1-10위 정보만 필요
         }
         return null;
     }
-    // web-crawling 해온 뮤지컬 랭킹의 title에서 불필요한 문구(앞에 뮤지컬 적혀있는거) 제거 후 제목만 넘김.
-    // 뮤지컬 <> 외에도 제목 양식이 존재하기 때문에 오류방생 -> 기능 삭제
 
 
     /**** 뮤지컬 크롤링 ****/
