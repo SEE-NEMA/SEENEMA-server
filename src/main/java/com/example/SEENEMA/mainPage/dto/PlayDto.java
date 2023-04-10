@@ -11,6 +11,7 @@ public class PlayDto {
     @Setter
     @NoArgsConstructor
     public static class musicalList {
+        private Long no;
         private String title;
         private String genre;
         private String date;
@@ -19,7 +20,8 @@ public class PlayDto {
         private String imgUrl;
         private String detailUrl;
 
-        public musicalList(String imgUrl, String title, String place, String date) {
+        public musicalList(Long no, String imgUrl, String title, String place, String date) {
+            this.no = no;
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
@@ -55,6 +57,7 @@ public class PlayDto {
     @Setter
     @NoArgsConstructor
     public static class concertList {
+        private Long no;
         private String title;
         private String genre;
         private String date;
@@ -63,7 +66,8 @@ public class PlayDto {
         private String imgUrl;
         private String detailUrl;
 
-        public concertList(String imgUrl, String title, String place, String date) {
+        public concertList(Long no, String imgUrl, String title, String place, String date) {
+            this.no = no;
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
