@@ -1,13 +1,17 @@
 package com.example.SEENEMA.post.theater.controller;
 
 import com.example.SEENEMA.comment.dto.CommentDto;
+import com.example.SEENEMA.post.file.service.FileService;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.post.theater.service.TheaterPostServiceImpl;
+import com.example.SEENEMA.post.view.domain.Image;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,11 +21,17 @@ import java.util.List;
 public class TheaterPostController {
     @Autowired
     private TheaterPostServiceImpl service;
-    private Long userId = 2L;  // 로그인 기능없어서 임시로 만들어놓은 userId
+    private final FileService fileService;
+    private Long userId = 2L;  // 임시 userId
 
     @ApiOperation(value = "공연장 후기 등록")
-    @PostMapping("/upload")
-    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestBody TheaterPostDto.addRequest request){
+    @PostMapping(value="/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestParam(value="files", required = false) List<MultipartFile> files, @ModelAttribute TheaterPostDto.addRequest request){
+        List<Image> imgUrls = null;
+        if(files != null && !files.isEmpty()) {
+            imgUrls = fileService.uploadFiles(files);
+            request.setImage(imgUrls);
+        }
         return ResponseEntity.ok(service.createTheaterPost(userId, request));
     }
 

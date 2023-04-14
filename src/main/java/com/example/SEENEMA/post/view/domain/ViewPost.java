@@ -44,12 +44,7 @@ public class ViewPost {
     @Column(nullable = false)
     private String content; // 내용
 
-    @ManyToMany
-    @JoinTable(
-            name="view_image",
-            joinColumns = @JoinColumn(name="view_no"),
-            inverseJoinColumns = @JoinColumn(name = "img_url")
-    )
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Image> image;
 
     @CreatedDate // 생성일 자동화

@@ -3,6 +3,7 @@ package com.example.SEENEMA.post.theater.dto;
 import com.example.SEENEMA.comment.domain.Comment;
 import com.example.SEENEMA.comment.dto.CommentDto;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
+import com.example.SEENEMA.post.view.domain.Image;
 import com.example.SEENEMA.tag.domain.Tag;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.theater.domain.Theater;
@@ -23,6 +24,7 @@ public class TheaterPostDto {
         private String title;       // 제목
         private String content;     // 내용
         private List<Tag> tags;     // 태그
+        private List<Image> image; // 이미지 url
 
         public TheaterPost toEntity(){
             return TheaterPost.builder()
@@ -31,6 +33,7 @@ public class TheaterPostDto {
                     .title(title)
                     .content(content)
                     .tags(tags)
+                    .image(image)
                     .build();
         }
     }
@@ -46,6 +49,7 @@ public class TheaterPostDto {
         private String createdAt;   // 게시글 생성일
         private String editedAt;    // 게시글 수정일
         private List<Tag> tags;     // 게시글 태그
+        private List<Image> image;
         private Long viewCount;    // 조회수
         private List<CommentDto.readComment> comments; // 댓글 목록
 
@@ -59,6 +63,7 @@ public class TheaterPostDto {
             this.editedAt = theaterPost.getEditedAt().toString();
             this.tags = theaterPost.getTags();
             this.viewCount = theaterPost.getViewCount();
+            this.image = theaterPost.getImage();
         }
     }
     @Getter
