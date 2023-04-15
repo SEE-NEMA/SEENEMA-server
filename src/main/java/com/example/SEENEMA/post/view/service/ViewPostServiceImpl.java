@@ -52,17 +52,6 @@ public class ViewPostServiceImpl implements ViewPostService {
         return new ViewPostDto.addResponse(viewPostRepository.save(view));
     }
 
-//        ViewPost view = ViewPost.builder()
-//                .user(user)
-//                .theater(theater)
-//                .play(requestDto.getPlay())
-//                .seat(requestDto.getSeat())
-//                .title(requestDto.getTitle())
-//                .content(requestDto.getContent())
-//                .imgUrl(requestDto.getImgUrl()) // imgUrl 값을 설정해줌
-//                .build();
-
-
 
     @Override
     @Transactional(readOnly = true)

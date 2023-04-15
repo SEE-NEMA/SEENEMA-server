@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,14 +26,20 @@ public class ViewPostController {
 
     @ApiOperation(value = "시야 후기 등록")
     @PostMapping(value="/{theaterId}/upload" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ViewPostDto.addResponse> createViewPost(@PathVariable("theaterId") Long theaterId, @RequestParam(value="files", required = false) List<MultipartFile> files, @ModelAttribute ViewPostDto.addRequest viewDto) {
+    public ResponseEntity<ViewPostDto.addResponse> createViewPost(@PathVariable("theaterId") Long theaterId, @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute ViewPostDto.addRequest viewDto) {
         List<Image> imgUrls = null;
-        if(files != null && !files.isEmpty()) {
-            imgUrls = fileService.uploadFiles(files);
+
+        if(images != null && !images.isEmpty()) {
+            imgUrls = fileService.uploadFiles(images);
+            viewDto.setImage(imgUrls);
+        } else {
+            imgUrls = new ArrayList<>();
             viewDto.setImage(imgUrls);
         }
         return ResponseEntity.ok(viewPostService.createViewPost(userId, theaterId, viewDto));
     }
+
+
 
     @ApiOperation(value="시야 리뷰 상세화면")
     @GetMapping("/{theaterId}/{viewNo}")
@@ -43,10 +50,14 @@ public class ViewPostController {
     @ApiOperation(value = "시야 리뷰 상세화면에서 수정")
     @PutMapping("/{theaterId}/{viewNo}")
     public ResponseEntity<ViewPostDto.addResponse> updateViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo,
-                                                                  @RequestParam(value = "files", required = false) List<MultipartFile> files, @ModelAttribute ViewPostDto.updateRequest viewDto) {
+                                                                  @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute ViewPostDto.updateRequest viewDto) {
         List<Image> imgUrls = null;
-        if (files != null && !files.isEmpty()) {
-            imgUrls = fileService.uploadFiles(files);
+
+        if(images != null && !images.isEmpty()) {
+            imgUrls = fileService.uploadFiles(images);
+            viewDto.setImage(imgUrls);
+        } else {
+            imgUrls = new ArrayList<>();
             viewDto.setImage(imgUrls);
         }
         return ResponseEntity.ok(viewPostService.updateViewPost(theaterId, viewNo, viewDto));

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,11 +26,15 @@ public class TheaterPostController {
     private Long userId = 2L;  // 임시 userId
 
     @ApiOperation(value = "공연장 후기 등록")
-    @PostMapping(value="/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestParam(value="files", required = false) List<MultipartFile> files, @ModelAttribute TheaterPostDto.addRequest request){
+    @PostMapping(value="/upload")
+    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute TheaterPostDto.addRequest request){
         List<Image> imgUrls = null;
-        if(files != null && !files.isEmpty()) {
-            imgUrls = fileService.uploadFiles(files);
+
+        if(images != null && !images.isEmpty()) {
+            imgUrls = fileService.uploadFiles(images);
+            request.setImage(imgUrls);
+        } else {
+            imgUrls = new ArrayList<>();
             request.setImage(imgUrls);
         }
         return ResponseEntity.ok(service.createTheaterPost(userId, request));
@@ -49,10 +54,14 @@ public class TheaterPostController {
 
     @ApiOperation(value = "공연장 후기 게시물 수정")
     @PutMapping("/{postNo}")
-    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestParam(value="files", required = false) List<MultipartFile> files, @ModelAttribute TheaterPostDto.addRequest request){
+    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute TheaterPostDto.addRequest request){
         List<Image> imgUrls = null;
-        if(files != null && !files.isEmpty()) {
-            imgUrls = fileService.uploadFiles(files);
+
+        if(images != null && !images.isEmpty()) {
+            imgUrls = fileService.uploadFiles(images);
+            request.setImage(imgUrls);
+        } else {
+            imgUrls = new ArrayList<>();
             request.setImage(imgUrls);
         }
         return ResponseEntity.ok(service.editTheaterPost(userId, postNo, request));
