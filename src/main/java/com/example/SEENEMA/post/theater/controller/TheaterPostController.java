@@ -49,7 +49,12 @@ public class TheaterPostController {
 
     @ApiOperation(value = "공연장 후기 게시물 수정")
     @PutMapping("/{postNo}")
-    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestBody TheaterPostDto.addRequest request){
+    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestParam(value="files", required = false) List<MultipartFile> files, @ModelAttribute TheaterPostDto.addRequest request){
+        List<Image> imgUrls = null;
+        if(files != null && !files.isEmpty()) {
+            imgUrls = fileService.uploadFiles(files);
+            request.setImage(imgUrls);
+        }
         return ResponseEntity.ok(service.editTheaterPost(userId, postNo, request));
     }
 

@@ -18,11 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Id;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -97,11 +95,13 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         String theaterName = findTheaterName(request.getTitle());
         Theater theater = getTheater(theaterName);
         List<Tag> tags = getTags(request.getTags());
+        List<Image> images = getImage(request.getImage());
 
         TheaterPost t = getTheaterPost(postNo);
         t.setEditedAt(LocalDateTime.now());
         t.setTheater(theater);
         t.setTags(tags);
+        t.setImage(images);
         t.setTitle(request.getTitle());
         t.setContent(request.getContent());
         t.setViewCount(t.getViewCount()+1L);
@@ -119,6 +119,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         TheaterPost t = getTheaterPost(postNo);
         log.info(t.getTags().toString());
         t.setViewCount(t.getViewCount()+1L);
+        t.getImage().size();
         TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
 
         // 댓글 가져오기
