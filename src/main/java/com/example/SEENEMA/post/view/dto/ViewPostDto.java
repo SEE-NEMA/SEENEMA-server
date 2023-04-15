@@ -47,6 +47,7 @@ public class ViewPostDto {
         private String seat;
         private String title;
         private String content;
+        private List<Image> image;
 
     }
 

@@ -67,10 +67,11 @@ public class ViewPost {
         this.createdAt = createdAt;
     }
 
-    public void updateViewPost(String play, String seat, String title, String content) {
+    public void updateViewPost(String play, String seat, String title, String content, List<Image> image) {
         this.play = play;
         this.seat = seat;
         this.title = title;
         this.content = content;
+        this.image = image;
     }
 }

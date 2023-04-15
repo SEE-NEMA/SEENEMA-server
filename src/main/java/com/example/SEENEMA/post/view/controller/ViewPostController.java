@@ -40,10 +40,16 @@ public class ViewPostController {
         return ResponseEntity.ok(viewPostService.readViewPost(userId,theaterId,viewNo));
     }
 
-    @ApiOperation(value = " 시야 리뷰 상세화면에서 수정")
+    @ApiOperation(value = "시야 리뷰 상세화면에서 수정")
     @PutMapping("/{theaterId}/{viewNo}")
-    public ResponseEntity<ViewPostDto.addResponse> updateViewPost (@PathVariable("theaterId") Long theaterId,@PathVariable("viewNo") Long viewNo, @RequestBody ViewPostDto.updateRequest viewDto){
-        return ResponseEntity.ok(viewPostService.updateViewPost(theaterId,viewNo,viewDto));
+    public ResponseEntity<ViewPostDto.addResponse> updateViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo,
+                                                                  @RequestParam(value = "files", required = false) List<MultipartFile> files, @ModelAttribute ViewPostDto.updateRequest viewDto) {
+        List<Image> imgUrls = null;
+        if (files != null && !files.isEmpty()) {
+            imgUrls = fileService.uploadFiles(files);
+            viewDto.setImage(imgUrls);
+        }
+        return ResponseEntity.ok(viewPostService.updateViewPost(theaterId, viewNo, viewDto));
     }
 
     @ApiOperation(value = "시야 리뷰 상세화면에서 삭제")

@@ -11,6 +11,7 @@ import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +69,8 @@ public class ViewPostServiceImpl implements ViewPostService {
     public ViewPostDto.detailResponse readViewPost(Long userId, Long theaterId, Long viewNo){
 
         ViewPost viewPost = getViewPost(theaterId,viewNo);
+        // 이미지 컬렉션을 명시적으로 초기화
+        Hibernate.initialize(viewPost.getImage());
         return new ViewPostDto.detailResponse(viewPost);
     }
 
@@ -76,7 +79,7 @@ public class ViewPostServiceImpl implements ViewPostService {
     public ViewPostDto.addResponse updateViewPost(Long theaterId,Long viewNo, ViewPostDto.updateRequest requestDto){
 
         ViewPost viewPost = getViewPost(theaterId,viewNo);
-        viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent());
+        viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent(), requestDto.getImage());
 
         return new ViewPostDto.addResponse(viewPost);
     }
