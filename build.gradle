@@ -21,7 +21,7 @@ dependencies {
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
 	annotationProcessor('org.projectlombok:lombok:1.18.22')
 
-    // swagger dependency
+  // swagger dependency
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
 	// Jsoup for web-crawling
@@ -32,8 +32,12 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-test'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-	// s3 파일 업로드
+	// Spring Security OAuth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+  
+  // s3 파일 업로드
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 }
 
 tasks.named('test') {
