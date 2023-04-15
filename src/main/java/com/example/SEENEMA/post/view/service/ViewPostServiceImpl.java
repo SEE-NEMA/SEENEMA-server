@@ -1,8 +1,8 @@
 package com.example.SEENEMA.post.view.service;
 
-import com.example.SEENEMA.post.view.domain.Image;
+import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.post.view.dto.ViewPostDto;
-import com.example.SEENEMA.post.view.repository.ImageRepository;
+import com.example.SEENEMA.post.file.ImageRepository;
 import com.example.SEENEMA.post.view.repository.ViewPostRepository;
 import com.example.SEENEMA.post.view.domain.ViewPost;
 import com.example.SEENEMA.theater.domain.Theater;

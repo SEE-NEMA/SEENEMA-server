@@ -1,7 +1,7 @@
 package com.example.SEENEMA.post.view.controller;
 
-import com.example.SEENEMA.post.file.service.FileService;
-import com.example.SEENEMA.post.view.domain.Image;
+import com.example.SEENEMA.post.file.ImageService;
+import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.post.view.dto.ResponseMessage;
 import com.example.SEENEMA.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.post.view.service.ViewPostServiceImpl;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/v1/view-review")
 public class ViewPostController {
     private final ViewPostServiceImpl viewPostService;
-    private final FileService fileService;
+    private final ImageService imageService;
     private Long userId = 1L;  // 임시 ID
 
     @ApiOperation(value = "시야 후기 등록")
@@ -30,7 +30,7 @@ public class ViewPostController {
         List<Image> imgUrls = null;
 
         if(images != null && !images.isEmpty()) {
-            imgUrls = fileService.uploadFiles(images);
+            imgUrls = imageService.uploadFiles(images);
             viewDto.setImage(imgUrls);
         } else {
             imgUrls = new ArrayList<>();
@@ -54,7 +54,7 @@ public class ViewPostController {
         List<Image> imgUrls = null;
 
         if(images != null && !images.isEmpty()) {
-            imgUrls = fileService.uploadFiles(images);
+            imgUrls = imageService.uploadFiles(images);
             viewDto.setImage(imgUrls);
         } else {
             imgUrls = new ArrayList<>();

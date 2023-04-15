@@ -1,6 +1,6 @@
-package com.example.SEENEMA.post.view.repository;
+package com.example.SEENEMA.post.file;
 
-import com.example.SEENEMA.post.view.domain.Image;
+import com.example.SEENEMA.post.file.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

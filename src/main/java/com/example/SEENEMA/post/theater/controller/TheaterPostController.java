@@ -1,14 +1,13 @@
 package com.example.SEENEMA.post.theater.controller;
 
 import com.example.SEENEMA.comment.dto.CommentDto;
-import com.example.SEENEMA.post.file.service.FileService;
+import com.example.SEENEMA.post.file.ImageService;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.post.theater.service.TheaterPostServiceImpl;
-import com.example.SEENEMA.post.view.domain.Image;
+import com.example.SEENEMA.post.file.Image;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +21,7 @@ import java.util.List;
 public class TheaterPostController {
     @Autowired
     private TheaterPostServiceImpl service;
-    private final FileService fileService;
+    private final ImageService imageService;
     private Long userId = 2L;  // 임시 userId
 
     @ApiOperation(value = "공연장 후기 등록")
@@ -31,7 +30,7 @@ public class TheaterPostController {
         List<Image> imgUrls = null;
 
         if(images != null && !images.isEmpty()) {
-            imgUrls = fileService.uploadFiles(images);
+            imgUrls = imageService.uploadFiles(images);
             request.setImage(imgUrls);
         } else {
             imgUrls = new ArrayList<>();
@@ -58,7 +57,7 @@ public class TheaterPostController {
         List<Image> imgUrls = null;
 
         if(images != null && !images.isEmpty()) {
-            imgUrls = fileService.uploadFiles(images);
+            imgUrls = imageService.uploadFiles(images);
             request.setImage(imgUrls);
         } else {
             imgUrls = new ArrayList<>();

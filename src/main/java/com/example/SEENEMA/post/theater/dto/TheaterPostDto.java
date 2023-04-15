@@ -1,9 +1,8 @@
 package com.example.SEENEMA.post.theater.dto;
 
-import com.example.SEENEMA.comment.domain.Comment;
 import com.example.SEENEMA.comment.dto.CommentDto;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
-import com.example.SEENEMA.post.view.domain.Image;
+import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.tag.domain.Tag;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.theater.domain.Theater;

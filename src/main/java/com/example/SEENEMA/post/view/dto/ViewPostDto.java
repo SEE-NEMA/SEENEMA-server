@@ -1,6 +1,6 @@
 package com.example.SEENEMA.post.view.dto;
 
-import com.example.SEENEMA.post.view.domain.Image;
+import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.post.view.domain.ViewPost;

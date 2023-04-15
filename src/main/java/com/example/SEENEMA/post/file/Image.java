@@ -1,4 +1,4 @@
-package com.example.SEENEMA.post.view.domain;
+package com.example.SEENEMA.post.file;
 
 import lombok.AccessLevel;
 import lombok.*;
