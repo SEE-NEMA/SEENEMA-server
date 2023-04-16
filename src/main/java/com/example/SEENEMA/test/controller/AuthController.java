@@ -22,8 +22,6 @@ public class AuthController {
     private final UserRepository repo;
     private final JwtTokenProvider provider;
     private final PasswordEncoder passwordEncoder;
-
-//    private final BCryptPasswordEncoder encoder;
     @ApiOperation("회원가입 테스트")
     @PostMapping("/join")
     public Long join(@RequestBody Map<String, String> user){
@@ -47,11 +45,21 @@ public class AuthController {
     }
 
     @ResponseBody
-    @GetMapping("/login")
-    public String login(Authentication authentication, @AuthenticationPrincipal PrincipalDetails userDetails){
+    @GetMapping("/oauth/loginInfo")
+    public String login(Authentication authentication){
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        return "세션 정보 확인";
+        return principalDetails.toString();
     }
+
+    @GetMapping("/loginForm")
+    public String loginForm(){
+        return "TEST loginForm";
+    }
+
+//    @GetMapping("/oauth/loginInfo")
+//    public String loginInfo(){
+//        return "loginInfo";
+//    }
 //    @ResponseBody
 //    @GetMapping("/oauth/login")
 //    public String OAuthLogin

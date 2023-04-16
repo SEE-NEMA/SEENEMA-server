@@ -2,6 +2,7 @@ package com.example.SEENEMA.config;
 
 import com.example.SEENEMA.jwt.JwtAuthenticationFilter;
 import com.example.SEENEMA.jwt.JwtTokenProvider;
+import com.example.SEENEMA.oauth.service.OAuthService;
 import com.example.SEENEMA.user.service.PrincipalDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider provider;
-//    private final PrincipalDetailsService service;
+    private final PrincipalDetailsService service;
+    private final OAuthService oAuthService;
 
     // 암호화에 필요한거 빈 등록
     @Bean
@@ -51,17 +53,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/user/test/**").hasRole("USER")
                 .anyRequest().permitAll()
                 .and()
-                .formLogin()
-                .loginPage("/api/v1/user/test/loginForm")
-                .loginProcessingUrl("/api/v1/user/test/login")
-                .defaultSuccessUrl("/api/v1/")
+                .logout().logoutSuccessUrl("/api/v1/")
+                .and()
+                .oauth2Login()
+                .defaultSuccessUrl("/api/v1/test/oauth/loginInfo", true)
+                .userInfoEndpoint()
+                .userService(service);
+//                .formLogin()
+//                .loginPage("/api/v1/user/test/loginForm")
+//                .loginProcessingUrl("/api/v1/user/test/login")
+//                .defaultSuccessUrl("/api/v1/")
 //                .and()
 //                .oauth2Login()
 //                .loginPage("/api/v1/user/test/loginForm")
 //                .loginProcessingUrl("/api/v1/")
 //                .userInfoEndpoint()
 //                .userService(service);
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(provider), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(provider), UsernamePasswordAuthenticationFilter.class);
     }
 }
