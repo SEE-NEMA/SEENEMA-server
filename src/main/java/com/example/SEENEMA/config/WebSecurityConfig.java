@@ -6,6 +6,7 @@ import com.example.SEENEMA.user.service.PrincipalDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -50,6 +51,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/user/test/**").hasRole("USER")
                 .antMatchers("/api/v1/theater-review/upload").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/v1/theater-review/{postNo}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/v1/theater-review/{postNo}").authenticated()
                 .anyRequest().permitAll()
 //                .and()
 //                .formLogin()
