@@ -1,14 +1,18 @@
 package com.example.SEENEMA.post.theater.controller;
 
 import com.example.SEENEMA.comment.dto.CommentDto;
+import com.example.SEENEMA.post.file.ImageService;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.post.theater.service.TheaterPostServiceImpl;
+import com.example.SEENEMA.post.file.Image;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -17,11 +21,21 @@ import java.util.List;
 public class TheaterPostController {
     @Autowired
     private TheaterPostServiceImpl service;
-    private Long userId = 2L;  // 로그인 기능없어서 임시로 만들어놓은 userId
+    private final ImageService imageService;
+    private Long userId = 2L;  // 임시 userId
 
     @ApiOperation(value = "공연장 후기 등록")
-    @PostMapping("/upload")
-    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestBody TheaterPostDto.addRequest request){
+    @PostMapping(value="/upload")
+    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute TheaterPostDto.addRequest request){
+        List<Image> imgUrls = null;
+
+        if(images != null && !images.isEmpty()) {
+            imgUrls = imageService.uploadFiles(images);
+            request.setImage(imgUrls);
+        } else {
+            imgUrls = new ArrayList<>();
+            request.setImage(imgUrls);
+        }
         return ResponseEntity.ok(service.createTheaterPost(userId, request));
     }
 
@@ -39,7 +53,16 @@ public class TheaterPostController {
 
     @ApiOperation(value = "공연장 후기 게시물 수정")
     @PutMapping("/{postNo}")
-    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestBody TheaterPostDto.addRequest request){
+    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute TheaterPostDto.addRequest request){
+        List<Image> imgUrls = null;
+
+        if(images != null && !images.isEmpty()) {
+            imgUrls = imageService.uploadFiles(images);
+            request.setImage(imgUrls);
+        } else {
+            imgUrls = new ArrayList<>();
+            request.setImage(imgUrls);
+        }
         return ResponseEntity.ok(service.editTheaterPost(userId, postNo, request));
     }
 

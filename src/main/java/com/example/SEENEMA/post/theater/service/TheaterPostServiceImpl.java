@@ -6,6 +6,8 @@ import com.example.SEENEMA.comment.repository.CommentRepository;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
+import com.example.SEENEMA.post.file.Image;
+import com.example.SEENEMA.post.file.ImageRepository;
 import com.example.SEENEMA.tag.domain.Tag;
 import com.example.SEENEMA.tag.repository.TagRepository;
 import com.example.SEENEMA.theater.domain.Theater;
@@ -16,11 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Id;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -33,6 +33,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     private final TheaterRepository theaterRepo;
     private final TagRepository tagRepo;
     private final CommentRepository commentRepo;
+    private final ImageRepository imageRepository;
 
     @Override
     @Transactional
@@ -42,15 +43,25 @@ public class TheaterPostServiceImpl implements TheaterPostService{
 
         String theaterName = findTheaterName(request.getTitle());
         Theater theater = getTheater(theaterName);
+        List<Image> images = getImage(request.getImage());
 
         List<Tag> tags = getTags(request.getTags());
 
         request.setUser(user);
         request.setTheater(theater);
         request.setTags(tags);
+        request.setImage(images);
 
         TheaterPost theaterPost = request.toEntity();
         theaterPost.setViewCount(1L);   // 조회수 초기값 = 1
+
+        // ViewPost 엔티티에 저장된 Image 엔티티들을 영속화
+        List<Image> persistedImages = new ArrayList<>();
+        for(Image image : images) {
+            persistedImages.add(imageRepository.save(image));
+        }
+        theaterPost.setImage(persistedImages);
+
         return new TheaterPostDto.addResponse(theaterPostRepo.save(theaterPost));
     }
     @Override
@@ -84,11 +95,13 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         String theaterName = findTheaterName(request.getTitle());
         Theater theater = getTheater(theaterName);
         List<Tag> tags = getTags(request.getTags());
+        List<Image> images = getImage(request.getImage());
 
         TheaterPost t = getTheaterPost(postNo);
         t.setEditedAt(LocalDateTime.now());
         t.setTheater(theater);
         t.setTags(tags);
+        t.setImage(images);
         t.setTitle(request.getTitle());
         t.setContent(request.getContent());
         t.setViewCount(t.getViewCount()+1L);
@@ -106,6 +119,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         TheaterPost t = getTheaterPost(postNo);
         log.info(t.getTags().toString());
         t.setViewCount(t.getViewCount()+1L);
+        t.getImage().size();
         TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
 
         // 댓글 가져오기
@@ -236,5 +250,16 @@ public class TheaterPostServiceImpl implements TheaterPostService{
             if(c.getTheaterPost().getPostNo() == post_no)
                 commentRepo.delete(c);
         }
+    }
+
+    private List<Image> getImage(List<Image> images){
+        List<Image> tmp = imageRepository.findAll();
+        for (Image a : tmp){
+            for(Image i : images){
+                if(a.getImgUrl().equals(i.getImgUrl()))
+                    i.setImgUrl(a.getImgUrl());
+            }
+        }
+        return images;
     }
 }
