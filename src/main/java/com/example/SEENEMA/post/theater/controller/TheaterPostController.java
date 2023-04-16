@@ -51,7 +51,8 @@ public class TheaterPostController {
     @ApiOperation(value = "공연장 후기 게시물 수정")
     @PutMapping("/{postNo}")
     public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestBody TheaterPostDto.addRequest request, HttpServletRequest http){
-        return ResponseEntity.ok(service.editTheaterPost(userId, postNo, request));
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.editTheaterPost(user.get().getUserId(), postNo, request));
     }
 
     @ApiOperation(value = "공연장 후기 게시글 조회")

@@ -88,24 +88,31 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     @Transactional
     public TheaterPostDto.addResponse editTheaterPost(Long userId, Long postNo, TheaterPostDto.addRequest request){
         // 공연장 후기 게시글 수정
-        //User user = getUser(userId);
+
         String theaterName = findTheaterName(request.getTitle());
         Theater theater = getTheater(theaterName);
         List<Tag> tags = getTags(request.getTags());
 
         TheaterPost t = getTheaterPost(postNo);
-        t.setEditedAt(LocalDateTime.now());
-        t.setTheater(theater);
-        t.setTags(tags);
-        t.setTitle(request.getTitle());
-        t.setContent(request.getContent());
-        t.setViewCount(t.getViewCount()+1L);
+        // 작성자와 사용자 동일인 판별
+        if(t.getUser().getUserId() != userId){
+            // 동일인 X -> 수정 X
+            return readTheaterPost(postNo);
+        }
+        else {
+            t.setEditedAt(LocalDateTime.now());
+            t.setTheater(theater);
+            t.setTags(tags);
+            t.setTitle(request.getTitle());
+            t.setContent(request.getContent());
+            t.setViewCount(t.getViewCount() + 1L);
 
-        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(theaterPostRepo.save(t));
-        // 댓글 가져오기
-        List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
-        response.setComments(comments);
-        return response;
+            TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(theaterPostRepo.save(t));
+            // 댓글 가져오기
+            List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
+            response.setComments(comments);
+            return response;
+        }
     }
 
     @Override
