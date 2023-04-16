@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -69,11 +70,18 @@ public class TheaterPostServiceImpl implements TheaterPostService{
 
     @Override
     @Transactional
-    public TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo){
+    public TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo, Long userId){
         // 공연장 후기 게시글 삭제
-        deleteCommentByPostNo(postNo);
-        theaterPostRepo.deleteById(postNo);
-        return null;
+        TheaterPostDto.deleteResponse response;
+        Optional<TheaterPost> target = theaterPostRepo.findById(postNo);
+        if(target.get().getUser().getUserId() == userId) {
+            deleteCommentByPostNo(postNo);
+            theaterPostRepo.deleteById(postNo);
+            response = new TheaterPostDto.deleteResponse("success");
+        }
+        else
+            response = new TheaterPostDto.deleteResponse("check user ID");
+        return response;
     }
 
     @Override

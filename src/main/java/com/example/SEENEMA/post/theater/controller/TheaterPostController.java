@@ -30,9 +30,8 @@ public class TheaterPostController {
 
     @ApiOperation(value = "공연장 후기 등록")
     @PostMapping("/upload")
-    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestBody TheaterPostDto.addRequest request, HttpServletRequest http){
-        String token = provider.resolveToken(http);
-        Optional<User> user = userRepo.findByEmail(provider.getUserPk(token));
+    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestBody TheaterPostDto.addRequest request, HttpServletRequest http){;
+        Optional<User> user = findUser(http);
         return ResponseEntity.ok(service.createTheaterPost(user.get().getUserId(), request));
     }
 
@@ -44,13 +43,14 @@ public class TheaterPostController {
 
     @ApiOperation(value = "공연장 후기 게시물 삭제")
     @DeleteMapping("/{postNo}")
-    public ResponseEntity<TheaterPostDto.deleteResponse> deleteTheaterPost(@PathVariable Long postNo){
-        return ResponseEntity.ok(service.deleteTheaterPost(postNo));
+    public ResponseEntity<TheaterPostDto.deleteResponse> deleteTheaterPost(@PathVariable Long postNo, HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.deleteTheaterPost(postNo,user.get().getUserId()));
     }
 
     @ApiOperation(value = "공연장 후기 게시물 수정")
     @PutMapping("/{postNo}")
-    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestBody TheaterPostDto.addRequest request){
+    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestBody TheaterPostDto.addRequest request, HttpServletRequest http){
         return ResponseEntity.ok(service.editTheaterPost(userId, postNo, request));
     }
 
@@ -82,5 +82,10 @@ public class TheaterPostController {
     @DeleteMapping("/{postNo}/{commentId}")
     public ResponseEntity<TheaterPostDto.addResponse> deleteCommentTheaterPost(@PathVariable Long postNo, @PathVariable Long commentId){
         return ResponseEntity.ok(service.deleteCommentTheaterPost(postNo, commentId));
+    }
+
+    private Optional<User> findUser(HttpServletRequest request){
+        String token = provider.resolveToken(request);
+        return userRepo.findByEmail(provider.getUserPk(token));
     }
 }
