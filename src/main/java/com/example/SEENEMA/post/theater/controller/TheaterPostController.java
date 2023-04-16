@@ -1,15 +1,20 @@
 package com.example.SEENEMA.post.theater.controller;
 
 import com.example.SEENEMA.comment.dto.CommentDto;
+import com.example.SEENEMA.jwt.JwtTokenProvider;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.post.theater.service.TheaterPostServiceImpl;
+import com.example.SEENEMA.user.domain.User;
+import com.example.SEENEMA.user.repository.UserRepository;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,12 +22,18 @@ import java.util.List;
 public class TheaterPostController {
     @Autowired
     private TheaterPostServiceImpl service;
+    @Autowired
+    private UserRepository userRepo;
+    @Autowired
+    private JwtTokenProvider provider;
     private Long userId = 2L;  // 로그인 기능없어서 임시로 만들어놓은 userId
 
     @ApiOperation(value = "공연장 후기 등록")
     @PostMapping("/upload")
-    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestBody TheaterPostDto.addRequest request){
-        return ResponseEntity.ok(service.createTheaterPost(userId, request));
+    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestBody TheaterPostDto.addRequest request, HttpServletRequest http){
+        String token = provider.resolveToken(http);
+        Optional<User> user = userRepo.findByEmail(provider.getUserPk(token));
+        return ResponseEntity.ok(service.createTheaterPost(user.get().getUserId(), request));
     }
 
     @ApiOperation(value = "공연장 후기 게시물 메인 페이지")
