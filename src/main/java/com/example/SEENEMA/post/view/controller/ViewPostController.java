@@ -39,8 +39,6 @@ public class ViewPostController {
         return ResponseEntity.ok(viewPostService.createViewPost(userId, theaterId, viewDto));
     }
 
-
-
     @ApiOperation(value="시야 리뷰 상세화면")
     @GetMapping("/{theaterId}/{viewNo}")
     public ResponseEntity readViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo){
