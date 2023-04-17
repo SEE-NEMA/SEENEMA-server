@@ -54,15 +54,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/api/v1/user/test/loginForm")
                 .loginProcessingUrl("/api/v1/user/test/login")
-                .defaultSuccessUrl("/api/v1/");
+                .defaultSuccessUrl("/api/v1/")
 //                .and()
 //                .oauth2Login()
 //                .loginPage("/api/v1/user/test/loginForm")
 //                .loginProcessingUrl("/api/v1/")
 //                .userInfoEndpoint()
 //                .userService(service);
-//                .and()
-//                .addFilterBefore(new JwtAuthenticationFilter(provider), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(new JwtAuthenticationFilter(provider), UsernamePasswordAuthenticationFilter.class);
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(provider), UsernamePasswordAuthenticationFilter.class);
     }
 }
