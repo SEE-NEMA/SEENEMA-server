@@ -11,18 +11,18 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
-@Lazy
-public class PrincipalDetailsService extends DefaultOAuth2UserService {
-    private final PasswordEncoder encoder;
+public class PrincipalDetailsService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository repo;
 
     // social site에게 받은 userRequest 데이터 후처리
@@ -31,13 +31,14 @@ public class PrincipalDetailsService extends DefaultOAuth2UserService {
         //"registrationId" 로 어떤 OAuth로 로그인 했는지 확인 가능
         System.out.println("getClientRegistration: " + userRequest.getClientRegistration());
         System.out.println("getAccessToken: "+userRequest.getAccessToken().getTokenValue());
-        System.out.println("getAttributes: "+ super.loadUser(userRequest).getAttributes());
+//        System.out.println("getAttributes: "+ super.loadUser(userRequest).getAttributes());
         //OAuth 로그인 버튼 클릭 -> OAuth 로그인창 -> 로그인 완료 -> code를 리턴(OAuth-Clien라이브러리가 받아줌) -> code를 통해서 Token요청(access토큰 받음)
         // userRequest는 access 토큰 가지고있음
         //"loadUser" 함수-> OAuth 로부터 회원 프로필을 받음
 
         // OAuth 로그인, 회원가입
-        OAuth2User oAuth2User = super.loadUser(userRequest);
+        OAuth2UserService delegate = new DefaultOAuth2UserService();
+        OAuth2User oAuth2User = delegate.loadUser(userRequest);
         OAuth2UserInfo oAuth2UserInfo = null;
         if (userRequest.getClientRegistration().getRegistrationId().equals("google")) {
             oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
@@ -50,22 +51,22 @@ public class PrincipalDetailsService extends DefaultOAuth2UserService {
         String provider = oAuth2UserInfo.getProvider();
         String providerId = oAuth2UserInfo.getProviderId();
         String nickname = provider + "_" + providerId;
-        String password = encoder.encode("1234");
+        String password = Base64.getEncoder().encodeToString("1234".getBytes());
         String email = oAuth2UserInfo.getEmail();
         String role = "ROLE_USER";
 
-        User entity = repo.findByNickname(email);
+        User entity;
         // 처음이용(가입)
 //        if (entity == null) {
-            entity = User.builder()
-                    .nickname(nickname)
-                    .password(password)
-                    .email(email)
-                    .roles(Collections.singletonList(role))
-                    .provider(provider)
-                    .providerId(providerId)
-                    .build();
-            repo.save(entity);
+        entity = User.builder()
+              .nickname(nickname)
+              .password(password)
+              .email(email)
+              .roles(Collections.singletonList(role))
+              .provider(provider)
+              .providerId(providerId)
+              .build();
+        repo.save(entity);
 //        }
 
         return new PrincipalDetails(entity, oAuth2User.getAttributes());

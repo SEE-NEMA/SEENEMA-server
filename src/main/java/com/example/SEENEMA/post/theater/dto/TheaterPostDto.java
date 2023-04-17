@@ -6,6 +6,7 @@ import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.tag.domain.Tag;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.theater.domain.Theater;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -79,6 +80,9 @@ public class TheaterPostDto {
             this.nickname = theaterPost.getUser().getNickname();
         }
     }
+    @Getter
     public static class deleteResponse{ // 공연장 후기 삭제
+        private String result;
+        public deleteResponse(String result){ this.result = result;}
     }
 }

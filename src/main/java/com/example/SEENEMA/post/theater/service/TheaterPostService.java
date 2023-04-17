@@ -10,11 +10,12 @@ import java.util.List;
 public interface TheaterPostService {
     TheaterPostDto.addResponse createTheaterPost(Long userId, TheaterPostDto.addRequest request);
     List<TheaterPostDto.listResponse> listTheaterPost();
-    TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo);
+    TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo, Long userId);
     TheaterPostDto.addResponse editTheaterPost(Long userId, Long postNo, TheaterPostDto.addRequest request);
     TheaterPostDto.addResponse readTheaterPost(Long postNo);
     List<TheaterPostDto.listResponse> searchTheaterPost(String title);
     TheaterPostDto.addResponse writeCommentTheaterPost(Long userId, Long postNo, CommentDto.addRequest request);
     TheaterPostDto.addResponse editCommentTheaterPost(Long userId, Long postNo, Long commentId, CommentDto.addRequest request);
     TheaterPostDto.addResponse deleteCommentTheaterPost(Long postNo, Long commentId);
+    String authUserForEdit(Long postNo, Long userid);
 }
