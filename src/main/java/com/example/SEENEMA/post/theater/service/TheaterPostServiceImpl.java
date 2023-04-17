@@ -69,6 +69,15 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     }
 
     @Override
+    public String authUserForEdit(Long postNo, Long userId){
+        // 공연장 후기 게시글 수정/삭제 전 사용자 인증
+        Optional<TheaterPost> target = theaterPostRepo.findById(postNo);
+        log.info(userId.toString());
+        if(target.get().getUser().getUserId() == userId) return "SUCCESS";
+        else return "NOT_SAME_USER";
+    }
+
+    @Override
     @Transactional
     public TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo, Long userId){
         // 공연장 후기 게시글 삭제

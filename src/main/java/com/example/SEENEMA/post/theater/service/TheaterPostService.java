@@ -17,4 +17,5 @@ public interface TheaterPostService {
     TheaterPostDto.addResponse writeCommentTheaterPost(Long userId, Long postNo, CommentDto.addRequest request);
     TheaterPostDto.addResponse editCommentTheaterPost(Long userId, Long postNo, Long commentId, CommentDto.addRequest request);
     TheaterPostDto.addResponse deleteCommentTheaterPost(Long postNo, Long commentId);
+    String authUserForEdit(Long postNo, Long userid);
 }

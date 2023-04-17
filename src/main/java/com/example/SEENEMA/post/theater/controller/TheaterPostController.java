@@ -28,6 +28,15 @@ public class TheaterPostController {
     private JwtTokenProvider provider;
     private Long userId = 2L;  // 로그인 기능없어서 임시로 만들어놓은 userId
 
+    @ApiOperation(value = "게시글 등록 전 사용자 인증")
+    @GetMapping("/upload/auth")
+    public String authUserForPosting(HttpServletRequest http){
+        String token = provider.resolveToken(http);
+        if(token == null) return "FAIL";    // 토큰 자체가 없는 경우 -> fail
+        if(!provider.validateToken(token)) return "FAIL";   // 유효하지 않은 토큰 -> fail
+        return "SUCCESS";
+    }
+
     @ApiOperation(value = "공연장 후기 등록")
     @PostMapping("/upload")
     public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestBody TheaterPostDto.addRequest request, HttpServletRequest http){;
@@ -39,6 +48,15 @@ public class TheaterPostController {
     @GetMapping("/")
     public ResponseEntity<List<TheaterPostDto.listResponse>> mainTheaterPost(){
         return ResponseEntity.ok(service.listTheaterPost());
+    }
+
+    @ApiOperation(value = "게시글 수정/삭제 시 사용자 인증")
+    @GetMapping("/{postNo}/auth")
+    public String authUserForEdit(@PathVariable Long postNo, HttpServletRequest http){
+        String basicAuth = authUserForPosting(http); // 기본 인증 : 토큰 유무 / 토큰 유효성
+        if(basicAuth.equals("FAIL")) return "FAIL";
+        Optional<User> user = findUser(http);
+        return service.authUserForEdit(postNo, user.get().getUserId());
     }
 
     @ApiOperation(value = "공연장 후기 게시물 삭제")
