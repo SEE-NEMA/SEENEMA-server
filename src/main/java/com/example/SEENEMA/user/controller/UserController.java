@@ -26,11 +26,16 @@ public class UserController {
     @ApiOperation("회원가입 테스트")
     @PostMapping("/signup")
     public String join(@RequestBody Map<String, String> user){
+        // 아이디(email), 비밀번호 양식 확인 필요
         String id = user.get("email");
+//        if(repo.findByEmail(id) != null){   // 이미 존재하는 id
+//            return "아이디 중복";
+//        }
         List<User> userList = repo.findAll();
         for(User u : userList){
             if(u.getEmail().equals(id)) return "아이디 중복";
         }
+
         repo.save(User.builder()
                 .email(user.get("email"))
                 .password(passwordEncoder.encode(user.get("password")))
@@ -43,6 +48,8 @@ public class UserController {
     @ApiOperation("로그인")
     @PostMapping("/login")
     public String login(@RequestBody Map<String, String> user){
+//        User member = repo.findByEmail(user.get("email"));
+//                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 아이디 입니다."));
         User member = repo.findByNickname(user.get("email"));
         if(member == null) return "가입되지 않은 아이디 입니다.";
         if(!passwordEncoder.matches(user.get("password"), member.getPassword())){
