@@ -64,6 +64,15 @@ public class TheaterPostController {
         return ResponseEntity.ok(service.listTheaterPost());
     }
 
+    @ApiOperation(value = "게시글 수정/삭제 시 사용자 인증")
+    @GetMapping("/{postNo}/auth")
+    public String authUserForEdit(@PathVariable Long postNo, HttpServletRequest http){
+        String basicAuth = authUserForPosting(http); // 기본 인증 : 토큰 유무 / 토큰 유효성
+        if(basicAuth.equals("FAIL")) return "FAIL";
+        Optional<User> user = findUser(http);
+        return service.authUserForEdit(postNo, user.get().getUserId());
+    }
+
     @ApiOperation(value = "공연장 후기 게시물 삭제")
     @DeleteMapping("/{postNo}")
     public ResponseEntity<TheaterPostDto.deleteResponse> deleteTheaterPost(@PathVariable Long postNo, HttpServletRequest http){
