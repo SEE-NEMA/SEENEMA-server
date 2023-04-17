@@ -43,7 +43,7 @@ public class AuthController {
         }
         return provider.createToken(member.getUsername(), member.getRoles());
     }
-
+    
     @ResponseBody
     @GetMapping("/oauth/loginInfo")
     public String login(Authentication authentication){

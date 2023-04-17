@@ -1,13 +1,19 @@
 package com.example.SEENEMA.post.view.controller;
 
+import com.example.SEENEMA.post.file.ImageService;
+import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.post.view.dto.ResponseMessage;
 import com.example.SEENEMA.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.post.view.service.ViewPostServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -15,13 +21,25 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/api/v1/view-review")
 public class ViewPostController {
     private final ViewPostServiceImpl viewPostService;
+    private final ImageService imageService;
     private Long userId = 1L;  // 임시 ID
 
     @ApiOperation(value = "시야 후기 등록")
-    @PostMapping("/{theaterId}/upload")
-    public ResponseEntity <ViewPostDto.addResponse> createViewPost (@PathVariable("theaterId") Long theaterId, @RequestBody ViewPostDto.addRequest viewDto){
-        return ResponseEntity.ok(viewPostService.createViewPost(userId, theaterId,viewDto));
+    @PostMapping(value="/{theaterId}/upload" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ViewPostDto.addResponse> createViewPost(@PathVariable("theaterId") Long theaterId, @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute ViewPostDto.addRequest viewDto) {
+        List<Image> imgUrls = null;
+
+        if(images != null && !images.isEmpty()) {
+            imgUrls = imageService.uploadFiles(images);
+            viewDto.setImage(imgUrls);
+        } else {
+            imgUrls = new ArrayList<>();
+            viewDto.setImage(imgUrls);
+        }
+        return ResponseEntity.ok(viewPostService.createViewPost(userId, theaterId, viewDto));
     }
+
+
 
     @ApiOperation(value="시야 리뷰 상세화면")
     @GetMapping("/{theaterId}/{viewNo}")
@@ -29,10 +47,20 @@ public class ViewPostController {
         return ResponseEntity.ok(viewPostService.readViewPost(userId,theaterId,viewNo));
     }
 
-    @ApiOperation(value = " 시야 리뷰 상세화면에서 수정")
+    @ApiOperation(value = "시야 리뷰 상세화면에서 수정")
     @PutMapping("/{theaterId}/{viewNo}")
-    public ResponseEntity<ViewPostDto.addResponse> updateViewPost (@PathVariable("theaterId") Long theaterId,@PathVariable("viewNo") Long viewNo, @RequestBody ViewPostDto.updateRequest viewDto){
-        return ResponseEntity.ok(viewPostService.updateViewPost(theaterId,viewNo,viewDto));
+    public ResponseEntity<ViewPostDto.addResponse> updateViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo,
+                                                                  @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute ViewPostDto.updateRequest viewDto) {
+        List<Image> imgUrls = null;
+
+        if(images != null && !images.isEmpty()) {
+            imgUrls = imageService.uploadFiles(images);
+            viewDto.setImage(imgUrls);
+        } else {
+            imgUrls = new ArrayList<>();
+            viewDto.setImage(imgUrls);
+        }
+        return ResponseEntity.ok(viewPostService.updateViewPost(theaterId, viewNo, viewDto));
     }
 
     @ApiOperation(value = "시야 리뷰 상세화면에서 삭제")

@@ -1,9 +1,9 @@
 package com.example.SEENEMA.post.theater.domain;
 
+import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.tag.domain.Tag;
 import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.user.domain.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -13,7 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
+
 
 
 @Getter
@@ -41,6 +41,8 @@ public class TheaterPost {
     @Column
     private Long viewCount;    // 조회수
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Image> image;
 
     //태그 기능
     @ManyToMany
@@ -61,7 +63,7 @@ public class TheaterPost {
     private LocalDateTime editedAt; // 최종 수정 일시
 
     @Builder
-    public TheaterPost(User user, Theater theater, String title, String content, LocalDateTime createdAt, List<Tag> tags) {
+    public TheaterPost(User user, Theater theater, String title, String content, LocalDateTime createdAt, List<Tag> tags, List<Image> image) {
         this.user = user;
         this.theater = theater;
         this.title = title;
@@ -69,5 +71,6 @@ public class TheaterPost {
         this.createdAt = createdAt;
         this.tags=tags;
         this.viewCount= 0L;
+        this.image = image;
     }
 }

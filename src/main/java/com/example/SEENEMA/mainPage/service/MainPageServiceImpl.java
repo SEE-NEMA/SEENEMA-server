@@ -184,7 +184,7 @@ public class MainPageServiceImpl implements MainPageService {
     /** 뮤지컬 목록에 title,place,imgurl만 출력*/
     public List<PlayDto.musicalList> getMusicalList(){
         List<Musical> musicals = musicalRepository.findAll();
-        return musicals.stream().map(musical -> new PlayDto.musicalList(musical.getImgUrl(), musical.getTitle(), musical.getPlace(), musical.getDate())).collect(Collectors.toList());
+        return musicals.stream().map(musical -> new PlayDto.musicalList(musical.getNo(),musical.getImgUrl(), musical.getTitle(), musical.getPlace(), musical.getDate())).collect(Collectors.toList());
     }
 
     /** 뮤지컬 상세 정보*/
@@ -311,7 +311,7 @@ public class MainPageServiceImpl implements MainPageService {
     /** 콘서트 목록에 title,place,imgurl만 출력*/
     public List<PlayDto.concertList> getConcertList(){
         List<Concert> concerts = concertRepository.findAll();
-        return concerts.stream().map(concert -> new PlayDto.concertList(concert.getImgUrl(), concert.getTitle(), concert.getPlace(), concert.getDate())).collect(Collectors.toList());
+        return concerts.stream().map(concert -> new PlayDto.concertList(concert.getNo(), concert.getImgUrl(), concert.getTitle(), concert.getPlace(), concert.getDate())).collect(Collectors.toList());
     }
 
     /** 콘서트 상세 정보*/
