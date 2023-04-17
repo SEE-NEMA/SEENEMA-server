@@ -22,6 +22,8 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -79,12 +81,28 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     }
 
     @Override
+    public String authUserForEdit(Long postNo, Long userId){
+        // 공연장 후기 게시글 수정/삭제 전 사용자 인증
+        Optional<TheaterPost> target = theaterPostRepo.findById(postNo);
+        log.info(userId.toString());
+        if(Objects.equals(target.get().getUser().getUserId(), userId)) return "SUCCESS";
+        else return "NOT_SAME_USER";
+    }
+
+    @Override
     @Transactional
-    public TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo){
+    public TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo, Long userId){
         // 공연장 후기 게시글 삭제
-        deleteCommentByPostNo(postNo);
-        theaterPostRepo.deleteById(postNo);
-        return null;
+        TheaterPostDto.deleteResponse response;
+        Optional<TheaterPost> target = theaterPostRepo.findById(postNo);
+        if(Objects.equals(target.get().getUser().getUserId(), userId)) {
+            deleteCommentByPostNo(postNo);
+            theaterPostRepo.deleteById(postNo);
+            response = new TheaterPostDto.deleteResponse("success");
+        }
+        else
+            response = new TheaterPostDto.deleteResponse("check user ID");
+        return response;
     }
 
     @Override
@@ -98,19 +116,26 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         List<Image> images = getImage(request.getImage());
 
         TheaterPost t = getTheaterPost(postNo);
-        t.setEditedAt(LocalDateTime.now());
-        t.setTheater(theater);
-        t.setTags(tags);
-        t.setImage(images);
-        t.setTitle(request.getTitle());
-        t.setContent(request.getContent());
-        t.setViewCount(t.getViewCount()+1L);
+        // 작성자와 사용자 동일인 판별
+        if(t.getUser().getUserId() != userId){
+            // 동일인 X -> 수정 X
+            return readTheaterPost(postNo);
+        }
+        else {
+            t.setEditedAt(LocalDateTime.now());
+            t.setTheater(theater);
+            t.setTags(tags);
+            t.setImage(images);
+            t.setTitle(request.getTitle());
+            t.setContent(request.getContent());
+            t.setViewCount(t.getViewCount() + 1L);
 
-        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(theaterPostRepo.save(t));
-        // 댓글 가져오기
-        List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
-        response.setComments(comments);
-        return response;
+            TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(theaterPostRepo.save(t));
+            // 댓글 가져오기
+            List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
+            response.setComments(comments);
+            return response;
+        }
     }
 
     @Override

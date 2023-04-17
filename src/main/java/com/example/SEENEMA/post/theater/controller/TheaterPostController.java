@@ -1,10 +1,13 @@
 package com.example.SEENEMA.post.theater.controller;
 
 import com.example.SEENEMA.comment.dto.CommentDto;
+import com.example.SEENEMA.jwt.JwtTokenProvider;
 import com.example.SEENEMA.post.file.ImageService;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.post.theater.service.TheaterPostServiceImpl;
 import com.example.SEENEMA.post.file.Image;
+import com.example.SEENEMA.user.domain.User;
+import com.example.SEENEMA.user.repository.UserRepository;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,11 +27,25 @@ public class TheaterPostController {
     @Autowired
     private TheaterPostServiceImpl service;
     private final ImageService imageService;
+    @Autowired
+    private UserRepository userRepo;
+    @Autowired
+    private JwtTokenProvider provider;
     private Long userId = 2L;  // 임시 userId
+
+    @ApiOperation(value = "게시글 등록 전 사용자 인증")
+    @GetMapping("/upload/auth")
+    public String authUserForPosting(HttpServletRequest http){
+        String token = provider.resolveToken(http);
+        if(token == null) return "FAIL";    // 토큰 자체가 없는 경우 -> fail
+        if(!provider.validateToken(token)) return "FAIL";   // 유효하지 않은 토큰 -> fail
+        return "SUCCESS";
+    }
 
     @ApiOperation(value = "공연장 후기 등록")
     @PostMapping(value="/upload")
-    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute TheaterPostDto.addRequest request){
+    public ResponseEntity<TheaterPostDto.addResponse> createTheaterPost(@RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute TheaterPostDto.addRequest request, HttpServletRequest http){
+        Optional<User> user = findUser(http);
         List<Image> imgUrls = null;
 
         if(images != null && !images.isEmpty()) {
@@ -36,7 +55,7 @@ public class TheaterPostController {
             imgUrls = new ArrayList<>();
             request.setImage(imgUrls);
         }
-        return ResponseEntity.ok(service.createTheaterPost(userId, request));
+        return ResponseEntity.ok(service.createTheaterPost(user.get().getUserId(), request));
     }
 
     @ApiOperation(value = "공연장 후기 게시물 메인 페이지")
@@ -47,13 +66,15 @@ public class TheaterPostController {
 
     @ApiOperation(value = "공연장 후기 게시물 삭제")
     @DeleteMapping("/{postNo}")
-    public ResponseEntity<TheaterPostDto.deleteResponse> deleteTheaterPost(@PathVariable Long postNo){
-        return ResponseEntity.ok(service.deleteTheaterPost(postNo));
+    public ResponseEntity<TheaterPostDto.deleteResponse> deleteTheaterPost(@PathVariable Long postNo, HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.deleteTheaterPost(postNo,user.get().getUserId()));
     }
 
     @ApiOperation(value = "공연장 후기 게시물 수정")
     @PutMapping("/{postNo}")
-    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute TheaterPostDto.addRequest request){
+    public ResponseEntity<TheaterPostDto.addResponse> editTheaterPost(@PathVariable Long postNo, @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute TheaterPostDto.addRequest request, HttpServletRequest http){
+        Optional<User> user = findUser(http);
         List<Image> imgUrls = null;
 
         if(images != null && !images.isEmpty()) {
@@ -63,7 +84,7 @@ public class TheaterPostController {
             imgUrls = new ArrayList<>();
             request.setImage(imgUrls);
         }
-        return ResponseEntity.ok(service.editTheaterPost(userId, postNo, request));
+        return ResponseEntity.ok(service.editTheaterPost(user.get().getUserId(), postNo, request));
     }
 
     @ApiOperation(value = "공연장 후기 게시글 조회")
@@ -94,5 +115,10 @@ public class TheaterPostController {
     @DeleteMapping("/{postNo}/{commentId}")
     public ResponseEntity<TheaterPostDto.addResponse> deleteCommentTheaterPost(@PathVariable Long postNo, @PathVariable Long commentId){
         return ResponseEntity.ok(service.deleteCommentTheaterPost(postNo, commentId));
+    }
+
+    private Optional<User> findUser(HttpServletRequest request){
+        String token = provider.resolveToken(request);
+        return userRepo.findByEmail(provider.getUserPk(token));
     }
 }
