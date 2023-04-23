@@ -55,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/api/v1/theater-review/{postNo}").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/v1/theater-review/{postNo}").authenticated()
                 .antMatchers(HttpMethod.GET, "/api/v1/theater-review/{postNo}/auth").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/v1/theater-review/{postNo}/{commentId}/auth").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/v1/theater-review/{postNo}/{commentId}/auth").permitAll()
                 .anyRequest().permitAll()
 //                .and()
 //                .formLogin()
