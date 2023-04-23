@@ -165,6 +165,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         // 공연장 후기 게시글 댓글 작성
         TheaterPost t = getTheaterPost(postNo);
         log.info(t.getTags().toString());
+        t.getImage().size();
         TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
 
         // 댓글 작성
