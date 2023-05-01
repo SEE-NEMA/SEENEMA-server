@@ -1,10 +1,12 @@
 package com.example.SEENEMA.post.view.controller;
 
+import com.example.SEENEMA.jwt.JwtTokenProvider;
 import com.example.SEENEMA.post.file.ImageService;
 import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.post.view.dto.ResponseMessage;
 import com.example.SEENEMA.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.post.view.service.ViewPostServiceImpl;
+import com.example.SEENEMA.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +25,18 @@ import java.util.List;
 public class ViewPostController {
     private final ViewPostServiceImpl viewPostService;
     private final ImageService imageService;
+    private final JwtTokenProvider provider;
+    private final UserRepository userRepo;
     private Long userId = 1L;  // 임시 ID
+
+    @ApiOperation(value = "시야 후기 등록 전 사용자 인증")
+    @GetMapping("/auth")
+    public String authUserForPost(HttpServletRequest http){
+        String token = provider.resolveToken(http);
+        if(token == null) return "FAIL";    // 토큰 자체가 없는 경우
+         if(!provider.validateToken(token)) return "FAIL";  // 유효하지 않은 토큰인 경우
+        return "SUCCESS";
+    }
 
     @ApiOperation(value = "시야 후기 등록")
     @PostMapping(value="/{theaterId}/upload" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
