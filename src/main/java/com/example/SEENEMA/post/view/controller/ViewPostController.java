@@ -61,7 +61,7 @@ public class ViewPostController {
     @ApiOperation(value="시야 리뷰 상세화면")
     @GetMapping("/{theaterId}/{viewNo}")
     public ResponseEntity readViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo){
-        return ResponseEntity.ok(viewPostService.readViewPost(userId,theaterId,viewNo));
+        return ResponseEntity.ok(viewPostService.readViewPost(theaterId,viewNo));
     }
 
     @ApiOperation(value = "시야 리뷰 수정/삭제 전 인증")
@@ -76,8 +76,10 @@ public class ViewPostController {
     @ApiOperation(value = "시야 리뷰 상세화면에서 수정")
     @PutMapping("/{theaterId}/{viewNo}")
     public ResponseEntity<ViewPostDto.addResponse> updateViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo,
-                                                                  @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute ViewPostDto.updateRequest viewDto) {
+                                                                  @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute ViewPostDto.updateRequest viewDto, HttpServletRequest http) {
+        Optional<User> user = findUser(http);
         List<Image> imgUrls = null;
+
 
         if(images != null && !images.isEmpty()) {
             imgUrls = imageService.uploadFiles(images);
@@ -86,7 +88,7 @@ public class ViewPostController {
             imgUrls = new ArrayList<>();
             viewDto.setImage(imgUrls);
         }
-        return ResponseEntity.ok(viewPostService.updateViewPost(theaterId, viewNo, viewDto));
+        return ResponseEntity.ok(viewPostService.updateViewPost(theaterId, viewNo, viewDto, user.get().getUserId()));
     }
 
     @ApiOperation(value = "시야 리뷰 상세화면에서 삭제")

@@ -55,7 +55,7 @@ public class ViewPostServiceImpl implements ViewPostService {
 
     @Override
     @Transactional(readOnly = true)
-    public ViewPostDto.detailResponse readViewPost(Long userId, Long theaterId, Long viewNo){
+    public ViewPostDto.detailResponse readViewPost(Long theaterId, Long viewNo){
 
         ViewPost viewPost = getViewPost(theaterId,viewNo);
         // 이미지 컬렉션을 명시적으로 초기화
@@ -73,12 +73,19 @@ public class ViewPostServiceImpl implements ViewPostService {
 
     @Override
     @Transactional
-    public ViewPostDto.addResponse updateViewPost(Long theaterId,Long viewNo, ViewPostDto.updateRequest requestDto){
+    public ViewPostDto.addResponse updateViewPost(Long theaterId,Long viewNo, ViewPostDto.updateRequest requestDto, Long userId){
 
         ViewPost viewPost = getViewPost(theaterId,viewNo);
-        viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent(), requestDto.getImage());
+        // update전 작성자와 사용자 동일인 판별
+        if(!viewPost.getUser().getUserId().equals(userId)) {
+            // 동일인 X -> 수정 X
+            return new ViewPostDto.addResponse(viewPost);
+        }
+        else{
+            viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent(), requestDto.getImage());
 
-        return new ViewPostDto.addResponse(viewPost);
+            return new ViewPostDto.addResponse(viewPost);
+        }
     }
 
     @Override
