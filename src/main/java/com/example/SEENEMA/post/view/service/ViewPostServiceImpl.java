@@ -65,6 +65,14 @@ public class ViewPostServiceImpl implements ViewPostService {
 
     @Override
     @Transactional
+    public String authUserForEdit(Long theaterId, Long viewNo, Long userId){
+        ViewPost viewPost = getViewPost(theaterId, viewNo);
+        if(viewPost.getUser().getUserId().equals(userId)) return "SUCCESS";
+        else return "NOT_SAME_USER";
+    }
+
+    @Override
+    @Transactional
     public ViewPostDto.addResponse updateViewPost(Long theaterId,Long viewNo, ViewPostDto.updateRequest requestDto){
 
         ViewPost viewPost = getViewPost(theaterId,viewNo);

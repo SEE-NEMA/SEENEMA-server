@@ -64,6 +64,15 @@ public class ViewPostController {
         return ResponseEntity.ok(viewPostService.readViewPost(userId,theaterId,viewNo));
     }
 
+    @ApiOperation(value = "시야 리뷰 수정/삭제 전 인증")
+    @GetMapping("/{theaterId}/{viewNo}/auth")
+    public String authUserForEdit(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo, HttpServletRequest http){
+        String basicAuth = authUserForPost(http); // 기본 인증 : 토큰 유무 / 토큰 유효성
+        if(basicAuth.equals("FAIL")) return "FAIL";
+        Optional<User> user = findUser(http);
+        return viewPostService.authUserForEdit(theaterId, viewNo, user.get().getUserId());
+    }
+
     @ApiOperation(value = "시야 리뷰 상세화면에서 수정")
     @PutMapping("/{theaterId}/{viewNo}")
     public ResponseEntity<ViewPostDto.addResponse> updateViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo,

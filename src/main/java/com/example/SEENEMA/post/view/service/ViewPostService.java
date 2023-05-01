@@ -16,5 +16,6 @@ public interface ViewPostService {
 
     List<ViewPostDto.viewListResponse>  getListBySeat(Long theaterId, String seatName);
     List<ViewPostDto.viewListResponse>  getListByTheater(Long theaterId);
+    String authUserForEdit(Long theaterId, Long viewNo, Long userId);
 
 }
