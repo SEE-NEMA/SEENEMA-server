@@ -24,13 +24,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/theater-review")
 public class TheaterPostController {
-    @Autowired
-    private TheaterPostServiceImpl service;
+    private final TheaterPostServiceImpl service;
     private final ImageService imageService;
-    @Autowired
-    private UserRepository userRepo;
-    @Autowired
-    private JwtTokenProvider provider;
+    private final UserRepository userRepo;
+    private final JwtTokenProvider provider;
     private Long userId = 2L;  // 임시 userId
 
     @ApiOperation(value = "게시글과 댓글 등록 전 사용자 인증")
