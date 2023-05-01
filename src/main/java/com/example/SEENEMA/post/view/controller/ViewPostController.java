@@ -6,6 +6,7 @@ import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.post.view.dto.ResponseMessage;
 import com.example.SEENEMA.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.post.view.service.ViewPostServiceImpl;
+import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -40,7 +42,8 @@ public class ViewPostController {
 
     @ApiOperation(value = "시야 후기 등록")
     @PostMapping(value="/{theaterId}/upload" ,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ViewPostDto.addResponse> createViewPost(@PathVariable("theaterId") Long theaterId, @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute ViewPostDto.addRequest viewDto) {
+    public ResponseEntity<ViewPostDto.addResponse> createViewPost(@PathVariable("theaterId") Long theaterId, @RequestParam(value = "images", required = false) List<MultipartFile> images, @ModelAttribute ViewPostDto.addRequest viewDto, HttpServletRequest http) {
+        Optional<User> user = findUser(http); // 토큰 읽어서 유저 정보 읽기
         List<Image> imgUrls = null;
 
         if(images != null && !images.isEmpty()) {
@@ -50,7 +53,7 @@ public class ViewPostController {
             imgUrls = new ArrayList<>();
             viewDto.setImage(imgUrls);
         }
-        return ResponseEntity.ok(viewPostService.createViewPost(userId, theaterId, viewDto));
+        return ResponseEntity.ok(viewPostService.createViewPost(user.get().getUserId(), theaterId, viewDto));
     }
 
 
@@ -95,5 +98,8 @@ public class ViewPostController {
     public ResponseEntity getListByTheater(@PathVariable("theaterId") Long theaterId){
         return ResponseEntity.ok(viewPostService. getListByTheater(theaterId));
     }
-
+    private Optional<User> findUser(HttpServletRequest request){
+        String token = provider.resolveToken(request);
+        return userRepo.findByEmail(provider.getUserPk(token));
+    }
 }
