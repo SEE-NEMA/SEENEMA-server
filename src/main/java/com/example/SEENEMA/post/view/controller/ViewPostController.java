@@ -93,9 +93,14 @@ public class ViewPostController {
 
     @ApiOperation(value = "시야 리뷰 상세화면에서 삭제")
     @DeleteMapping("/{theaterId}/{viewNo}")
-    public ResponseEntity deleteViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo) {
-        viewPostService.deleteViewPost(theaterId, viewNo);
-        return ResponseEntity.ok(ResponseMessage.DELETE.getMsg());
+    public ResponseEntity deleteViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo, HttpServletRequest http) {
+        Optional<User> user = findUser(http);
+        String msg = viewPostService.deleteViewPost(theaterId, viewNo, user.get().getUserId());
+        if(msg.equals("FAIL")) return ResponseEntity.ok("삭제 실패");
+        else{
+            return ResponseEntity.ok(ResponseMessage.DELETE.getMsg());
+        }
+
     }
 
     @ApiOperation(value="좌석 조회")

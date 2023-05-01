@@ -1,6 +1,7 @@
 package com.example.SEENEMA.post.view.service;
 
 import com.example.SEENEMA.post.file.Image;
+import com.example.SEENEMA.post.view.dto.ResponseMessage;
 import com.example.SEENEMA.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.post.file.ImageRepository;
 import com.example.SEENEMA.post.view.repository.ViewPostRepository;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,10 +92,16 @@ public class ViewPostServiceImpl implements ViewPostService {
 
     @Override
     @Transactional
-    public void deleteViewPost(Long theaterId, Long viewNo){
-
+    public String deleteViewPost(Long theaterId, Long viewNo, Long userId){
+        // 시야 후기 게시글 삭제
         ViewPost viewPost = getViewPost(theaterId, viewNo);
-        viewPostRepository.delete(viewPost);
+        if(viewPost.getUser().getUserId().equals(userId)) {
+            viewPostRepository.delete(viewPost);
+            return ResponseMessage.DELETE.getMsg();
+        }
+        else {
+            return "FAIL";
+        }
     }
 
     @Override
