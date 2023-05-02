@@ -84,7 +84,6 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     public String authUserForEdit(Long postNo, Long userId){
         // 공연장 후기 게시글 수정/삭제 전 사용자 인증
         Optional<TheaterPost> target = theaterPostRepo.findById(postNo);
-        log.info(userId.toString());
         if(Objects.equals(target.get().getUser().getUserId(), userId)) return "SUCCESS";
         else return "NOT_SAME_USER";
     }
@@ -98,10 +97,10 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         if(Objects.equals(target.get().getUser().getUserId(), userId)) {
             deleteCommentByPostNo(postNo);
             theaterPostRepo.deleteById(postNo);
-            response = new TheaterPostDto.deleteResponse("success");
+            response = new TheaterPostDto.deleteResponse("SUCCESS");
         }
         else
-            response = new TheaterPostDto.deleteResponse("check user ID");
+            response = new TheaterPostDto.deleteResponse("CHECK_USER_ID");
         return response;
     }
 
@@ -165,6 +164,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         // 공연장 후기 게시글 댓글 작성
         TheaterPost t = getTheaterPost(postNo);
         log.info(t.getTags().toString());
+        t.getImage().size();
         TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
 
         // 댓글 작성
@@ -178,15 +178,26 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     }
 
     @Override
+    public String authForEditComment(Long postNo, Long commentId, Long userId){
+        // 공연장 후기 게시글 댓글 수정/삭제 전 인증
+        Comment comment = commentRepo.findById(commentId).get();
+        if(comment.getUser().getUserId().equals(userId)) return "SUCCESS";
+        return "FAIL";
+    }
+
+    @Override
     public TheaterPostDto.addResponse editCommentTheaterPost(Long userId, Long postNo, Long commentId, CommentDto.addRequest request){
         // 공연장 후기 게시글 댓글 수정
+        // 댓글 작성자와 로그인한 유저가 다르면 게시글 조회만 수행
+        if(!commentRepo.findById(commentId).get().getUser().getUserId().equals(userId)) return readTheaterPost(postNo);
+
         Comment comment = commentRepo.findById(commentId).get();
         comment.setContent(request.getContent());
         commentRepo.save(comment);
 
-
         TheaterPost t = getTheaterPost(postNo);
         log.info(t.getTags().toString());
+        t.getImage().size();
         TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
         // 댓글 가져오기
         List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
@@ -195,8 +206,11 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     }
 
     @Override
-    public TheaterPostDto.addResponse deleteCommentTheaterPost(Long postNo, Long commentId){
-        //댓글 삭제
+    public TheaterPostDto.addResponse deleteCommentTheaterPost(Long userId, Long postNo, Long commentId){
+        // 공연장 후기 게시글 댓글 삭제
+        // 댓글 작성자와 로그인한 유저가 다르면 게시글 조회만 수행
+        if(!commentRepo.findById(commentId).get().getUser().getUserId().equals(userId)) return readTheaterPost(postNo);
+
         commentRepo.deleteById(commentId);
         return readTheaterPost(postNo);
     }

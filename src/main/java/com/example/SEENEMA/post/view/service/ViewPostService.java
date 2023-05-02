@@ -10,11 +10,12 @@ import java.util.List;
 public interface ViewPostService {
 
     ViewPostDto.addResponse createViewPost(Long userId, Long theaterId, ViewPostDto.addRequest requestDto);
-    ViewPostDto.detailResponse readViewPost(Long userId, Long theaterId, Long viewNo);
-    ViewPostDto.addResponse updateViewPost(Long theaterId, Long viewNo, ViewPostDto.updateRequest requestDto);
-    void deleteViewPost(Long theaterId, Long viewNo);
+    ViewPostDto.detailResponse readViewPost(Long theaterId, Long viewNo);
+    ViewPostDto.addResponse updateViewPost(Long theaterId, Long viewNo, ViewPostDto.updateRequest requestDto, Long userId);
+    String deleteViewPost(Long theaterId, Long viewNo, Long userId);
 
     List<ViewPostDto.viewListResponse>  getListBySeat(Long theaterId, String seatName);
     List<ViewPostDto.viewListResponse>  getListByTheater(Long theaterId);
+    String authUserForEdit(Long theaterId, Long viewNo, Long userId);
 
 }

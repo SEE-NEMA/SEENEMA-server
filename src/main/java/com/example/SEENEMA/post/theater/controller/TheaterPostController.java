@@ -24,17 +24,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/theater-review")
 public class TheaterPostController {
-    @Autowired
-    private TheaterPostServiceImpl service;
+    private final TheaterPostServiceImpl service;
     private final ImageService imageService;
-    @Autowired
-    private UserRepository userRepo;
-    @Autowired
-    private JwtTokenProvider provider;
+    private final UserRepository userRepo;
+    private final JwtTokenProvider provider;
     private Long userId = 2L;  // 임시 userId
 
-    @ApiOperation(value = "게시글 등록 전 사용자 인증")
-    @GetMapping("/upload/auth")
+    @ApiOperation(value = "게시글과 댓글 등록 전 사용자 인증")
+    @GetMapping("/auth")
     public String authUserForPosting(HttpServletRequest http){
         String token = provider.resolveToken(http);
         if(token == null) return "FAIL";    // 토큰 자체가 없는 경우 -> fail
@@ -110,20 +107,32 @@ public class TheaterPostController {
 
     @ApiOperation(value = "공연장 후기 게시글 댓글 작성")
     @PostMapping("/{postNo}/comment")
-    public ResponseEntity<TheaterPostDto.addResponse> writeCommentTheaterPost(@PathVariable Long postNo, @RequestBody CommentDto.addRequest request){
-        return ResponseEntity.ok(service.writeCommentTheaterPost(userId, postNo, request));
+    public ResponseEntity<TheaterPostDto.addResponse> writeCommentTheaterPost(@PathVariable Long postNo, @RequestBody CommentDto.addRequest request, HttpServletRequest http){
+        Optional<User> user = findUser(http); // /auth API를 통해 인증 후 작성하므로 별다른 인증 진행 X
+        return ResponseEntity.ok(service.writeCommentTheaterPost(user.get().getUserId(), postNo, request));
+    }
+
+    @ApiOperation(value = "공연장 후기 게시글 댓글 수정/삭제 전 인증")
+    @GetMapping("/{postNo}/{commentId}/auth")
+    public String authForEditComment(@PathVariable Long postNo, @PathVariable Long commentId, HttpServletRequest http){
+        String basicAuth = authUserForPosting(http); // 기본 인증 : 토큰 유무 / 토큰 유효성
+        if(basicAuth.equals("FAIL")) return "FAIL";
+        Optional<User> user = findUser(http);
+        return service.authForEditComment(postNo, commentId, user.get().getUserId());
     }
 
     @ApiOperation(value = "공연장 후기 게시글 댓글 수정")
     @PutMapping("/{postNo}/{commentId}")
-    public ResponseEntity<TheaterPostDto.addResponse> editCommentTheaterPost(@PathVariable Long postNo, @PathVariable Long commentId, @RequestBody CommentDto.addRequest request){
-        return ResponseEntity.ok(service.editCommentTheaterPost(userId, postNo, commentId, request));
+    public ResponseEntity<TheaterPostDto.addResponse> editCommentTheaterPost(@PathVariable Long postNo, @PathVariable Long commentId, @RequestBody CommentDto.addRequest request, HttpServletRequest http){
+        Optional<User> user = findUser(http); // /auth API를 통해 인증 후 작성하므로 별다른 인증 진행 X
+        return ResponseEntity.ok(service.editCommentTheaterPost(user.get().getUserId(), postNo, commentId, request));
     }
 
     @ApiOperation(value = "공연장 후기 게시글 댓글 삭제")
     @DeleteMapping("/{postNo}/{commentId}")
-    public ResponseEntity<TheaterPostDto.addResponse> deleteCommentTheaterPost(@PathVariable Long postNo, @PathVariable Long commentId){
-        return ResponseEntity.ok(service.deleteCommentTheaterPost(postNo, commentId));
+    public ResponseEntity<TheaterPostDto.addResponse> deleteCommentTheaterPost(@PathVariable Long postNo, @PathVariable Long commentId, HttpServletRequest http){
+        Optional<User> user = findUser(http); // /auth API를 통해 인증 후 작성하므로 별다른 인증 진행 X
+        return ResponseEntity.ok(service.deleteCommentTheaterPost(user.get().getUserId(), postNo, commentId));
     }
 
     private Optional<User> findUser(HttpServletRequest request){
