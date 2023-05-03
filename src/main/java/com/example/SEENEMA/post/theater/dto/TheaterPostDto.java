@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -63,7 +64,7 @@ public class TheaterPostDto {
             this.editedAt = theaterPost.getEditedAt().toString();
             this.tags = theaterPost.getTags();
             this.viewCount = theaterPost.getViewCount();
-            this.image = theaterPost.getImage();
+            this.image = new ArrayList<>(theaterPost.getImage());
         }
     }
     @Getter
