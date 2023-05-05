@@ -19,4 +19,5 @@ public interface TheaterPostService {
     TheaterPostDto.addResponse deleteCommentTheaterPost(Long userId, Long postNo, Long commentId);
     String authUserForEdit(Long postNo, Long userId);
     String authForEditComment(Long postNo, Long commentId, Long userId);
+    TheaterPostDto.addResponse likeTheaterPost(Long userId, Long postNo);
 }

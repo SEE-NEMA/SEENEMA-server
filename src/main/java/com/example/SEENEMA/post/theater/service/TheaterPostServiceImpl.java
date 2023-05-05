@@ -4,7 +4,9 @@ import com.example.SEENEMA.comment.domain.Comment;
 import com.example.SEENEMA.comment.dto.CommentDto;
 import com.example.SEENEMA.comment.repository.CommentRepository;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
+import com.example.SEENEMA.post.theater.domain.TheaterPostHeart;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
+import com.example.SEENEMA.post.theater.repository.TheaterPostHeartRepository;
 import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
 import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.post.file.ImageRepository;
@@ -36,6 +38,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     private final TagRepository tagRepo;
     private final CommentRepository commentRepo;
     private final ImageRepository imageRepository;
+    private final TheaterPostHeartRepository heartRepo;
 
     @Override
     @Transactional
@@ -212,6 +215,22 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         if(!commentRepo.findById(commentId).get().getUser().getUserId().equals(userId)) return readTheaterPost(postNo);
 
         commentRepo.deleteById(commentId);
+        return readTheaterPost(postNo);
+    }
+
+    @Override
+    public TheaterPostDto.addResponse likeTheaterPost(Long userId, Long postNo){
+        User u = getUser(userId);
+        TheaterPost t = getTheaterPost(postNo);
+
+        TheaterPostHeart heart = TheaterPostHeart.builder()
+                .theaterPost(t)
+                .user(u)
+                .build();
+        heartRepo.save(heart);
+        assert t != null;
+        t.setLikeCount(t.getLikeCount()+1L);
+        //theaterPostRepo.save(t);
         return readTheaterPost(postNo);
     }
 

@@ -1,10 +1,7 @@
 package com.example.SEENEMA.post.theater.domain;
 
 import com.example.SEENEMA.user.domain.User;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -27,4 +24,10 @@ public class TheaterPostHeart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_no")
     private TheaterPost theaterPost;
+
+    @Builder
+    public TheaterPostHeart(User user, TheaterPost theaterPost){
+        this.user = user;
+        this.theaterPost = theaterPost;
+    }
 }
