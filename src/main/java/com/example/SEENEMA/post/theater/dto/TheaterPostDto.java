@@ -52,7 +52,9 @@ public class TheaterPostDto {
         private List<Tag> tags;     // 게시글 태그
         private List<Image> image;
         private Long viewCount;    // 조회수
+        private Boolean great;      // 좋아요 여부
         private List<CommentDto.readComment> comments; // 댓글 목록
+
 
         public addResponse(TheaterPost theaterPost){
             this.userId = theaterPost.getUser().getUserId();
@@ -64,6 +66,7 @@ public class TheaterPostDto {
             this.editedAt = theaterPost.getEditedAt().toString();
             this.tags = theaterPost.getTags();
             this.viewCount = theaterPost.getViewCount();
+            this.great = theaterPost.getGreat();
             this.image = new ArrayList<>(theaterPost.getImage());
         }
     }
