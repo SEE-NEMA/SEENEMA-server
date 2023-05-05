@@ -6,6 +6,7 @@ import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.post.view.domain.ViewPost;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -73,7 +74,7 @@ public class ViewPostDto {
             this.seat = view.getSeat();
             this.title = view.getTitle();
             this.content = view.getContent();
-            this.image = view.getImage();
+            this.image = new ArrayList<>(view.getImage());
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
 
