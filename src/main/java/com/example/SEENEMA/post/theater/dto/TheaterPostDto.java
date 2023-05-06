@@ -52,7 +52,8 @@ public class TheaterPostDto {
         private List<Tag> tags;     // 게시글 태그
         private List<Image> image;
         private Long viewCount;    // 조회수
-        private Long likeCount;          // 좋아요 갯수
+        private Boolean heartedYN;        // 로그인한 사용자의 좋아요 여부
+        private Long heartCount;          // 좋아요 갯수
         private List<CommentDto.readComment> comments; // 댓글 목록
 
 
@@ -66,7 +67,8 @@ public class TheaterPostDto {
             this.editedAt = theaterPost.getEditedAt().toString();
             this.tags = theaterPost.getTags();
             this.viewCount = theaterPost.getViewCount();
-            this.likeCount = theaterPost.getLikeCount();
+            this.heartedYN = Boolean.FALSE;
+            this.heartCount = theaterPost.getHeartCount();
             this.image = new ArrayList<>(theaterPost.getImage());
         }
     }

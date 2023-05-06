@@ -154,6 +154,20 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         response.setComments(comments);
        return response;
     }
+    @Override
+    public TheaterPostDto.addResponse readTheaterPost(Long postNo, Long userId){
+        // 로그인 한 사용자가 게시글 조회하는 경우 - 좋아요 여부 판단
+        User u = getUser(userId);
+        TheaterPost t = getTheaterPost(postNo);
+        // 사용자가 이미 좋아요 한 게시글일 경우 addResponse의 isLiked=true
+        TheaterPostHeart tmp = heartRepo.findByUserAndTheaterPost(u,t);
+        if (tmp!=null){
+            TheaterPostDto.addResponse response = readTheaterPost(postNo);
+            response.setHeartedYN(Boolean.TRUE);
+            return response;
+        }
+        else return readTheaterPost(postNo);
+    }
 
     @Override
     public List<TheaterPostDto.listResponse> searchTheaterPost(String title){
@@ -225,7 +239,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         // 사용자가 이미 좋아요 한 게시글일 경우 무시
         TheaterPostHeart tmp = heartRepo.findByUserAndTheaterPost(u,t);
         if (tmp!=null){
-            return readTheaterPost(postNo);
+            return readTheaterPost(postNo, userId);
         }
 
         TheaterPostHeart heart = TheaterPostHeart.builder()
@@ -234,8 +248,8 @@ public class TheaterPostServiceImpl implements TheaterPostService{
                 .build();
         heartRepo.save(heart);                  // 사용자와 게시글 좋아요 정보 저장
         assert t != null;
-        t.setLikeCount(t.getLikeCount()+1L);    // 좋아요 갯수 + 1
-        return readTheaterPost(postNo);
+        t.setHeartCount(t.getHeartCount() + 1L);    // 좋아요 갯수 + 1
+        return readTheaterPost(postNo, userId);
     }
 
 

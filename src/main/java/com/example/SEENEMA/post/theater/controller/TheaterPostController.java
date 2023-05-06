@@ -95,8 +95,14 @@ public class TheaterPostController {
 
     @ApiOperation(value = "공연장 후기 게시글 조회")
     @GetMapping("/{postNo}")
-    public ResponseEntity<TheaterPostDto.addResponse> readTheaterPost(@PathVariable Long postNo){
-        return ResponseEntity.ok(service.readTheaterPost(postNo));
+    public ResponseEntity<TheaterPostDto.addResponse> readTheaterPost(@PathVariable Long postNo, HttpServletRequest http){
+        // 로그인 한 사용자가 게시글을 조회하는 경우와 비로그인 상태 구분
+        String token = provider.resolveToken(http);
+        if(token==null) return ResponseEntity.ok(service.readTheaterPost(postNo));
+        else {
+            Optional<User> user = findUser(http);
+            return ResponseEntity.ok(service.readTheaterPost(postNo, user.get().getUserId()));
+        }
     }
 
     @ApiOperation(value = "공연장 후기 게시글 좋아요")

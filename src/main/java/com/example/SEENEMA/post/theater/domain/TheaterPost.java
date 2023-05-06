@@ -63,7 +63,7 @@ public class TheaterPost {
     private LocalDateTime editedAt; // 최종 수정 일시
 
     @Column
-    private Long likeCount;
+    private Long heartCount;
 
     @Builder
     public TheaterPost(User user, Theater theater, String title, String content, LocalDateTime createdAt, List<Tag> tags, List<Image> image) {
@@ -75,6 +75,6 @@ public class TheaterPost {
         this.tags=tags;
         this.viewCount= 0L;
         this.image = image;
-        this.likeCount = 0L;
+        this.heartCount = 0L;
     }
 }

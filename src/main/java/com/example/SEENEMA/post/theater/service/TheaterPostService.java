@@ -13,6 +13,7 @@ public interface TheaterPostService {
     TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo, Long userId);
     TheaterPostDto.addResponse editTheaterPost(Long userId, Long postNo, TheaterPostDto.addRequest request);
     TheaterPostDto.addResponse readTheaterPost(Long postNo);
+    TheaterPostDto.addResponse readTheaterPost(Long postNo, Long userId);
     List<TheaterPostDto.listResponse> searchTheaterPost(String title);
     TheaterPostDto.addResponse writeCommentTheaterPost(Long userId, Long postNo, CommentDto.addRequest request);
     TheaterPostDto.addResponse editCommentTheaterPost(Long userId, Long postNo, Long commentId, CommentDto.addRequest request);
