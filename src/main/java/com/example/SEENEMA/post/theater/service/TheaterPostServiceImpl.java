@@ -222,15 +222,19 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     public TheaterPostDto.addResponse likeTheaterPost(Long userId, Long postNo){
         User u = getUser(userId);
         TheaterPost t = getTheaterPost(postNo);
+        // 사용자가 이미 좋아요 한 게시글일 경우 무시
+        TheaterPostHeart tmp = heartRepo.findByUserAndTheaterPost(u,t);
+        if (tmp!=null){
+            return readTheaterPost(postNo);
+        }
 
         TheaterPostHeart heart = TheaterPostHeart.builder()
                 .theaterPost(t)
                 .user(u)
                 .build();
-        heartRepo.save(heart);
+        heartRepo.save(heart);                  // 사용자와 게시글 좋아요 정보 저장
         assert t != null;
-        t.setLikeCount(t.getLikeCount()+1L);
-        //theaterPostRepo.save(t);
+        t.setLikeCount(t.getLikeCount()+1L);    // 좋아요 갯수 + 1
         return readTheaterPost(postNo);
     }
 
