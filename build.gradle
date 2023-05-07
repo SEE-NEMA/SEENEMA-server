@@ -21,7 +21,7 @@ dependencies {
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
 	annotationProcessor('org.projectlombok:lombok:1.18.22')
 
-  // swagger dependency
+    // swagger dependency
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
 	// Jsoup for web-crawling
@@ -35,10 +35,17 @@ dependencies {
 	// Spring Security OAuth2
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
   
-  // s3 파일 업로드
+    // s3 파일 업로드
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+	// 티켓 인식
+	implementation 'net.sourceforge.tess4j:tess4j:3.4.8'
+	implementation 'org.imgscalr:imgscalr-lib:4.2'
+	implementation "org.opencv:opencv-java:4.5.4"
+
+
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()
