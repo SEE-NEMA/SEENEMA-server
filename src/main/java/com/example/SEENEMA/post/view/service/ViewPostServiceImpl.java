@@ -124,6 +124,7 @@ public class ViewPostServiceImpl implements ViewPostService {
     @Override
     @Transactional
     public ViewPostDto.detailResponse heartViewPost(Long theaterId, Long viewNo, Long userId){
+        // 게시글 좋아요
         User u = getUser(userId);
         ViewPost v = getViewPost(theaterId, viewNo);
         // 사용자가 이미 좋아요 한 게시글일 경우 무시
@@ -138,6 +139,19 @@ public class ViewPostServiceImpl implements ViewPostService {
                 .build();
         heartRepository.save(heart);    // 사용자와 게시글 좋아요 정보 저장
         v.setHeartCount(v.getHeartCount() + 1L);    // 좋아요 갯수 + 1
+        return readViewPost(theaterId, viewNo, userId);
+    }
+    @Override
+    @Transactional
+    public ViewPostDto.detailResponse cancelHeart(Long theaterId, Long viewNo, Long userId){
+        User u = getUser(userId);
+        ViewPost v = getViewPost(theaterId, viewNo);
+        // 좋아요 취소
+        ViewPostHeart tmp = heartRepository.findByUserAndViewPost(u, v);
+        if(tmp != null){
+            heartRepository.deleteById(tmp.getId());
+        }
+        v.setHeartCount(v.getHeartCount() - 1L);
         return readViewPost(theaterId, viewNo, userId);
     }
 

@@ -19,5 +19,6 @@ public interface ViewPostService {
     List<ViewPostDto.viewListResponse>  getListByTheater(Long theaterId);
     String authUserForEdit(Long theaterId, Long viewNo, Long userId);
     ViewPostDto.detailResponse heartViewPost(Long theaterId, Long viewNo, Long userId);
+    ViewPostDto.detailResponse cancelHeart(Long theaterId, Long viewNo, Long userId);
 
 }
