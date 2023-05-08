@@ -21,4 +21,5 @@ public interface TheaterPostService {
     String authUserForEdit(Long postNo, Long userId);
     String authForEditComment(Long postNo, Long commentId, Long userId);
     TheaterPostDto.addResponse heartTheaterPost(Long userId, Long postNo);
+    TheaterPostDto.addResponse cancelHeart(Long userId, Long postNo);
 }

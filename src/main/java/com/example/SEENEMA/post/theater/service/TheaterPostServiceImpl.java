@@ -235,6 +235,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
 
     @Override
     public TheaterPostDto.addResponse heartTheaterPost(Long userId, Long postNo){
+        // 게시글 좋아요
         User u = getUser(userId);
         TheaterPost t = getTheaterPost(postNo);
         // 사용자가 이미 좋아요 한 게시글일 경우 무시
@@ -252,7 +253,18 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         t.setHeartCount(t.getHeartCount() + 1L);    // 좋아요 갯수 + 1
         return readTheaterPost(postNo, userId);
     }
-
+    @Override
+    public TheaterPostDto.addResponse cancelHeart(Long userId, Long postNo){
+        User u = getUser(userId);
+        TheaterPost t = getTheaterPost(postNo);
+        // 좋아요 취소
+        TheaterPostHeart tmp = heartRepo.findByUserAndTheaterPost(u,t);
+        if(tmp != null){
+            heartRepo.deleteById(tmp.getId());
+        }
+        t.setHeartCount(t.getHeartCount() - 1L);    // 좋아요 갯수 - 1
+        return readTheaterPost(postNo, userId);
+    }
 
 
     private User getUser(Long userId){
