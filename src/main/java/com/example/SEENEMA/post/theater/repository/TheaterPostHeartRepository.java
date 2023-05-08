@@ -7,8 +7,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TheaterPostHeartRepository extends JpaRepository<TheaterPostHeart, Long> {
     @Query
     TheaterPostHeart findByUserAndTheaterPost(User user, TheaterPost theaterPost);
+    @Query
+    List<TheaterPostHeart> findByTheaterPost(Long postNo);
 }

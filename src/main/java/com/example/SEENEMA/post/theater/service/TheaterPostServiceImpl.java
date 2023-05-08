@@ -99,7 +99,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         Optional<TheaterPost> target = theaterPostRepo.findById(postNo);
         if(Objects.equals(target.get().getUser().getUserId(), userId)) {
             deleteCommentByPostNo(postNo);
-            heartRepo.deleteById(heartRepo.findByUserAndTheaterPost(getUser(userId), getTheaterPost(postNo)).getId());
+            deleteHeartByPostNo(postNo);
             theaterPostRepo.deleteById(postNo);
             response = new TheaterPostDto.deleteResponse("SUCCESS");
         }
@@ -338,5 +338,14 @@ public class TheaterPostServiceImpl implements TheaterPostService{
             }
         }
         return images;
+    }
+    private void deleteHeartByPostNo(Long postNo){
+        List<TheaterPostHeart> tmp = heartRepo.findAll();
+        if(tmp == null ) return;
+        else{
+            for(TheaterPostHeart h : tmp){
+                if(h.getTheaterPost()==getTheaterPost(postNo)) heartRepo.delete(h);
+            }
+        }
     }
 }
