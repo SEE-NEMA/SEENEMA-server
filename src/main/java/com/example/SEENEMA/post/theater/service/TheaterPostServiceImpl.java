@@ -99,6 +99,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         Optional<TheaterPost> target = theaterPostRepo.findById(postNo);
         if(Objects.equals(target.get().getUser().getUserId(), userId)) {
             deleteCommentByPostNo(postNo);
+            heartRepo.deleteById(heartRepo.findByUserAndTheaterPost(getUser(userId), getTheaterPost(postNo)).getId());
             theaterPostRepo.deleteById(postNo);
             response = new TheaterPostDto.deleteResponse("SUCCESS");
         }
