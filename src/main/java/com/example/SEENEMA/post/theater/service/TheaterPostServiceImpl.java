@@ -353,11 +353,8 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     }
     private void deleteHeartByPostNo(Long postNo){
         List<TheaterPostHeart> tmp = heartRepo.findAll();
-        if(tmp == null ) return;
-        else{
-            for(TheaterPostHeart h : tmp){
-                if(h.getTheaterPost()==getTheaterPost(postNo)) heartRepo.delete(h);
-            }
+        for (TheaterPostHeart h : tmp) {
+            if (h.getTheaterPost() == getTheaterPost(postNo)) heartRepo.delete(h);
         }
     }
 }

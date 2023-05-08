@@ -113,6 +113,7 @@ public class ViewPostServiceImpl implements ViewPostService {
         // 시야 후기 게시글 삭제
         ViewPost viewPost = getViewPost(theaterId, viewNo);
         if(viewPost.getUser().getUserId().equals(userId)) {
+            deleteHeartByViewNo(theaterId, viewNo);
             viewPostRepository.delete(viewPost);
             return ResponseMessage.DELETE.getMsg();
         }
@@ -174,5 +175,12 @@ public class ViewPostServiceImpl implements ViewPostService {
             }
         }
         return images;
+    }
+
+    private void deleteHeartByViewNo(Long theaterId, Long viewNo){
+        List<ViewPostHeart> tmp = heartRepository.findAll();
+        for (ViewPostHeart h : tmp) {
+            if (h.getViewPost() == getViewPost(theaterId, viewNo)) heartRepository.delete(h);
+        }
     }
 }
