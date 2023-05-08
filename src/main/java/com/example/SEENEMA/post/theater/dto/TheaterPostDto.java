@@ -78,12 +78,14 @@ public class TheaterPostDto {
         private String title;               // 게시글 제목
         private LocalDateTime createdAt;    // 게시글 생성일
         private String nickname;            // 작성자 닉네임
+        private Long heartCount;            // 좋아요 갯수
 
         public listResponse(TheaterPost theaterPost){
             this.post_no = theaterPost.getPostNo();
             this.title = theaterPost.getTitle();
             this.createdAt = theaterPost.getCreatedAt();
             this.nickname = theaterPost.getUser().getNickname();
+            this.heartCount = theaterPost.getHeartCount();
         }
     }
     @Getter
