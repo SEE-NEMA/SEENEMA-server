@@ -107,9 +107,9 @@ public class TheaterPostController {
 
     @ApiOperation(value = "공연장 후기 게시글 좋아요")
     @PostMapping("/{postNo}/heart")
-    public ResponseEntity<TheaterPostDto.addResponse> greatTheaterPost(@PathVariable Long postNo, HttpServletRequest http){
+    public ResponseEntity<TheaterPostDto.addResponse> heartTheaterPost(@PathVariable Long postNo, HttpServletRequest http){
         Optional<User> user = findUser(http);
-        return ResponseEntity.ok(service.likeTheaterPost(user.get().getUserId(), postNo));
+        return ResponseEntity.ok(service.heartTheaterPost(user.get().getUserId(), postNo));
     }
 
     @ApiOperation(value = "공연장 후기 게시글 검색")

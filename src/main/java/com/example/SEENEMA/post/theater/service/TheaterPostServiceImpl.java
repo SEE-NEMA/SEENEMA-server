@@ -160,7 +160,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         // 로그인 한 사용자가 게시글 조회하는 경우 - 좋아요 여부 판단
         User u = getUser(userId);
         TheaterPost t = getTheaterPost(postNo);
-        // 사용자가 이미 좋아요 한 게시글일 경우 addResponse의 isLiked=true
+        // 사용자가 이미 좋아요 한 게시글일 경우 addResponse의 heartedYN=true
         TheaterPostHeart tmp = heartRepo.findByUserAndTheaterPost(u,t);
         if (tmp!=null){
             TheaterPostDto.addResponse response = readTheaterPost(postNo);
@@ -234,7 +234,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     }
 
     @Override
-    public TheaterPostDto.addResponse likeTheaterPost(Long userId, Long postNo){
+    public TheaterPostDto.addResponse heartTheaterPost(Long userId, Long postNo){
         User u = getUser(userId);
         TheaterPost t = getTheaterPost(postNo);
         // 사용자가 이미 좋아요 한 게시글일 경우 무시
