@@ -151,7 +151,8 @@ public class ViewPostServiceImpl implements ViewPostService {
         // 좋아요 취소
         ViewPostHeart tmp = heartRepository.findByUserAndViewPost(u, v);
         if(tmp != null){
-            heartRepository.deleteById(tmp.getId());
+            System.out.println(tmp.getUser().getNickname()+tmp.getViewPost().getTitle());
+            heartRepository.delete(tmp);
         }
         v.setHeartCount(v.getHeartCount() - 1L);
         viewPostRepository.save(v);

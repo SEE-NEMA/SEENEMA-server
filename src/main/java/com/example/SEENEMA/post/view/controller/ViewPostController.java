@@ -78,7 +78,7 @@ public class ViewPostController {
     @DeleteMapping("/{theaterId}/{viewNo}/heart")
     public ResponseEntity cancelHeart(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo, HttpServletRequest http){
         Optional<User> user = findUser(http);
-        return ResponseEntity.ok(viewPostService.cancelHeart(theaterId, viewNo, userId));
+        return ResponseEntity.ok(viewPostService.cancelHeart(theaterId, viewNo, user.get().getUserId()));
     }
 
     @ApiOperation(value = "시야 리뷰 수정/삭제 전 인증")

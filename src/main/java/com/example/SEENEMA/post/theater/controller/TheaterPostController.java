@@ -115,7 +115,7 @@ public class TheaterPostController {
     @DeleteMapping("/{postNo}/heart")
     public ResponseEntity<TheaterPostDto.addResponse> cancelHeart(@PathVariable Long postNo, HttpServletRequest http){
         Optional<User> user = findUser(http);
-        return ResponseEntity.ok(service.cancelHeart(userId, postNo));
+        return ResponseEntity.ok(service.cancelHeart(user.get().getUserId(), postNo));
     }
 
     @ApiOperation(value = "공연장 후기 게시글 검색")
