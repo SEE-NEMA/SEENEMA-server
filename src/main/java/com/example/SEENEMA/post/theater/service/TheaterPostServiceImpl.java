@@ -147,6 +147,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         TheaterPost t = getTheaterPost(postNo);
         log.info(t.getTags().toString());
         t.setViewCount(t.getViewCount()+1L);
+        t.setHeartCount((long) heartRepo.findByTheaterPost(t).size());
         t.getImage().size();
         TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
 
@@ -251,6 +252,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         heartRepo.save(heart);                  // 사용자와 게시글 좋아요 정보 저장
         assert t != null;
         t.setHeartCount(t.getHeartCount() + 1L);    // 좋아요 갯수 + 1
+        theaterPostRepo.save(t);
         return readTheaterPost(postNo, userId);
     }
     @Override
@@ -263,6 +265,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
             heartRepo.deleteById(tmp.getId());
         }
         t.setHeartCount(t.getHeartCount() - 1L);    // 좋아요 갯수 - 1
+        theaterPostRepo.save(t);
         return readTheaterPost(postNo, userId);
     }
 

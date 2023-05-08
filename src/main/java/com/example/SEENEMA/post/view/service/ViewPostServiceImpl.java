@@ -62,6 +62,7 @@ public class ViewPostServiceImpl implements ViewPostService {
     public ViewPostDto.detailResponse readViewPost(Long theaterId, Long viewNo){
 
         ViewPost viewPost = getViewPost(theaterId,viewNo);
+        viewPost.setHeartCount((long) heartRepository.findByViewPost(viewPost).size());
         // 이미지 컬렉션을 명시적으로 초기화
         Hibernate.initialize(viewPost.getImage());
         return new ViewPostDto.detailResponse(viewPost);
@@ -139,6 +140,7 @@ public class ViewPostServiceImpl implements ViewPostService {
                 .build();
         heartRepository.save(heart);    // 사용자와 게시글 좋아요 정보 저장
         v.setHeartCount(v.getHeartCount() + 1L);    // 좋아요 갯수 + 1
+        viewPostRepository.save(v);
         return readViewPost(theaterId, viewNo, userId);
     }
     @Override
@@ -152,6 +154,7 @@ public class ViewPostServiceImpl implements ViewPostService {
             heartRepository.deleteById(tmp.getId());
         }
         v.setHeartCount(v.getHeartCount() - 1L);
+        viewPostRepository.save(v);
         return readViewPost(theaterId, viewNo, userId);
     }
 

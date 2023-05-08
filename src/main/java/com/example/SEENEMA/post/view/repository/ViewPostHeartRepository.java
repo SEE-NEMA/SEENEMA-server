@@ -7,10 +7,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ViewPostHeartRepository extends JpaRepository<ViewPostHeart, Long> {
     @Query
-    ViewPostHeart findByViewPost(ViewPost viewPost);
+    List<ViewPostHeart> findByViewPost(ViewPost viewPost);
     @Query
     ViewPostHeart findByUserAndViewPost(User user, ViewPost viewPost);
 }

@@ -14,5 +14,5 @@ public interface TheaterPostHeartRepository extends JpaRepository<TheaterPostHea
     @Query
     TheaterPostHeart findByUserAndTheaterPost(User user, TheaterPost theaterPost);
     @Query
-    List<TheaterPostHeart> findByTheaterPost(Long postNo);
+    List<TheaterPostHeart> findByTheaterPost(TheaterPost theaterPost);
 }
