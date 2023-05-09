@@ -59,11 +59,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/v1/theater-review/{postNo}/comment").authenticated()
                 .antMatchers(HttpMethod.PUT, "/api/v1/theater-review/{postNo}/{commentId}").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/v1/theater-review/{postNo}/{commentId}").authenticated()
+                .antMatchers("/api/v1/theater_review/{postNo}/heart").authenticated()   // 좋아요와 취소 모두기 때문에 HttpMetode 나누지 않음
                 .antMatchers(HttpMethod.POST, "/api/v1/view-review/{theaterId}/upload").authenticated()
                 .antMatchers(HttpMethod.GET, "/api/v1/view-review/auth").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/view-reivew/{theaterId}/{viewNo}/auth").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/v1/view-review/{theaterId}/{viewNo}").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/v1/view-review/{theaterId}/{viewNo}").authenticated()
+                .antMatchers("/api/v1/view-review/{theaterId}/{viewNo}/heart").authenticated()
                 .anyRequest().permitAll()
 //                .and()
 //                .formLogin()

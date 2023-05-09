@@ -58,8 +58,27 @@ public class ViewPostController {
 
     @ApiOperation(value="시야 리뷰 상세화면")
     @GetMapping("/{theaterId}/{viewNo}")
-    public ResponseEntity readViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo){
-        return ResponseEntity.ok(viewPostService.readViewPost(theaterId,viewNo));
+    public ResponseEntity readViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo, HttpServletRequest http){
+        // 비로그인과 로그인 상태 구분
+        String token =provider.resolveToken(http);
+        if(token == null) return ResponseEntity.ok(viewPostService.readViewPost(theaterId, viewNo));
+//        return ResponseEntity.ok(viewPostService.readViewPost(theaterId,viewNo));
+        else{
+            Optional<User> user = findUser(http);
+            return ResponseEntity.ok(viewPostService.readViewPost(theaterId, viewNo, user.get().getUserId()));
+        }
+    }
+    @ApiOperation(value = "시야 리뷰 상세화면에서 좋아요 하기")
+    @PostMapping("/{theaterId}/{viewNo}/heart")
+    public ResponseEntity heartViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo, HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(viewPostService.heartViewPost(theaterId, viewNo, user.get().getUserId()));
+    }
+    @ApiOperation(value = "시야 리뷰 좋아요 취소")
+    @DeleteMapping("/{theaterId}/{viewNo}/heart")
+    public ResponseEntity cancelHeart(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo, HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(viewPostService.cancelHeart(theaterId, viewNo, user.get().getUserId()));
     }
 
     @ApiOperation(value = "시야 리뷰 수정/삭제 전 인증")
@@ -116,4 +135,6 @@ public class ViewPostController {
         String token = provider.resolveToken(request);
         return userRepo.findByEmail(provider.getUserPk(token));
     }
+
+
 }

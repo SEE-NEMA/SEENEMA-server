@@ -62,6 +62,9 @@ public class TheaterPost {
     @Column
     private LocalDateTime editedAt; // 최종 수정 일시
 
+    @Column
+    private Long heartCount;
+
     @Builder
     public TheaterPost(User user, Theater theater, String title, String content, LocalDateTime createdAt, List<Tag> tags, List<Image> image) {
         this.user = user;
@@ -72,5 +75,6 @@ public class TheaterPost {
         this.tags=tags;
         this.viewCount= 0L;
         this.image = image;
+        this.heartCount = 0L;
     }
 }

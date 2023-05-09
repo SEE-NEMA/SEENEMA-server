@@ -55,6 +55,8 @@ public class ViewPost {
     @LastModifiedDate // 수정일 자동화
     @Column
     private LocalDateTime editedAt; // 최종 수정 일시
+    @Column
+    private Long heartCount;
 
     @Builder
     public ViewPost(User user, Theater theater, String play, String seat, String title, String content, List<Image> image, LocalDateTime createdAt) {
@@ -66,6 +68,7 @@ public class ViewPost {
         this.content = content;
         this.image = image;
         this.createdAt = createdAt;
+        this.heartCount = 0L;
     }
 
     public void updateViewPost(String play, String seat, String title, String content, List<Image> image) {

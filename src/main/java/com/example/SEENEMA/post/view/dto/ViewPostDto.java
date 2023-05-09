@@ -83,12 +83,15 @@ public class ViewPostDto {
 
     /** 게시글 상세정보를 리턴할 Response 클래스 */
     @Getter
+    @Setter
     public static class detailResponse{
         private Long viewNo;
         private String nickName;
         private String title;
         private String content;
         private List<Image> image;
+        private Long heartCount;       //좋아요 갯수
+        private Boolean heartedYN;      // 로그인한 사용자의 좋아요 여부
 
         public detailResponse(ViewPost view){
             this.viewNo = view.getViewNo();
@@ -96,6 +99,8 @@ public class ViewPostDto {
             this.title = view.getTitle();
             this.content = view.getContent();
             this.image = view.getImage();
+            this.heartedYN = Boolean.FALSE;
+            this.heartCount = view.getHeartCount();
         }
     }
 
@@ -106,12 +111,14 @@ public class ViewPostDto {
         private String nickName;
         private String title;
         private String createdAt;
+        private Long heartCount;
 
         public viewListResponse(ViewPost view){
             this.viewNo = view.getViewNo();
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();
+            this.heartCount = view.getHeartCount();
         }
     }
 }
