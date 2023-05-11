@@ -32,7 +32,7 @@ public class ViewPostController {
     private Long userId = 1L;  // 임시 ID
 
     @ApiOperation(value = "시야 후기 등록 전 사용자 인증")
-    @GetMapping("/auth")
+    @PostMapping("/auth")
     public String authUserForPost(HttpServletRequest http){
         String token = provider.resolveToken(http);
         if(token == null) return "FAIL";    // 토큰 자체가 없는 경우
@@ -82,7 +82,7 @@ public class ViewPostController {
     }
 
     @ApiOperation(value = "시야 리뷰 수정/삭제 전 인증")
-    @GetMapping("/{theaterId}/{viewNo}/auth")
+    @PostMapping("/{theaterId}/{viewNo}/auth")
     public String authUserForEdit(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo, HttpServletRequest http){
         String basicAuth = authUserForPost(http); // 기본 인증 : 토큰 유무 / 토큰 유효성
         if(basicAuth.equals("FAIL")) return "FAIL";

@@ -31,7 +31,7 @@ public class TheaterPostController {
     private Long userId = 2L;  // 임시 userId
 
     @ApiOperation(value = "게시글과 댓글 등록 전 사용자 인증")
-    @GetMapping("/auth")
+    @PostMapping("/auth")
     public String authUserForPosting(HttpServletRequest http){
         String token = provider.resolveToken(http);
         if(token == null) return "FAIL";    // 토큰 자체가 없는 경우 -> fail
@@ -62,7 +62,7 @@ public class TheaterPostController {
     }
 
     @ApiOperation(value = "게시글 수정/삭제 시 사용자 인증")
-    @GetMapping("/{postNo}/auth")
+    @PostMapping("/{postNo}/auth")
     public String authUserForEdit(@PathVariable Long postNo, HttpServletRequest http){
         String basicAuth = authUserForPosting(http); // 기본 인증 : 토큰 유무 / 토큰 유효성
         if(basicAuth.equals("FAIL")) return "FAIL";
@@ -132,7 +132,7 @@ public class TheaterPostController {
     }
 
     @ApiOperation(value = "공연장 후기 게시글 댓글 수정/삭제 전 인증")
-    @GetMapping("/{postNo}/{commentId}/auth")
+    @PostMapping("/{postNo}/{commentId}/auth")
     public String authForEditComment(@PathVariable Long postNo, @PathVariable Long commentId, HttpServletRequest http){
         String basicAuth = authUserForPosting(http); // 기본 인증 : 토큰 유무 / 토큰 유효성
         if(basicAuth.equals("FAIL")) return "FAIL";
