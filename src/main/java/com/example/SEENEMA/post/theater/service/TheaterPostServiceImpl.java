@@ -204,20 +204,16 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     public TheaterPostDto.addResponse editCommentTheaterPost(Long userId, Long postNo, Long commentId, CommentDto.addRequest request){
         // 공연장 후기 게시글 댓글 수정
         // 댓글 작성자와 로그인한 유저가 다르면 게시글 조회만 수행
-        User u = getUser(userId);
+
         if(!commentRepo.findById(commentId).get().getUser().getUserId().equals(userId)) return readTheaterPost(postNo);
 
         Comment comment = commentRepo.findById(commentId).get();
         comment.setContent(request.getContent());
         commentRepo.save(comment);
 
+        User u = getUser(userId);
         TheaterPost t = getTheaterPost(postNo);
         t.getImage().size();
-//        TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
-        // 댓글 가져오기
-//        List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
-//        response.setComments(comments);
-        // 사용자가 이미 좋아요 한 게시글일 경우 addResponse의 heartedYN=true
         TheaterPostHeart tmp = heartRepo.findByUserAndTheaterPost(u,t);
         if(tmp!=null){
             TheaterPostDto.addResponse response = readTheaterPost(postNo);
