@@ -24,7 +24,7 @@ public class TheaterPostDto {
         private Theater theater;    // 공연장
         private String title;       // 제목
         private String content;     // 내용
-        private List<Tag> tags;     // 태그
+//        private List<Tag> tags;     // 태그
         private List<Image> image; // 이미지 url
 
         public TheaterPost toEntity(){
@@ -33,7 +33,7 @@ public class TheaterPostDto {
                     .theater(theater)
                     .title(title)
                     .content(content)
-                    .tags(tags)
+//                    .tags(tags)
                     .image(image)
                     .build();
         }
@@ -49,7 +49,7 @@ public class TheaterPostDto {
         private String content;     // 게시글 내용
         private String createdAt;   // 게시글 생성일
         private String editedAt;    // 게시글 수정일
-        private List<Tag> tags;     // 게시글 태그
+//        private List<Tag> tags;     // 게시글 태그
         private List<Image> image;
         private Long viewCount;    // 조회수
         private Boolean heartedYN;        // 로그인한 사용자의 좋아요 여부
@@ -65,7 +65,7 @@ public class TheaterPostDto {
             this.content = theaterPost.getContent();
             this.createdAt = theaterPost.getCreatedAt().toString();
             this.editedAt = theaterPost.getEditedAt().toString();
-            this.tags = theaterPost.getTags();
+//            this.tags = theaterPost.getTags();
             this.viewCount = theaterPost.getViewCount();
             this.heartedYN = Boolean.FALSE;
             this.heartCount = theaterPost.getHeartCount();

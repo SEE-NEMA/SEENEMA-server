@@ -10,8 +10,6 @@ import com.example.SEENEMA.post.theater.repository.TheaterPostHeartRepository;
 import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
 import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.post.file.ImageRepository;
-import com.example.SEENEMA.tag.domain.Tag;
-import com.example.SEENEMA.tag.repository.TagRepository;
 import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.theater.repository.TheaterRepository;
 import com.example.SEENEMA.user.domain.User;
@@ -35,7 +33,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     private final TheaterPostRepository theaterPostRepo;
     private final UserRepository userRepo;
     private final TheaterRepository theaterRepo;
-    private final TagRepository tagRepo;
+//    private final TagRepository tagRepo;
     private final CommentRepository commentRepo;
     private final ImageRepository imageRepository;
     private final TheaterPostHeartRepository heartRepo;
@@ -50,11 +48,11 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         Theater theater = getTheater(theaterName);
         List<Image> images = getImage(request.getImage());
 
-        List<Tag> tags = getTags(request.getTags());
+//        List<Tag> tags = getTags(request.getTags());
 
         request.setUser(user);
         request.setTheater(theater);
-        request.setTags(tags);
+//        request.setTags(tags);
         request.setImage(images);
 
         TheaterPost theaterPost = request.toEntity();
@@ -115,7 +113,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         //User user = getUser(userId);
         String theaterName = findTheaterName(request.getTitle());
         Theater theater = getTheater(theaterName);
-        List<Tag> tags = getTags(request.getTags());
+//        List<Tag> tags = getTags(request.getTags());
         List<Image> images = getImage(request.getImage());
 
         TheaterPost t = getTheaterPost(postNo);
@@ -127,7 +125,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         else {
             t.setEditedAt(LocalDateTime.now());
             t.setTheater(theater);
-            t.setTags(tags);
+//            t.setTags(tags);
             t.setImage(images);
             t.setTitle(request.getTitle());
             t.setContent(request.getContent());
@@ -145,7 +143,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     public TheaterPostDto.addResponse readTheaterPost(Long postNo){
         // 공연장 후기 게시글 조회
         TheaterPost t = getTheaterPost(postNo);
-        log.info(t.getTags().toString());
+//        log.info(t.getTags().toString());
         t.setViewCount(t.getViewCount()+1L);
         t.setHeartCount((long) heartRepo.findByTheaterPost(t).size());
         t.getImage().size();
@@ -182,7 +180,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     public TheaterPostDto.addResponse writeCommentTheaterPost(Long userId, Long postNo, CommentDto.addRequest request){
         // 공연장 후기 게시글 댓글 작성
         TheaterPost t = getTheaterPost(postNo);
-        log.info(t.getTags().toString());
+//        log.info(t.getTags().toString());
         t.getImage().size();
         TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
 
@@ -215,7 +213,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         commentRepo.save(comment);
 
         TheaterPost t = getTheaterPost(postNo);
-        log.info(t.getTags().toString());
+//        log.info(t.getTags().toString());
         t.getImage().size();
         TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
         // 댓글 가져오기
@@ -301,16 +299,16 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         }
         return null;
     }
-    private List<Tag> getTags(List<Tag> tags){
-        List<Tag> tmp = tagRepo.findAll();
-        for (Tag t : tmp){
-            for(Tag ex : tags){
-                if(t.getTagId().equals(ex.getTagId()))
-                    ex.setTagName(t.getTagName());
-            }
-        }
-        return tags;
-    }
+//    private List<Tag> getTags(List<Tag> tags){
+//        List<Tag> tmp = tagRepo.findAll();
+//        for (Tag t : tmp){
+//            for(Tag ex : tags){
+//                if(t.getTagId().equals(ex.getTagId()))
+//                    ex.setTagName(t.getTagName());
+//            }
+//        }
+//        return tags;
+//    }
     private List<TheaterPostDto.listResponse> findTheaterPostList(String title){
         List<TheaterPost> originPost = theaterPostRepo.findAll();
         List<TheaterPostDto.listResponse> result = new ArrayList<>();
