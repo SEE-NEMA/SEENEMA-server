@@ -43,16 +43,6 @@ public class TheaterPost {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Image> image;
 
-    //태그 기능
-//    @ManyToMany
-//    @JoinTable(
-//            name="theater_post_tags",
-//            joinColumns = @JoinColumn(name="post_no"),
-//            inverseJoinColumns = @JoinColumn(name = "tag_id")
-//    )
-//    private List<Tag> tags;
-
-
     @CreatedDate // 생성일 자동화
     @Column(updatable = false)
     private LocalDateTime createdAt; // 작성 일시
@@ -65,13 +55,12 @@ public class TheaterPost {
     private Long heartCount;
 
     @Builder
-    public TheaterPost(User user, Theater theater, String title, String content, LocalDateTime createdAt,/* List<Tag> tags,*/ List<Image> image) {
+    public TheaterPost(User user, Theater theater, String title, String content, LocalDateTime createdAt, List<Image> image) {
         this.user = user;
         this.theater = theater;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
-//        this.tags=tags;
         this.viewCount= 0L;
         this.image = image;
         this.heartCount = 0L;
