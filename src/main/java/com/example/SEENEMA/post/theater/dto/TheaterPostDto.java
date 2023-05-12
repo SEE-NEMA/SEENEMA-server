@@ -52,7 +52,10 @@ public class TheaterPostDto {
         private List<Tag> tags;     // 게시글 태그
         private List<Image> image;
         private Long viewCount;    // 조회수
+        private Boolean heartedYN;        // 로그인한 사용자의 좋아요 여부
+        private Long heartCount;          // 좋아요 갯수
         private List<CommentDto.readComment> comments; // 댓글 목록
+
 
         public addResponse(TheaterPost theaterPost){
             this.userId = theaterPost.getUser().getUserId();
@@ -64,6 +67,8 @@ public class TheaterPostDto {
             this.editedAt = theaterPost.getEditedAt().toString();
             this.tags = theaterPost.getTags();
             this.viewCount = theaterPost.getViewCount();
+            this.heartedYN = Boolean.FALSE;
+            this.heartCount = theaterPost.getHeartCount();
             this.image = new ArrayList<>(theaterPost.getImage());
         }
     }
@@ -73,12 +78,14 @@ public class TheaterPostDto {
         private String title;               // 게시글 제목
         private LocalDateTime createdAt;    // 게시글 생성일
         private String nickname;            // 작성자 닉네임
+        private Long heartCount;            // 좋아요 갯수
 
         public listResponse(TheaterPost theaterPost){
             this.post_no = theaterPost.getPostNo();
             this.title = theaterPost.getTitle();
             this.createdAt = theaterPost.getCreatedAt();
             this.nickname = theaterPost.getUser().getNickname();
+            this.heartCount = theaterPost.getHeartCount();
         }
     }
     @Getter

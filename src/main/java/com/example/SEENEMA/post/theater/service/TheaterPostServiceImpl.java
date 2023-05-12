@@ -4,7 +4,9 @@ import com.example.SEENEMA.comment.domain.Comment;
 import com.example.SEENEMA.comment.dto.CommentDto;
 import com.example.SEENEMA.comment.repository.CommentRepository;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
+import com.example.SEENEMA.post.theater.domain.TheaterPostHeart;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
+import com.example.SEENEMA.post.theater.repository.TheaterPostHeartRepository;
 import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
 import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.post.file.ImageRepository;
@@ -36,6 +38,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     private final TagRepository tagRepo;
     private final CommentRepository commentRepo;
     private final ImageRepository imageRepository;
+    private final TheaterPostHeartRepository heartRepo;
 
     @Override
     @Transactional
@@ -96,6 +99,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         Optional<TheaterPost> target = theaterPostRepo.findById(postNo);
         if(Objects.equals(target.get().getUser().getUserId(), userId)) {
             deleteCommentByPostNo(postNo);
+            deleteHeartByPostNo(postNo);
             theaterPostRepo.deleteById(postNo);
             response = new TheaterPostDto.deleteResponse("SUCCESS");
         }
@@ -143,6 +147,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         TheaterPost t = getTheaterPost(postNo);
         log.info(t.getTags().toString());
         t.setViewCount(t.getViewCount()+1L);
+        t.setHeartCount((long) heartRepo.findByTheaterPost(t).size());
         t.getImage().size();
         TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
 
@@ -150,6 +155,20 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
         response.setComments(comments);
        return response;
+    }
+    @Override
+    public TheaterPostDto.addResponse readTheaterPost(Long postNo, Long userId){
+        // 로그인 한 사용자가 게시글 조회하는 경우 - 좋아요 여부 판단
+        User u = getUser(userId);
+        TheaterPost t = getTheaterPost(postNo);
+        // 사용자가 이미 좋아요 한 게시글일 경우 addResponse의 heartedYN=true
+        TheaterPostHeart tmp = heartRepo.findByUserAndTheaterPost(u,t);
+        if (tmp!=null){
+            TheaterPostDto.addResponse response = readTheaterPost(postNo);
+            response.setHeartedYN(Boolean.TRUE);
+            return response;
+        }
+        else return readTheaterPost(postNo);
     }
 
     @Override
@@ -215,6 +234,40 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         return readTheaterPost(postNo);
     }
 
+    @Override
+    public TheaterPostDto.addResponse heartTheaterPost(Long userId, Long postNo){
+        // 게시글 좋아요
+        User u = getUser(userId);
+        TheaterPost t = getTheaterPost(postNo);
+        // 사용자가 이미 좋아요 한 게시글일 경우 무시
+        TheaterPostHeart tmp = heartRepo.findByUserAndTheaterPost(u,t);
+        if (tmp!=null){
+            return readTheaterPost(postNo, userId);
+        }
+
+        TheaterPostHeart heart = TheaterPostHeart.builder()
+                .theaterPost(t)
+                .user(u)
+                .build();
+        heartRepo.save(heart);                  // 사용자와 게시글 좋아요 정보 저장
+        assert t != null;
+        t.setHeartCount(t.getHeartCount() + 1L);    // 좋아요 갯수 + 1
+        theaterPostRepo.save(t);
+        return readTheaterPost(postNo, userId);
+    }
+    @Override
+    public TheaterPostDto.addResponse cancelHeart(Long userId, Long postNo){
+        User u = getUser(userId);
+        TheaterPost t = getTheaterPost(postNo);
+        // 좋아요 취소
+        TheaterPostHeart tmp = heartRepo.findByUserAndTheaterPost(u,t);
+        if(tmp != null){
+            heartRepo.deleteById(tmp.getId());
+        }
+        t.setHeartCount(t.getHeartCount() - 1L);    // 좋아요 갯수 - 1
+        theaterPostRepo.save(t);
+        return readTheaterPost(postNo, userId);
+    }
 
 
     private User getUser(Long userId){
@@ -300,5 +353,11 @@ public class TheaterPostServiceImpl implements TheaterPostService{
             }
         }
         return images;
+    }
+    private void deleteHeartByPostNo(Long postNo){
+        List<TheaterPostHeart> tmp = heartRepo.findAll();
+        for (TheaterPostHeart h : tmp) {
+            if (h.getTheaterPost() == getTheaterPost(postNo)) heartRepo.delete(h);
+        }
     }
 }
