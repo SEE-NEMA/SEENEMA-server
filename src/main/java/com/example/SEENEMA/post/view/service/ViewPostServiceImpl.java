@@ -35,7 +35,6 @@ public class ViewPostServiceImpl implements ViewPostService {
     @Override
     @Transactional
     public ViewPostDto.addResponse createViewPost(Long userId, Long theaterId, ViewPostDto.addRequest requestDto){
-
         User user = getUser(userId);
         Theater theater = getTheater(theaterId);
         List<Image> images = getImage(requestDto.getImage());
@@ -52,7 +51,6 @@ public class ViewPostServiceImpl implements ViewPostService {
             persistedImages.add(imageRepository.save(image));
         }
         view.setImage(persistedImages);
-
         return new ViewPostDto.addResponse(viewPostRepository.save(view));
     }
 
@@ -94,7 +92,6 @@ public class ViewPostServiceImpl implements ViewPostService {
     @Override
     @Transactional
     public ViewPostDto.addResponse updateViewPost(Long theaterId,Long viewNo, ViewPostDto.updateRequest requestDto, Long userId){
-
         ViewPost viewPost = getViewPost(theaterId,viewNo);
         // update전 작성자와 사용자 동일인 판별
         if(!viewPost.getUser().getUserId().equals(userId)) {
@@ -102,8 +99,8 @@ public class ViewPostServiceImpl implements ViewPostService {
             return new ViewPostDto.addResponse(viewPost);
         }
         else{
-            viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent(), requestDto.getImage());
-
+            viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent(),
+                    requestDto.getViewScore(), requestDto.getSeatScore(), requestDto.getLightScore(), requestDto.getSoundScore(), requestDto.getImage());
             return new ViewPostDto.addResponse(viewPost);
         }
     }
