@@ -35,7 +35,6 @@ public class ViewPostServiceImpl implements ViewPostService {
     @Override
     @Transactional
     public ViewPostDto.addResponse createViewPost(Long userId, Long theaterId, ViewPostDto.addRequest requestDto){
-
         User user = getUser(userId);
         Theater theater = getTheater(theaterId);
         List<Image> images = getImage(requestDto.getImage());
@@ -52,7 +51,11 @@ public class ViewPostServiceImpl implements ViewPostService {
             persistedImages.add(imageRepository.save(image));
         }
         view.setImage(persistedImages);
-
+//        // 별점 반영
+//        view.setViewScore(requestDto.getViewScore());
+//        view.setSeatScore(requestDto.getSeatScore());
+//        view.setLightScore(requestDto.getLightScore());
+//        view.setSoundScore(requestDto.getSoundScore());
         return new ViewPostDto.addResponse(viewPostRepository.save(view));
     }
 
@@ -102,8 +105,8 @@ public class ViewPostServiceImpl implements ViewPostService {
             return new ViewPostDto.addResponse(viewPost);
         }
         else{
-            viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent(), requestDto.getImage());
-
+            viewPost.updateViewPost(requestDto.getPlay(), requestDto.getSeat(), requestDto.getTitle(), requestDto.getContent(),
+                    requestDto.getViewScore(), requestDto.getSeatScore(), requestDto.getLightScore(), requestDto.getSoundScore(), requestDto.getImage());
             return new ViewPostDto.addResponse(viewPost);
         }
     }

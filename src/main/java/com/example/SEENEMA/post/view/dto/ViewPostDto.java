@@ -38,6 +38,10 @@ public class ViewPostDto {
                     .seat(seat)
                     .title(title)
                     .content(content)
+                    .viewScore(viewScore)
+                    .seatScore(seatScore)
+                    .lightScore(lightScore)
+                    .soundScore(soundScore)
                     .image(image)
                     .build();
         }

@@ -84,11 +84,16 @@ public class ViewPost {
         this.heartCount = 0L;
     }
 
-    public void updateViewPost(String play, String seat, String title, String content, List<Image> image) {
+    public void updateViewPost(String play, String seat, String title, String content,
+                               Double viewScore, Double seatScore, Double lightScore, Double soundScore,List<Image> image) {
         this.play = play;
         this.seat = seat;
         this.title = title;
         this.content = content;
+        this.viewScore = viewScore;
+        this.seatScore = seatScore;
+        this.lightScore = lightScore;
+        this.soundScore = soundScore;
         this.image = image;
     }
 }
