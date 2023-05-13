@@ -35,10 +35,6 @@ public class ViewPostServiceImpl implements ViewPostService {
     @Override
     @Transactional
     public ViewPostDto.addResponse createViewPost(Long userId, Long theaterId, ViewPostDto.addRequest requestDto){
-        // 별점이 0.0 미만, 5.0 초과일 경우 무시
-        Boolean isInRangeRight = isInRange(requestDto.getViewScore(), requestDto.getSeatScore(), requestDto.getLightScore(), requestDto.getSoundScore());
-        if(isInRangeRight == Boolean.FALSE) return null;
-
         User user = getUser(userId);
         Theater theater = getTheater(theaterId);
         List<Image> images = getImage(requestDto.getImage());
@@ -96,10 +92,6 @@ public class ViewPostServiceImpl implements ViewPostService {
     @Override
     @Transactional
     public ViewPostDto.addResponse updateViewPost(Long theaterId,Long viewNo, ViewPostDto.updateRequest requestDto, Long userId){
-        // 별점이 0.0 미만, 5.0 초과일 경우 무시
-        Boolean isInRangeRight = isInRange(requestDto.getViewScore(), requestDto.getSeatScore(), requestDto.getLightScore(), requestDto.getSoundScore());
-        if(isInRangeRight == Boolean.FALSE) return null;
-
         ViewPost viewPost = getViewPost(theaterId,viewNo);
         // update전 작성자와 사용자 동일인 판별
         if(!viewPost.getUser().getUserId().equals(userId)) {
@@ -205,12 +197,5 @@ public class ViewPostServiceImpl implements ViewPostService {
         for (ViewPostHeart h : tmp) {
             if (h.getViewPost() == getViewPost(theaterId, viewNo)) heartRepository.delete(h);
         }
-    }
-    private Boolean isInRange(Double viewScore, Double seatScore, Double lightScore, Double soundScore){
-        if (viewScore < 0.0 || viewScore > 5.0) return Boolean.FALSE;
-        else if (seatScore < 0.0 || seatScore > 5.0) return Boolean.FALSE;
-        else if (lightScore < 0.0 || lightScore > 5.0) return Boolean.FALSE;
-        else if (soundScore < 0.0 || soundScore > 5.0) return Boolean.FALSE;
-        else return Boolean.TRUE;
     }
 }
