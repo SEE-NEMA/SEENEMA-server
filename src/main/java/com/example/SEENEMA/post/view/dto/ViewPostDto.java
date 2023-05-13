@@ -24,10 +24,10 @@ public class ViewPostDto {
         private String seat; // 좌석
         private String title; // 제목
         private String content; // 내용
-        private Double viewScore;   // 시야 점수
-        private Double seatScore;   // 좌석 점수
-        private Double lightScore;  // 조명 점수
-        private Double soundScore;  // 음향 점수
+        private Integer viewScore;   // 시야 점수
+        private Integer seatScore;   // 좌석 점수
+        private Integer lightScore;  // 조명 점수
+        private Integer soundScore;  // 음향 점수
         private List<Image> image; // 이미지 url
 
         public ViewPost toEntity(){
@@ -56,10 +56,10 @@ public class ViewPostDto {
         private String seat;
         private String title;
         private String content;
-        private Double viewScore;   // 시야 점수
-        private Double seatScore;   // 좌석 점수
-        private Double lightScore;  // 조명 점수
-        private Double soundScore;  // 음향 점수
+        private Integer viewScore;   // 시야 점수
+        private Integer seatScore;   // 좌석 점수
+        private Integer lightScore;  // 조명 점수
+        private Integer soundScore;  // 음향 점수
         private List<Image> image;
 
     }
@@ -74,10 +74,10 @@ public class ViewPostDto {
         private String seat; // 좌석
         private String title; // 제목
         private String content; // 내용
-        private Double viewScore;   // 시야 점수
-        private Double seatScore;   // 좌석 점수
-        private Double lightScore;  // 조명 점수
-        private Double soundScore;  // 음향 점수
+        private Integer viewScore;   // 시야 점수
+        private Integer seatScore;   // 좌석 점수
+        private Integer lightScore;  // 조명 점수
+        private Integer soundScore;  // 음향 점수
         private List<Image> image;
         private String createdAt;  // 작성일
         private String editedAt; // 수정일
@@ -109,10 +109,10 @@ public class ViewPostDto {
         private String nickName;
         private String title;
         private String content;
-        private Double viewScore;   // 시야 점수
-        private Double seatScore;   // 좌석 점수
-        private Double lightScore;  // 조명 점수
-        private Double soundScore;  // 음향 점수
+        private Integer viewScore;   // 시야 점수
+        private Integer seatScore;   // 좌석 점수
+        private Integer lightScore;  // 조명 점수
+        private Integer soundScore;  // 음향 점수
         private List<Image> image;
         private Long heartCount;       //좋아요 갯수
         private Boolean heartedYN;      // 로그인한 사용자의 좋아요 여부
@@ -140,7 +140,7 @@ public class ViewPostDto {
         private String title;
         private String createdAt;
         private Long heartCount;
-        private Double viewScore;   // 시야 점수
+        private Integer viewScore;   // 시야 점수
 
         public viewListResponse(ViewPost view){
             this.viewNo = view.getViewNo();
