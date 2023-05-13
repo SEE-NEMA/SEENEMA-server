@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -80,6 +77,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
             TheaterPostDto.listResponse tmp = new TheaterPostDto.listResponse(t);
             result.add(tmp);
         }
+        Collections.sort(result, Collections.reverseOrder());
         return result;
     }
 
@@ -175,6 +173,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     public List<TheaterPostDto.listResponse> searchTheaterPost(String title){
         // 공연장 후기 게시글 검색
         List<TheaterPostDto.listResponse> result =  findTheaterPostList(title);
+        Collections.sort(result, Collections.reverseOrder());
         return result;
     }
 
