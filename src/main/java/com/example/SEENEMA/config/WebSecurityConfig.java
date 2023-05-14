@@ -69,6 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/api/v1/view-review/{theaterId}/{viewNo}").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/v1/view-review/{theaterId}/{viewNo}").authenticated()
                 .antMatchers("/api/v1/view-review/{theaterId}/{viewNo}/heart").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/v1/user/mypage").authenticated()
                 .anyRequest().permitAll()
 //                .and()
 //                .formLogin()
