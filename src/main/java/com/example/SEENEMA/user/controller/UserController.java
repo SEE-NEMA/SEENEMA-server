@@ -63,9 +63,29 @@ public class UserController {
     @GetMapping("/mypage")
     public ResponseEntity<MyPageDto.MyPageResponse> loadMyPage(HttpServletRequest http){
         Optional<User> user = findUser(http);
-        System.out.println();
         return ResponseEntity.ok(service.loadMyPage(user.get()));
     }
+    @ApiOperation(value = "프로필 수정을 위한 수정 전 정보 보여주는 페이지")
+    @GetMapping("/profile")
+    public ResponseEntity<MyPageDto.MyPageResponse> loadMyProfile(HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.loadMyPage(user.get()));
+    }
+
+    @ApiOperation(value = "프로필 수정 시 닉네임 중복 체크")
+    @PostMapping("/profile/check-nickname")
+    public String checkNickname(HttpServletRequest http, @RequestBody MyPageDto.EditProfileRequest request){
+        Optional<User> user = findUser(http);
+        return service.checkNickname(user.get(), request);
+    }
+
+    @ApiOperation(value = "프로필 수정")
+    @PutMapping("/profile")
+    public ResponseEntity<MyPageDto.MyPageResponse> editProfile(HttpServletRequest http, @RequestBody MyPageDto.EditProfileRequest request){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.editProfile(user.get(), request));
+    }
+
     private Optional<User> findUser(HttpServletRequest request){
         String token = provider.resolveToken(request);
         return repo.findByEmail(provider.getUserPk(token));

@@ -21,19 +21,9 @@ public class MyPageDto {
             this.nickname = user.getNickname();
         }
     }
+    @Getter
     public static class EditProfileRequest{
-        private String email;
         private String nickname;
-    }
-    public static class EditProfileResponse{
-        private Long userId;
-        private String nickname;
-        private String email;   // 가입한 ID
-        public EditProfileResponse(User user){
-            this.userId = user.getUserId();
-            this.nickname = user.getNickname();
-            this.email = user.getEmail();
-        }
     }
     // 내가 쓴 + 내가 좋아요 한 후기 목록은 기존 DTO 사용
     public static class MyCommentList{
