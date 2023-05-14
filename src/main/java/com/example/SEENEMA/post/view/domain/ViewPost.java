@@ -44,6 +44,14 @@ public class ViewPost {
 
     @Column(nullable = false)
     private String content; // 내용
+    @Column
+    private Integer viewScore;   // 시야 점수
+    @Column
+    private Integer seatScore;   // 좌석 점수
+    @Column
+    private Integer lightScore;  // 조명 점수
+    @Column
+    private Integer soundScore;  // 음향 점수
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Image> image;
@@ -59,23 +67,33 @@ public class ViewPost {
     private Long heartCount;
 
     @Builder
-    public ViewPost(User user, Theater theater, String play, String seat, String title, String content, List<Image> image, LocalDateTime createdAt) {
+    public ViewPost(User user, Theater theater, String play, String seat, String title, String content,
+                    Integer viewScore, Integer seatScore, Integer lightScore, Integer soundScore,List<Image> image, LocalDateTime createdAt) {
         this.user = user;
         this.theater = theater;
         this.play = play;
         this.seat = seat;
         this.title = title;
         this.content = content;
+        this.viewScore = viewScore;
+        this.seatScore = seatScore;
+        this.lightScore = lightScore;
+        this.soundScore = soundScore;
         this.image = image;
         this.createdAt = createdAt;
         this.heartCount = 0L;
     }
 
-    public void updateViewPost(String play, String seat, String title, String content, List<Image> image) {
+    public void updateViewPost(String play, String seat, String title, String content,
+                               Integer viewScore, Integer seatScore, Integer lightScore, Integer soundScore,List<Image> image) {
         this.play = play;
         this.seat = seat;
         this.title = title;
         this.content = content;
+        this.viewScore = viewScore;
+        this.seatScore = seatScore;
+        this.lightScore = lightScore;
+        this.soundScore = soundScore;
         this.image = image;
     }
 }
