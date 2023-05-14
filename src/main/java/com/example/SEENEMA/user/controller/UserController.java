@@ -62,9 +62,5 @@ public class UserController {
     public String testAPI(){
         return "hi";
     }
-//
-//    @ApiOperation("로그아웃")
-//    @PostMapping("/logout")
-//    public String logout()
 
 }
