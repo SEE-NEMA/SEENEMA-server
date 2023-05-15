@@ -73,7 +73,7 @@ public class TheaterPostDto {
         }
     }
     @Getter
-    public static class listResponse{ // 공연장 후기 페이지 결과
+    public static class listResponse implements Comparable<listResponse>{ // 공연장 후기 페이지 결과
         private Long post_no;               // 게시글 번호
         private String title;               // 게시글 제목
         private LocalDateTime createdAt;    // 게시글 생성일
@@ -86,6 +86,12 @@ public class TheaterPostDto {
             this.createdAt = theaterPost.getCreatedAt();
             this.nickname = theaterPost.getUser().getNickname();
             this.heartCount = theaterPost.getHeartCount();
+        }
+        @Override
+        public int compareTo(listResponse listDTO){
+            if(listDTO.getPost_no() < post_no) return 1;
+            else if(listDTO.getPost_no() > post_no) return -1;
+            return 0;
         }
     }
     @Getter

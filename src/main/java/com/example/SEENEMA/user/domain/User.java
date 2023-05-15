@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "USER")
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
 @AllArgsConstructor
