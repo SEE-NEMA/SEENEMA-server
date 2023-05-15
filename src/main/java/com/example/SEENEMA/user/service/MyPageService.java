@@ -13,4 +13,5 @@ public interface MyPageService {
     String checkNickname(User user, MyPageDto.EditProfileRequest request);
     MyPageDto.MyPageResponse editProfile(User user, MyPageDto.EditProfileRequest request);
     List<TheaterPostDto.listResponse> listMyTheaterReview(User user);
+    List<MyPageDto.MyCommentList> listMyComment(User user);
 }

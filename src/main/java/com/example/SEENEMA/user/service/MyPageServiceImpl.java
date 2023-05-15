@@ -1,5 +1,7 @@
 package com.example.SEENEMA.user.service;
 
+import com.example.SEENEMA.comment.domain.Comment;
+import com.example.SEENEMA.comment.repository.CommentRepository;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -21,6 +24,7 @@ import java.util.List;
 public class MyPageServiceImpl implements MyPageService{
     private final UserRepository userRepo;
     private final TheaterPostRepository theaterPostRepo;
+    private final CommentRepository commentRepo;
     @Override
     public MyPageDto.MyPageResponse loadMyPage(User user) {
         MyPageDto.MyPageResponse response = new MyPageDto.MyPageResponse(user);
@@ -58,6 +62,19 @@ public class MyPageServiceImpl implements MyPageService{
             TheaterPostDto.listResponse tmp = new TheaterPostDto.listResponse(t);
             response.add(tmp);
         }
+        Collections.sort(response, Collections.reverseOrder());
+        return response;
+    }
+
+    @Override
+    public List<MyPageDto.MyCommentList> listMyComment(User user) {
+        List<MyPageDto.MyCommentList> response = new ArrayList<>();
+        List<Comment> comments = commentRepo.findByUser(user);
+        for(Comment c : comments){
+            MyPageDto.MyCommentList tmp = new MyPageDto.MyCommentList(c);
+            response.add(tmp);
+        }
+        Collections.sort(response, Collections.reverseOrder());
         return response;
     }
 }
