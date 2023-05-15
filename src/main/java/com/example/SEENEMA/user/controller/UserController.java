@@ -46,7 +46,7 @@ public class UserController {
     @ApiOperation(value = "로그인")
     @PostMapping("/login")
     public String login(@RequestBody Map<String, String> user){
-        User member = repo.findByNickname(user.get("email"));
+        User member = repo.findByEmail(user.get("email")).get();
         if(member == null) return "가입되지 않은 아이디 입니다.";
         if(!passwordEncoder.matches(user.get("password"), member.getPassword())){
             return "잘못된 비밀번호 입니다.";
