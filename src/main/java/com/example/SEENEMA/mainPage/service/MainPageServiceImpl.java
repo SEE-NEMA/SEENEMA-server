@@ -57,19 +57,28 @@ public class MainPageServiceImpl implements MainPageService {
     }
 
     // 랭킹 정보 읽어온 후, 알맞게 MainPageDto.readRanking으로 변환 후 return
-    // int rank, String title
-    private List<MainPageDto.readRanking> getRankList(Document doc){ // if isMusical == 1 -> true
+    // int rank, String title, String imgUrl
+    private List<MainPageDto.readRanking> getRankList(Document doc) {
         Elements divClass = doc.select("td.prds");
-        List<MainPageDto.readRanking> result = new ArrayList<>(); // 함수 return 값
-        for(Element e : divClass){
+        List<MainPageDto.readRanking> result = new ArrayList<>();
+
+        for (Element e : divClass) {
             MainPageDto.readRanking tmp = new MainPageDto.readRanking();
             int rank = Integer.parseInt(e.select("div.ranks i").text());
             String title = e.select("div.prdInfo a b").text();
+            String imgUrl = e.select("a").select("img").attr("src");
+
             tmp.setRank(rank);
             tmp.setTitle(title);
+            tmp.setImgUrl(imgUrl);
+
             result.add(tmp);
-            if(rank >= 10) return result;   // 1-10위 정보만 필요
+
+            if (rank >= 10) {
+                return result;
+            }
         }
+
         return null;
     }
 
