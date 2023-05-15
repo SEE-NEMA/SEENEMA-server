@@ -12,6 +12,7 @@ public class MainPageDto {
     public static class readRanking{
         private int rank;      // 순위
         private String title;   // 공연 명
+        private String imgUrl; // 이미지
     }
     @Getter
     @Setter
