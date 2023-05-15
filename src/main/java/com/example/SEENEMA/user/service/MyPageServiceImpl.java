@@ -8,7 +8,9 @@ import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.post.theater.repository.TheaterPostHeartRepository;
 import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
 import com.example.SEENEMA.post.view.domain.ViewPost;
+import com.example.SEENEMA.post.view.domain.ViewPostHeart;
 import com.example.SEENEMA.post.view.dto.ViewPostDto;
+import com.example.SEENEMA.post.view.repository.ViewPostHeartRepository;
 import com.example.SEENEMA.post.view.repository.ViewPostRepository;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.user.dto.MyPageDto;
@@ -32,6 +34,7 @@ public class MyPageServiceImpl implements MyPageService{
     private final TheaterPostHeartRepository theaterHeartRepo;
     private final CommentRepository commentRepo;
     private final ViewPostRepository viewPostRepo;
+    private final ViewPostHeartRepository viewHeartRepo;
     @Override
     public MyPageDto.MyPageResponse loadMyPage(User user) {
         MyPageDto.MyPageResponse response = new MyPageDto.MyPageResponse(user);
@@ -91,6 +94,18 @@ public class MyPageServiceImpl implements MyPageService{
         List<ViewPost> viewPosts = viewPostRepo.findByUser(user);
         for(ViewPost v : viewPosts){
             ViewPostDto.viewListResponse tmp = new ViewPostDto.viewListResponse(v);
+            response.add(tmp);
+        }
+        Collections.sort(response, Collections.reverseOrder());
+        return response;
+    }
+
+    @Override
+    public List<ViewPostDto.viewListResponse> listHeartedViewReview(User user) {
+        List<ViewPostDto.viewListResponse> response = new ArrayList<>();
+        List<ViewPostHeart> viewPostHearts = viewHeartRepo.findByUser(user);
+        for(ViewPostHeart h : viewPostHearts){
+            ViewPostDto.viewListResponse tmp = new ViewPostDto.viewListResponse(h.getViewPost());
             response.add(tmp);
         }
         Collections.sort(response, Collections.reverseOrder());

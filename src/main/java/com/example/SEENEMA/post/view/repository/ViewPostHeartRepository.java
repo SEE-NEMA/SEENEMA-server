@@ -15,4 +15,5 @@ public interface ViewPostHeartRepository extends JpaRepository<ViewPostHeart, Lo
     List<ViewPostHeart> findByViewPost(ViewPost viewPost);
     @Query
     ViewPostHeart findByUserAndViewPost(User user, ViewPost viewPost);
+    List<ViewPostHeart> findByUser(User user);
 }

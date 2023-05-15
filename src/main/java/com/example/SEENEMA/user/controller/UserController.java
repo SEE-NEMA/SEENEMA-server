@@ -111,7 +111,12 @@ public class UserController {
         Optional<User> user = findUser(http);
         return ResponseEntity.ok(service.listHeartedTheaterReview(user.get()));
     }
-
+    @ApiOperation(value = "내가 좋아요한 시야 후기")
+    @GetMapping("/my-heart/view")
+    public ResponseEntity<List<ViewPostDto.viewListResponse>> listHeartedViewReview(HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.listHeartedViewReview(user.get()));
+    }
 
     private Optional<User> findUser(HttpServletRequest request){
         String token = provider.resolveToken(request);
