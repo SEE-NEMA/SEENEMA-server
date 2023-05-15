@@ -34,8 +34,8 @@ public class TheaterPostController {
     @PostMapping("/auth")
     public String authUserForPosting(HttpServletRequest http){
         String token = provider.resolveToken(http);
-        if(token == null) return "FAIL";    // 토큰 자체가 없는 경우 -> fail
-        if(!provider.validateToken(token)) return "FAIL";   // 유효하지 않은 토큰 -> fail
+        if(token == null) return "NO_TOKEN";    // 토큰 자체가 없는 경우 -> fail
+        if(!provider.validateToken(token)) return "INVALIDATE_TOKEN";   // 유효하지 않은 토큰 -> fail
         return "SUCCESS";
     }
 
@@ -65,7 +65,7 @@ public class TheaterPostController {
     @PostMapping("/{postNo}/auth")
     public String authUserForEdit(@PathVariable Long postNo, HttpServletRequest http){
         String basicAuth = authUserForPosting(http); // 기본 인증 : 토큰 유무 / 토큰 유효성
-        if(basicAuth.equals("FAIL")) return "FAIL";
+        if(!basicAuth.equals("SUCCESS")) return basicAuth;
         Optional<User> user = findUser(http);
         return service.authUserForEdit(postNo, user.get().getUserId());
     }
