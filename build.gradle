@@ -39,9 +39,9 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	// 티켓 인식
-	implementation 'net.sourceforge.tess4j:tess4j:3.4.8'
-	implementation 'org.imgscalr:imgscalr-lib:4.2'
-	implementation "org.opencv:opencv-java:4.5.4"
+//	implementation 'net.sourceforge.tess4j:tess4j:3.4.8'
+//	implementation 'org.imgscalr:imgscalr-lib:4.2'
+//	implementation "org.opencv:opencv-java:4.5.4"
 
 
 }
