@@ -84,6 +84,20 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     }
 
     @Override
+    @Transactional
+    public List<TheaterPostDto.listResponse> listTheaterPostByTag(Long tagId){
+        List<TheaterPost> posts = theaterPostRepo.findByTags_TagId(tagId);
+        List<TheaterPostDto.listResponse> result = new ArrayList<>();
+
+        for(TheaterPost t : posts){
+            TheaterPostDto.listResponse tmp = new TheaterPostDto.listResponse(t);
+            result.add(tmp);
+        }
+
+        return result;
+    }
+
+    @Override
     public String authUserForEdit(Long postNo, Long userId){
         // 공연장 후기 게시글 수정/삭제 전 사용자 인증
         Optional<TheaterPost> target = theaterPostRepo.findById(postNo);
@@ -154,7 +168,7 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         // 댓글 가져오기
         List<CommentDto.readComment> comments = findCommentByPostNo(postNo);
         response.setComments(comments);
-       return response;
+        return response;
     }
     @Override
     public TheaterPostDto.addResponse readTheaterPost(Long postNo, Long userId){

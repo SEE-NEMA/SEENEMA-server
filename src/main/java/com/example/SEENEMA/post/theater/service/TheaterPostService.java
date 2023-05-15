@@ -10,6 +10,7 @@ import java.util.List;
 public interface TheaterPostService {
     TheaterPostDto.addResponse createTheaterPost(Long userId, TheaterPostDto.addRequest request);
     List<TheaterPostDto.listResponse> listTheaterPost();
+    List<TheaterPostDto.listResponse> listTheaterPostByTag(Long tagId);
     TheaterPostDto.deleteResponse deleteTheaterPost(Long postNo, Long userId);
     TheaterPostDto.addResponse editTheaterPost(Long userId, Long postNo, TheaterPostDto.addRequest request);
     TheaterPostDto.addResponse readTheaterPost(Long postNo);
