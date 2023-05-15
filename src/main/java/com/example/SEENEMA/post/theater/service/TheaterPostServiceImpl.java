@@ -85,11 +85,11 @@ public class TheaterPostServiceImpl implements TheaterPostService{
 
     @Override
     @Transactional
-    public List<TheaterPostDto.listResponse> listTheaterPostByTag(Long tagId){
-        List<TheaterPost> posts = theaterPostRepo.findByTags_TagId(tagId);
+    public List<TheaterPostDto.listResponse> listTheaterPostByTags(List<Long> tagIds) {
+        List<TheaterPost> posts = theaterPostRepo.findByTags_TagIdIn(tagIds);
         List<TheaterPostDto.listResponse> result = new ArrayList<>();
 
-        for(TheaterPost t : posts){
+        for (TheaterPost t : posts) {
             TheaterPostDto.listResponse tmp = new TheaterPostDto.listResponse(t);
             result.add(tmp);
         }

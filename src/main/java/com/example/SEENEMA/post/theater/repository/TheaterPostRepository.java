@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface TheaterPostRepository extends JpaRepository<TheaterPost, Long> {
-    List<TheaterPost> findByTags_TagId(Long tagId);
+    List<TheaterPost> findByTags_TagIdIn(List<Long> tagId);
 }
