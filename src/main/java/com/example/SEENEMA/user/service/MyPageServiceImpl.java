@@ -1,5 +1,8 @@
 package com.example.SEENEMA.user.service;
 
+import com.example.SEENEMA.post.theater.domain.TheaterPost;
+import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
+import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.user.dto.MyPageDto;
 import com.example.SEENEMA.user.repository.UserRepository;
@@ -8,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -16,6 +20,7 @@ import java.util.List;
 @Service
 public class MyPageServiceImpl implements MyPageService{
     private final UserRepository userRepo;
+    private final TheaterPostRepository theaterPostRepo;
     @Override
     public MyPageDto.MyPageResponse loadMyPage(User user) {
         MyPageDto.MyPageResponse response = new MyPageDto.MyPageResponse(user);
@@ -42,6 +47,17 @@ public class MyPageServiceImpl implements MyPageService{
         userRepo.save(origin);
 
         MyPageDto.MyPageResponse response = new MyPageDto.MyPageResponse(origin);
+        return response;
+    }
+
+    @Override
+    public List<TheaterPostDto.listResponse> listMyTheaterReview(User user) {
+        List<TheaterPostDto.listResponse> response = new ArrayList<>();
+        List<TheaterPost> theaterPosts = theaterPostRepo.findByUser(user);
+        for(TheaterPost t : theaterPosts){
+            TheaterPostDto.listResponse tmp = new TheaterPostDto.listResponse(t);
+            response.add(tmp);
+        }
         return response;
     }
 }

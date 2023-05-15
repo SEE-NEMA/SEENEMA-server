@@ -1,6 +1,7 @@
 package com.example.SEENEMA.user.controller;
 
 import com.example.SEENEMA.jwt.JwtTokenProvider;
+import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.user.dto.MyPageDto;
 import com.example.SEENEMA.user.repository.UserRepository;
@@ -84,6 +85,12 @@ public class UserController {
     public ResponseEntity<MyPageDto.MyPageResponse> editProfile(HttpServletRequest http, @RequestBody MyPageDto.EditProfileRequest request){
         Optional<User> user = findUser(http);
         return ResponseEntity.ok(service.editProfile(user.get(), request));
+    }
+    @ApiOperation(value = "내가 쓴 공연장 후기 목록")
+    @GetMapping("/my-review/theater")
+    public ResponseEntity<List<TheaterPostDto.listResponse>> listMyTheaterReview(HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.listMyTheaterReview(user.get()));
     }
 
     private Optional<User> findUser(HttpServletRequest request){
