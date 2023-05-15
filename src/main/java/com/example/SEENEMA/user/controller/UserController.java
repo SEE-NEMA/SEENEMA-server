@@ -47,12 +47,12 @@ public class UserController {
     @ApiOperation(value = "로그인")
     @PostMapping("/login")
     public String login(@RequestBody Map<String, String> user){
-        User member = repo.findByEmail(user.get("email")).get();
-        if(member == null) return "가입되지 않은 아이디 입니다.";
-        if(!passwordEncoder.matches(user.get("password"), member.getPassword())){
+        Optional<User> member = repo.findByEmail(user.get("email"));
+        if(member.isEmpty()) return "가입되지 않은 아이디 입니다.";
+        if(!passwordEncoder.matches(user.get("password"), member.get().getPassword())){
             return "잘못된 비밀번호 입니다.";
         }
-        return provider.createToken(member.getUsername(), member.getRoles());
+        return provider.createToken(member.get().getUsername(), member.get().getRoles());
     }
     @ApiOperation(value = "인가 테스트")
     @PostMapping("/test/resource")
