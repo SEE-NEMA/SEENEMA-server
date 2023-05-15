@@ -61,6 +61,12 @@ public class TheaterPostController {
         return ResponseEntity.ok(service.listTheaterPost());
     }
 
+    @ApiOperation(value="태그별 게시물 모아보기")
+    @GetMapping("/tags")
+    public ResponseEntity<List<TheaterPostDto.listResponse>> getTheaterPostByTags(@RequestParam List<Long> tagId) {
+        return ResponseEntity.ok(service.listTheaterPostByTags(tagId));
+    }
+
     @ApiOperation(value = "게시글 수정/삭제 시 사용자 인증")
     @PostMapping("/{postNo}/auth")
     public String authUserForEdit(@PathVariable Long postNo, HttpServletRequest http){

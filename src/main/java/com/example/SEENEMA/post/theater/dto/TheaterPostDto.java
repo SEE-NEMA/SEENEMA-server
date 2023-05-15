@@ -79,6 +79,7 @@ public class TheaterPostDto {
         private LocalDateTime createdAt;    // 게시글 생성일
         private String nickname;            // 작성자 닉네임
         private Long heartCount;            // 좋아요 갯수
+        private List<Tag> tags;  // 게시글 태그
 
         public listResponse(TheaterPost theaterPost){
             this.post_no = theaterPost.getPostNo();
@@ -86,6 +87,7 @@ public class TheaterPostDto {
             this.createdAt = theaterPost.getCreatedAt();
             this.nickname = theaterPost.getUser().getNickname();
             this.heartCount = theaterPost.getHeartCount();
+            this.tags = new ArrayList<>(theaterPost.getTags());
         }
         @Override
         public int compareTo(listResponse listDTO){
