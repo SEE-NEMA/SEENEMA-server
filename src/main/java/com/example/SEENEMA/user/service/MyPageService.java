@@ -16,4 +16,5 @@ public interface MyPageService {
     List<TheaterPostDto.listResponse> listMyTheaterReview(User user);
     List<MyPageDto.MyCommentList> listMyComment(User user);
     List<ViewPostDto.viewListResponse> listMyViewReview(User user);
+    List<TheaterPostDto.listResponse> listHeartedTheaterReview(User user);
 }

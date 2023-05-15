@@ -3,7 +3,9 @@ package com.example.SEENEMA.user.service;
 import com.example.SEENEMA.comment.domain.Comment;
 import com.example.SEENEMA.comment.repository.CommentRepository;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
+import com.example.SEENEMA.post.theater.domain.TheaterPostHeart;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
+import com.example.SEENEMA.post.theater.repository.TheaterPostHeartRepository;
 import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
 import com.example.SEENEMA.post.view.domain.ViewPost;
 import com.example.SEENEMA.post.view.dto.ViewPostDto;
@@ -27,6 +29,7 @@ import java.util.List;
 public class MyPageServiceImpl implements MyPageService{
     private final UserRepository userRepo;
     private final TheaterPostRepository theaterPostRepo;
+    private final TheaterPostHeartRepository theaterHeartRepo;
     private final CommentRepository commentRepo;
     private final ViewPostRepository viewPostRepo;
     @Override
@@ -88,6 +91,18 @@ public class MyPageServiceImpl implements MyPageService{
         List<ViewPost> viewPosts = viewPostRepo.findByUser(user);
         for(ViewPost v : viewPosts){
             ViewPostDto.viewListResponse tmp = new ViewPostDto.viewListResponse(v);
+            response.add(tmp);
+        }
+        Collections.sort(response, Collections.reverseOrder());
+        return response;
+    }
+
+    @Override
+    public List<TheaterPostDto.listResponse> listHeartedTheaterReview(User user) {
+        List<TheaterPostDto.listResponse> response = new ArrayList<>();
+        List<TheaterPostHeart> theaterPostHearts = theaterHeartRepo.findByUser(user);
+        for(TheaterPostHeart h : theaterPostHearts){
+            TheaterPostDto.listResponse tmp = new TheaterPostDto.listResponse(h.getTheaterPost());
             response.add(tmp);
         }
         Collections.sort(response, Collections.reverseOrder());
