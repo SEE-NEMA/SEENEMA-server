@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -158,18 +159,20 @@ public class ViewPostServiceImpl implements ViewPostService {
 
     @Override
     public List<ViewPostDto.viewListResponse> getListByTheater(Long theaterId){
-
-        return viewPostRepository.findByTheater_TheaterId(theaterId).stream()
+        List<ViewPostDto.viewListResponse> response = viewPostRepository.findByTheater_TheaterId(theaterId).stream()
                 .map(ViewPostDto.viewListResponse::new)
                 .collect(Collectors.toList());
+        Collections.sort(response, Collections.reverseOrder());
+        return response;
     }
 
     @Override
     public List<ViewPostDto.viewListResponse> getListBySeat(Long theaterId, String seatName){
-
-        return viewPostRepository.findByTheater_TheaterIdAndTitleContaining(theaterId,seatName).stream()
+        List<ViewPostDto.viewListResponse> response = viewPostRepository.findByTheater_TheaterIdAndTitleContaining(theaterId,seatName).stream()
                 .map(ViewPostDto.viewListResponse::new)
                 .collect(Collectors.toList());
+        Collections.sort(response, Collections.reverseOrder());
+        return response;
     }
 
     private ViewPost getViewPost(Long theaterId, Long viewNo) { return viewPostRepository.findByTheater_TheaterIdAndViewNo(theaterId,viewNo); }

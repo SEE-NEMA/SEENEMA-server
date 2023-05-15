@@ -134,7 +134,7 @@ public class ViewPostDto {
 
     /** 게시글 목록을 리턴할 Response 클래스 */
     @Getter
-    public static class viewListResponse{
+    public static class viewListResponse implements Comparable<viewListResponse>{
         private Long viewNo;
         private String nickName;
         private String title;
@@ -149,6 +149,13 @@ public class ViewPostDto {
             this.createdAt = view.getCreatedAt().toString();
             this.heartCount = view.getHeartCount();
             this.viewScore = view.getViewScore();
+        }
+
+        @Override
+        public int compareTo(viewListResponse listDTO) {
+            if(listDTO.getViewNo() < viewNo) return 1;
+            else if(listDTO.getViewNo() > viewNo) return -1;
+            return 0;
         }
     }
 }

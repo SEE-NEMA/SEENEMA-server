@@ -2,6 +2,7 @@ package com.example.SEENEMA.user.controller;
 
 import com.example.SEENEMA.jwt.JwtTokenProvider;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
+import com.example.SEENEMA.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.user.dto.MyPageDto;
 import com.example.SEENEMA.user.repository.UserRepository;
@@ -97,6 +98,12 @@ public class UserController {
     public ResponseEntity<List<MyPageDto.MyCommentList>> listMyComment(HttpServletRequest http){
         Optional<User> user = findUser(http);
         return ResponseEntity.ok(service.listMyComment(user.get()));
+    }
+    @ApiOperation(value = "내가 작성한 시야후기 목록")
+    @GetMapping("/my-review/view")
+    public ResponseEntity<List<ViewPostDto.viewListResponse>> listMyViewReview(HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.listMyViewReview(user.get()));
     }
 
 
