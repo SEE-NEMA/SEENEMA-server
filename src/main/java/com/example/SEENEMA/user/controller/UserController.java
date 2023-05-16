@@ -1,6 +1,8 @@
 package com.example.SEENEMA.user.controller;
 
 import com.example.SEENEMA.jwt.JwtTokenProvider;
+import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
+import com.example.SEENEMA.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.user.dto.MyPageDto;
 import com.example.SEENEMA.user.repository.UserRepository;
@@ -46,12 +48,12 @@ public class UserController {
     @ApiOperation(value = "로그인")
     @PostMapping("/login")
     public String login(@RequestBody Map<String, String> user){
-        User member = repo.findByEmail(user.get("email")).get();
-        if(member == null) return "가입되지 않은 아이디 입니다.";
-        if(!passwordEncoder.matches(user.get("password"), member.getPassword())){
+        Optional<User> member = repo.findByEmail(user.get("email"));
+        if(member.isEmpty()) return "가입되지 않은 아이디 입니다.";
+        if(!passwordEncoder.matches(user.get("password"), member.get().getPassword())){
             return "잘못된 비밀번호 입니다.";
         }
-        return provider.createToken(member.getUsername(), member.getRoles());
+        return provider.createToken(member.get().getUsername(), member.get().getRoles());
     }
     @ApiOperation(value = "인가 테스트")
     @PostMapping("/test/resource")
@@ -84,6 +86,36 @@ public class UserController {
     public ResponseEntity<MyPageDto.MyPageResponse> editProfile(HttpServletRequest http, @RequestBody MyPageDto.EditProfileRequest request){
         Optional<User> user = findUser(http);
         return ResponseEntity.ok(service.editProfile(user.get(), request));
+    }
+    @ApiOperation(value = "내가 쓴 공연장 후기 목록")
+    @GetMapping("/my-review/theater")
+    public ResponseEntity<List<TheaterPostDto.listResponse>> listMyTheaterReview(HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.listMyTheaterReview(user.get()));
+    }
+    @ApiOperation(value = "내가 쓴 공연장 후기 댓글 목록")
+    @GetMapping("/my-review/theater/comment")
+    public ResponseEntity<List<MyPageDto.MyCommentList>> listMyComment(HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.listMyComment(user.get()));
+    }
+    @ApiOperation(value = "내가 작성한 시야후기 목록")
+    @GetMapping("/my-review/view")
+    public ResponseEntity<List<ViewPostDto.viewListResponse>> listMyViewReview(HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.listMyViewReview(user.get()));
+    }
+    @ApiOperation(value = "내가 좋아요한 공연장 후기")
+    @GetMapping("/my-heart/theater")
+    public ResponseEntity<List<TheaterPostDto.listResponse>> listHeartedTheaterReview(HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.listHeartedTheaterReview(user.get()));
+    }
+    @ApiOperation(value = "내가 좋아요한 시야 후기")
+    @GetMapping("/my-heart/view")
+    public ResponseEntity<List<ViewPostDto.viewListResponse>> listHeartedViewReview(HttpServletRequest http){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.listHeartedViewReview(user.get()));
     }
 
     private Optional<User> findUser(HttpServletRequest request){

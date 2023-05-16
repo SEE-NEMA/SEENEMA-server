@@ -26,7 +26,8 @@ public class MyPageDto {
         private String nickname;
     }
     // 내가 쓴 + 내가 좋아요 한 후기 목록은 기존 DTO 사용
-    public static class MyCommentList{
+    @Getter
+    public static class MyCommentList implements Comparable<MyCommentList>{
         private Long postNo;        // 게시글 번호
         private String title;         // 게시글 제목
         private Long commentId;     // comment id
@@ -42,6 +43,13 @@ public class MyPageDto {
             this.content = comment.getContent();
             this.createdAt =comment.getCreatedAt();
             this.editedAt = comment.getEditedAt();
+        }
+
+        @Override
+        public int compareTo(MyCommentList listDTO) {
+            if(listDTO.getCommentId() < commentId) return 1;
+            else if(listDTO.getCommentId() > commentId) return -1;
+            return 0;
         }
     }
 }
