@@ -36,7 +36,7 @@ public class ViewPostController {
     public String authUserForPost(HttpServletRequest http){
         String token = provider.resolveToken(http);
         if(token == null) return "FAIL";    // 토큰 자체가 없는 경우
-         if(!provider.validateToken(token)) return "FAIL";  // 유효하지 않은 토큰인 경우
+        if(!provider.validateToken(token)) return "FAIL";  // 유효하지 않은 토큰인 경우
         return "SUCCESS";
     }
 
