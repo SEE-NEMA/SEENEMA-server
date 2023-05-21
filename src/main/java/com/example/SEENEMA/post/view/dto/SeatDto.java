@@ -46,9 +46,7 @@ public class SeatDto{
                     .image(image)
                     .build();
         }
-
     }
-
 
     /** 게시글 정보를 리턴할 Response 클래스 */
     @Getter
@@ -64,6 +62,8 @@ public class SeatDto{
         private Integer seatScore;   // 좌석 점수
         private Integer lightScore;  // 조명 점수
         private Integer soundScore;  // 음향 점수
+        private Long heartCount;       //좋아요 갯수
+        private Boolean heartedYN;      // 로그인한 사용자의 좋아요 여부
         private List<Image> image;
         private String createdAt;  // 작성일
         private String editedAt; // 수정일
@@ -80,6 +80,8 @@ public class SeatDto{
             this.seatScore = view.getSeatScore();
             this.lightScore = view.getLightScore();
             this.soundScore = view.getSoundScore();
+            this.heartedYN = Boolean.FALSE;
+            this.heartCount = view.getHeartCount();
             this.image = new ArrayList<>(view.getImage());
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
