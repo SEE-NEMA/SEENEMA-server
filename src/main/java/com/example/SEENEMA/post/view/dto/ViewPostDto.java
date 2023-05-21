@@ -78,6 +78,9 @@ public class ViewPostDto {
         private Integer seatScore;   // 좌석 점수
         private Integer lightScore;  // 조명 점수
         private Integer soundScore;  // 음향 점수
+        private Long heartCount;       //좋아요 갯수
+        private Boolean heartedYN;      // 로그인한 사용자의 좋아요 여부
+
         private List<Image> image;
         private String createdAt;  // 작성일
         private String editedAt; // 수정일
@@ -94,6 +97,8 @@ public class ViewPostDto {
             this.seatScore = view.getSeatScore();
             this.lightScore = view.getLightScore();
             this.soundScore = view.getSoundScore();
+            this.heartedYN = Boolean.FALSE;
+            this.heartCount = view.getHeartCount();
             this.image = new ArrayList<>(view.getImage());
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
@@ -116,6 +121,8 @@ public class ViewPostDto {
         private List<Image> image;
         private Long heartCount;       //좋아요 갯수
         private Boolean heartedYN;      // 로그인한 사용자의 좋아요 여부
+        private String createdAt;  // 작성일
+        private String editedAt; // 수정일
 
         public detailResponse(ViewPost view){
             this.viewNo = view.getViewNo();
@@ -129,6 +136,8 @@ public class ViewPostDto {
             this.image = view.getImage();
             this.heartedYN = Boolean.FALSE;
             this.heartCount = view.getHeartCount();
+            this.createdAt = view.getCreatedAt().toString();
+            this.editedAt = view.getEditedAt().toString();
         }
     }
 

@@ -3,8 +3,10 @@ package com.example.SEENEMA.post.view.service;
 import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.post.file.ImageRepository;
 import com.example.SEENEMA.post.view.domain.Seat;
+import com.example.SEENEMA.post.view.domain.SeatHeart;
 import com.example.SEENEMA.post.view.domain.SeatViewPost;
 import com.example.SEENEMA.post.view.dto.SeatDto;
+import com.example.SEENEMA.post.view.repository.SeatHeartRepository;
 import com.example.SEENEMA.post.view.repository.SeatRepository;
 import com.example.SEENEMA.post.view.repository.SeatViewPostRepository;
 import com.example.SEENEMA.post.view.repository.ViewPostHeartRepository;
@@ -32,6 +34,7 @@ public class SeatService {
     private final TheaterRepository theaterRepository;
     private final ImageRepository imageRepository;
     private final ViewPostHeartRepository heartRepository;
+    private final SeatHeartRepository seatHeartRepository;
 
     public static String convertToSeatNumber(int x, int y) {
         String column = String.valueOf(x);  // 열은 x 좌표 그대로 사용
@@ -67,7 +70,7 @@ public class SeatService {
     public SeatDto.detailResponse readViewPost(Long theaterId, Long viewNo){
 
         SeatViewPost view = getSeatViewPost(theaterId,viewNo);
-        //viewPost.setHeartCount((long) heartRepository.findByViewPost(viewPost).size());
+        view.setHeartCount((long) seatHeartRepository.findByViewPost(view).size());
         // 이미지 컬렉션을 명시적으로 초기화
         Hibernate.initialize(view.getImage());
         return new SeatDto.detailResponse(view);
@@ -79,12 +82,12 @@ public class SeatService {
         User u = getUser(userId);
         SeatViewPost v = getSeatViewPost(theaterId, viewNo);
         // 사용자가 이미 좋아요 한 게시글일 경우 detailResponse의 heartedYN
-        //ViewPostHeart tmp = heartRepository.findByUserAndViewPost(u, v);
-//        if(tmp != null){
-//            SeatDto.detailResponse response = readViewPost(theaterId, viewNo);
-//            response.setHeartedYN(Boolean.TRUE);
-//            return  response;
-//        }
+        SeatHeart tmp = seatHeartRepository.findByUserAndViewPost(u, v);
+        if(tmp != null){
+            SeatDto.detailResponse response = readViewPost(theaterId, viewNo);
+            response.setHeartedYN(Boolean.TRUE);
+            return  response;
+        }
         return readViewPost(theaterId, viewNo);
     }
 
