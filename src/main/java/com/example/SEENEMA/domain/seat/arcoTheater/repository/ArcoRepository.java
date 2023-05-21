@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ArcoRepository extends JpaRepository<ArcoSeat, Long> {
     @Query
-    ArcoSeat findByXAndY(Integer x, Integer y);
+    ArcoSeat findByXAndYAndZ(Integer x, Integer y, Integer z);
 }
