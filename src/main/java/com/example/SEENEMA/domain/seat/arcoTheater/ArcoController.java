@@ -31,6 +31,14 @@ public class ArcoController {
     private final JwtTokenProvider provider;
     private final UserRepository userRepo;
 
+    @ApiOperation(value="좌석별 게시물 조회")
+    @GetMapping("/{theaterId}/{x}/{y}")
+    public ResponseEntity getListBySeat(@PathVariable("theaterId") Long theaterId, @PathVariable("x") int x, @PathVariable("y") int y){
+        ArcoSeat seat = arcoRepository.findByXAndY(x, y);
+        Long seatId = seat.getSeatId();
+        return ResponseEntity.ok(viewPostService. getListBySeat(theaterId,seatId));
+    }
+
     @ApiOperation(value = "시야 후기 등록")
     @PostMapping(value="/{theaterId}/{x}/{y}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ArcoDto.addResponse> createViewPost(
@@ -75,20 +83,9 @@ public class ArcoController {
             Optional<User> user = findUser(http);
             return ResponseEntity.ok(viewPostService.readViewPost(theaterId, seatId, viewNo, user.get().getUserId()));
         }
-
     }
 
-    @ApiOperation(value="좌석 조회")
-    @GetMapping("/{theaterId}/search")
-    public ResponseEntity getListBySeat(@PathVariable("theaterId") Long theaterId, @RequestParam(name="q") String seat){
-        return ResponseEntity.ok(viewPostService. getListBySeat(theaterId,seat));
-    }
 
-    @ApiOperation(value="공연장별 후기 조회")
-    @GetMapping("/{theaterId}")
-    public ResponseEntity getListByTheater(@PathVariable("theaterId") Long theaterId){
-        return ResponseEntity.ok(viewPostService. getListByTheater(theaterId));
-    }
     private Optional<User> findUser(HttpServletRequest request){
         String token = provider.resolveToken(request);
         return userRepo.findByEmail(provider.getUserPk(token));
