@@ -33,12 +33,16 @@ public class SeatController {
     private final UserRepository userRepo;
 
     @ApiOperation(value="좌석별 게시물 조회")
-    @GetMapping("/{theaterId}/{x}/{y}")
-    public ResponseEntity getListBySeat(@PathVariable("theaterId") Long theaterId, @PathVariable("x") int x, @PathVariable("y") int y){
+    @GetMapping("/{theaterId}/{x}/{y}/{z}")
+    public ResponseEntity getListBySeat(
+            @PathVariable("theaterId") Long theaterId,
+            @PathVariable("z") int z,
+            @PathVariable("x") int x,
+            @PathVariable("y") int y ) {
 
         /** 아르코 예술극장 */
         if (theaterId == 37) {
-            ArcoSeat seat = arcoRepository.findByXAndY(x, y);
+            ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(arcoService.getListBySeat(theaterId, seatId));
         }
@@ -52,9 +56,10 @@ public class SeatController {
     }
 
     @ApiOperation(value = "시야 후기 등록")
-    @PostMapping(value="/{theaterId}/{x}/{y}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value="/{theaterId}/{z}/{x}/{y}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SeatDto.addResponse> createViewPost(
             @PathVariable("theaterId") Long theaterId,
+            @PathVariable("z") int z,
             @PathVariable("x") int x,
             @PathVariable("y") int y,
             @RequestParam(value = "images", required = false) List<MultipartFile> images,
@@ -73,7 +78,7 @@ public class SeatController {
 
         /** 아르코 예술극장 */
         if (theaterId == 37) {
-            ArcoSeat seat = arcoRepository.findByXAndY(x, y);
+            ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(arcoService.createViewPost(user.get().getUserId(), theaterId, seatId, viewDto));
         }
@@ -87,9 +92,10 @@ public class SeatController {
     }
 
     @ApiOperation(value="시야 리뷰 상세화면")
-    @GetMapping("/{theaterId}/{x}/{y}/{viewNo}")
+    @GetMapping("/{theaterId}/{z}/{x}/{y}/{viewNo}")
     public ResponseEntity readViewPost(
             @PathVariable("theaterId") Long theaterId,
+            @PathVariable("z") int z,
             @PathVariable("x") int x,
             @PathVariable("y") int y,
             @PathVariable("viewNo") Long viewNo,
@@ -99,7 +105,7 @@ public class SeatController {
 
         /** 아르코 예술극장 */
         if (theaterId == 37) {
-            ArcoSeat seat = arcoRepository.findByXAndY(x, y);
+            ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
             seatId = seat.getSeatId();
             return ResponseEntity.ok(arcoService.readViewPost(theaterId, seatId, viewNo));
         }
