@@ -28,17 +28,16 @@ public class TheaterController {
         return ResponseEntity.ok(theaterService.getTheater());
     }
 
-    @ApiOperation(value="좌석 페이지 공연장 조회")
-    @GetMapping("/seats/search")
-    public ResponseEntity searchSeatTheater(@RequestParam(name="q") String theaterName){
-        return ResponseEntity.ok(theaterService. searchTheater(theaterName));
-    }
 
     @ApiOperation(value="좌석 페이지 공연장 목록")
     @GetMapping("/seats")
     public ResponseEntity getSeatTheater(){
-        return ResponseEntity.ok(theaterService.getTheater());
+        return ResponseEntity.ok(theaterService.getSeatTheater());
     }
 
-
+    @ApiOperation(value="좌석 페이지 공연장 조회")
+    @GetMapping("/seats/search")
+    public ResponseEntity searchSeatTheater(@RequestParam(name="q") String theaterName){
+        return ResponseEntity.ok(theaterService. searchSeatTheater(theaterName));
+    }
 }

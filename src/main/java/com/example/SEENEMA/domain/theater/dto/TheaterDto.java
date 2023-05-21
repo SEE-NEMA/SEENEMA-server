@@ -33,4 +33,16 @@ public class TheaterDto {
             this.detailUrl = theater.getDetailUrl();
         }
     }
+
+    /** 좌석 페이지에서 검색한 공연장을 리턴할 Response 클래스 */
+    @Getter
+    public static class seatTheaterResponse{
+        private Long theaterId;
+        private String theaterName;
+
+        public seatTheaterResponse(Theater theater){
+            this.theaterId = theater.getTheaterId();
+            this.theaterName = theater.getTheaterName();
+        }
+    }
 }
