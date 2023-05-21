@@ -36,11 +36,12 @@ public class ArcoService {
     private final ViewPostHeartRepository heartRepository;
     private final ArcoHeartRepository arcoHeartRepository;
 
-    public static String convertToSeatNumber(int x, int y) {
+    public static String convertToSeatNumber(int x, int y, int z) {
         String column = String.valueOf(x);  // 열은 x 좌표 그대로 사용
         String number = String.valueOf(y);  // 번호는 y 좌표 그대로 사용
+        String floor = String.valueOf(z); // 층은 z 좌표 그대로 사용
 
-        return column + "열 " + number + "번";
+        return floor + "층 " + column + "열 " + number + "번";
     }
 
     @Transactional

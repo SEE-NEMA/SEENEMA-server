@@ -21,11 +21,12 @@ public class ArcoSeat {
     private Long seatId;
     private int x;
     private int y;
+    private int z;
     @OneToMany(mappedBy = "arcoSeat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArcoPost> arcoPosts = new ArrayList<>();
 
     public String getSeatNumber() {
-        return ArcoService.convertToSeatNumber(x, y);
+        return ArcoService.convertToSeatNumber(x, y, z);
     }
 
 }
