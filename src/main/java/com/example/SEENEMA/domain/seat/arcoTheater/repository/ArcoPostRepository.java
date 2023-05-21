@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ArcoPostRepository extends JpaRepository<ArcoPost, Long> {
-    List<ArcoPost> findByTheater_TheaterId(Long theaterId);
-    List<ArcoPost> findByTheater_TheaterIdAndTitleContaining(Long theaterId, String seatName);
-    ArcoPost findByTheater_TheaterIdAndViewNo(Long theaterId, Long viewNo);
+    ArcoPost findByTheater_TheaterIdAndArcoSeat_SeatIdAndViewNo(Long theaterId, Long seatId, Long viewNo);
+    List<ArcoPost> findByTheater_TheaterIdAndArcoSeat_SeatId(Long theaterId, Long seatId);
     List<ArcoPost> findByUser(User user);
 }

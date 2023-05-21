@@ -35,4 +35,23 @@ public class TheaterServiceImpl implements TheaterService{
         }
         return theaterLists;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TheaterDto.seatTheaterResponse> searchSeatTheater(String theaterName){
+        return theaterRepository.findByTheaterNameContaining(theaterName).stream()
+                .map(TheaterDto.seatTheaterResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TheaterDto.seatTheaterResponse> getSeatTheater() {
+        List<Theater> theaters = theaterRepository.findAll();
+        List<TheaterDto.seatTheaterResponse> theaterLists = new ArrayList<>();
+        for (Theater theater : theaters) {
+            TheaterDto.seatTheaterResponse theaterResponse = new TheaterDto.seatTheaterResponse(theater);
+            theaterLists.add(theaterResponse);
+        }
+        return theaterLists;
+    }
 }

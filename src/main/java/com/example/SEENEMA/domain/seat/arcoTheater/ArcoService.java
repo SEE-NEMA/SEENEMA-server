@@ -66,9 +66,10 @@ public class ArcoService {
     }
 
     @Transactional(readOnly = true)
-    public ArcoDto.detailResponse readViewPost(Long theaterId, Long viewNo){
+    public ArcoDto.detailResponse readViewPost(Long theaterId, Long seatId,Long viewNo){
 
-        ArcoPost view = getSeatViewPost(theaterId,viewNo);
+        ArcoPost view = getSeatViewPost(theaterId,seatId, viewNo);
+
         view.setHeartCount((long) arcoHeartRepository.findByViewPost(view).size());
         // 이미지 컬렉션을 명시적으로 초기화
         Hibernate.initialize(view.getImage());
@@ -76,39 +77,31 @@ public class ArcoService {
     }
 
     @Transactional
-    public ArcoDto.detailResponse readViewPost(Long theaterId, Long viewNo, Long userId){
+    public ArcoDto.detailResponse readViewPost(Long theaterId, Long seatId, Long viewNo, Long userId){
         // 로그인 한 사용자가 게시글을 조회하는 경우 -> 좋아요 여부 판단 필요
         User u = getUser(userId);
-        ArcoPost v = getSeatViewPost(theaterId, viewNo);
+        ArcoPost v = getSeatViewPost(theaterId,seatId, viewNo);
         // 사용자가 이미 좋아요 한 게시글일 경우 detailResponse의 heartedYN
         ArcoHeart tmp = arcoHeartRepository.findByUserAndViewPost(u, v);
         if(tmp != null){
-            ArcoDto.detailResponse response = readViewPost(theaterId, viewNo);
+            ArcoDto.detailResponse response = readViewPost(theaterId, seatId, viewNo);
             response.setHeartedYN(Boolean.TRUE);
             return  response;
         }
-        return readViewPost(theaterId, viewNo);
+        return readViewPost(theaterId, seatId, viewNo);
     }
 
-
-    public List<ArcoDto.seatViewList> getListByTheater(Long theaterId){
-        List<ArcoDto.seatViewList> response = arcoPostRepository.findByTheater_TheaterId(theaterId).stream()
+    public List<ArcoDto.seatViewList> getListBySeat(Long theaterId, Long seatId){
+        List<ArcoDto.seatViewList> response = arcoPostRepository.findByTheater_TheaterIdAndArcoSeat_SeatId(theaterId,seatId).stream()
                 .map(ArcoDto.seatViewList::new)
                 .collect(Collectors.toList());
         Collections.sort(response, Collections.reverseOrder());
         return response;
     }
 
-
-    public List<ArcoDto.seatViewList> getListBySeat(Long theaterId, String seatName){
-        List<ArcoDto.seatViewList> response = arcoPostRepository.findByTheater_TheaterIdAndTitleContaining(theaterId,seatName).stream()
-                .map(ArcoDto.seatViewList::new)
-                .collect(Collectors.toList());
-        Collections.sort(response, Collections.reverseOrder());
-        return response;
+    private ArcoPost getSeatViewPost(Long theaterId, Long seatId, Long viewNo) {
+        return arcoPostRepository.findByTheater_TheaterIdAndArcoSeat_SeatIdAndViewNo(theaterId,seatId,viewNo);
     }
-
-    private ArcoPost getSeatViewPost(Long theaterId, Long viewNo) { return arcoPostRepository.findByTheater_TheaterIdAndViewNo(theaterId,viewNo); }
 
     private User getUser(Long userId){
         return userRepository.findById(userId).orElseThrow();
