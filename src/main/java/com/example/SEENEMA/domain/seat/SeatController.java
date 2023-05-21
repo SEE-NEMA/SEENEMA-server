@@ -3,6 +3,9 @@ package com.example.SEENEMA.domain.seat;
 import com.example.SEENEMA.domain.post.file.Image;
 import com.example.SEENEMA.domain.post.file.ImageService;
 import com.example.SEENEMA.domain.seat.arcoTheater.ArcoService;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.ShinhanService;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanSeat;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanRepository;
 import com.example.SEENEMA.domain.user.domain.User;
 import com.example.SEENEMA.global.jwt.JwtTokenProvider;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoSeat;
@@ -28,6 +31,8 @@ import java.util.Optional;
 public class SeatController {
     private final ArcoRepository arcoRepository;
     private final ArcoService arcoService;
+    private final ShinhanRepository shinhanRepository;
+    private final ShinhanService shinhanService;
     private final ImageService imageService;
     private final JwtTokenProvider provider;
     private final UserRepository userRepo;
@@ -82,6 +87,9 @@ public class SeatController {
             //블루스퀘어 seat = 블루스퀘어Repository.findByXAndY(x, y);
             //Long seatId = seat.getSeatId();
             //return ResponseEntity.ok(블루스퀘어Service.createViewPost(user.get().getUserId(), theaterId, seatId, viewDto));
+            ShinhanSeat seat =shinhanRepository.findByXAndY(x,y);
+            Long seatId = seat.getSeatId();
+            return ResponseEntity.ok(shinhanService.createViewPost(user.get().getUserId(), theaterId, seatId, viewDto));
         }
         return ResponseEntity.notFound().build();
     }

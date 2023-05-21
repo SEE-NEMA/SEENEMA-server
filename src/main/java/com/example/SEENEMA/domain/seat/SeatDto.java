@@ -1,6 +1,7 @@
 package com.example.SEENEMA.domain.seat;
 
 import com.example.SEENEMA.domain.post.file.Image;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanPost;
 import com.example.SEENEMA.domain.user.domain.User;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoSeat;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoPost;
@@ -22,7 +23,7 @@ public class SeatDto {
         private User user; // 작성자 id
         private Theater theater; // 공연장
         private String play; // 공연
-        private ArcoSeat arcoSeat; // 좌석
+//        private Seat seat; // 좌석
         private String title; // 제목
         private String content; // 내용
         private Integer viewScore;   // 시야 점수
@@ -31,12 +32,33 @@ public class SeatDto {
         private Integer soundScore;  // 음향 점수
         private List<Image> image; // 이미지 url
 
-        public ArcoPost toEntity(){
+        public ArcoPost toArcoPostEntity(){
             return ArcoPost.builder()
                     .user(user)
                     .theater(theater)
                     .play(play)
-                    .arcoSeat(arcoSeat)
+//                    .arcoSeat(seat)
+                    .title(title)
+                    .content(content)
+                    .viewScore(viewScore)
+                    .seatScore(seatScore)
+                    .lightScore(lightScore)
+                    .soundScore(soundScore)
+                    .image(image)
+                    .build();
+        }
+        /*
+        public ShinhanPost toShinhanPostEntity(){
+            return ShinhanPost.builder()
+                    .user.....;
+        }
+        */
+        public ShinhanPost toShinhanPostEntity(){
+            return ShinhanPost.builder()
+                    .user(user)
+                    .theater(theater)
+                    .play(play)
+//                    .shinhanSeat(seat)
                     .title(title)
                     .content(content)
                     .viewScore(viewScore)
@@ -50,6 +72,7 @@ public class SeatDto {
 
     /** 게시글 정보를 리턴할 Response 클래스 */
     @Getter
+    @Setter
     public static class addResponse{
         private Long userId; // 작성자 id
         private String nickName; // 작성자 닉네임
@@ -85,7 +108,25 @@ public class SeatDto {
             this.image = new ArrayList<>(view.getImage());
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
-
+        }
+        //public addResponse(ShinhanPost view){}
+        public addResponse(ShinhanPost view){
+            this.userId = view.getUser().getUserId();
+            this.nickName = view.getUser().getNickname();
+            this.theaterName = view.getTheater().getTheaterName();
+            this.play = view.getPlay();
+            this.seatName = view.getShinhanSeat().getSeatNumber();
+            this.title = view.getTitle();
+            this.content = view.getContent();
+            this.viewScore = view.getViewScore();
+            this.seatScore = view.getSeatScore();
+            this.lightScore = view.getLightScore();
+            this.soundScore = view.getSoundScore();
+            this.heartedYN = Boolean.FALSE;
+            this.heartCount = view.getHeartCount();
+            this.image = new ArrayList<>(view.getImage());
+            this.createdAt = view.getCreatedAt().toString();
+            this.editedAt = view.getEditedAt().toString();
         }
     }
 
@@ -120,6 +161,7 @@ public class SeatDto {
             this.heartedYN = Boolean.FALSE;
             this.heartCount = view.getHeartCount();
         }
+        //public detailResponse(ShinhanPost view){}
     }
 
     /** 게시글 목록을 리턴할 Response 클래스 */
@@ -140,6 +182,7 @@ public class SeatDto {
             this.heartCount = view.getHeartCount();
             this.viewScore = view.getViewScore();
         }
+        //public seatViewList(ShinhanPost view){}
 
         @Override
         public int compareTo(seatViewList listDTO) {

@@ -52,10 +52,11 @@ public class ArcoService {
 
         requestDto.setUser(user);
         requestDto.setTheater(theater);
-        requestDto.setArcoSeat(arcoSeat);
+//        requestDto.setArcoSeat(arcoSeat);
         requestDto.setImage(images);
 
-        ArcoPost view = requestDto.toEntity();
+        ArcoPost view = requestDto.toArcoPostEntity();
+        view.setArcoSeat(arcoSeat); // requestDto에 Seat 정보 지워서 설정 따로 필요
 
         // ViewPost 엔티티에 저장된 Image 엔티티들을 영속화
         List<Image> persistedImages = new ArrayList<>();
