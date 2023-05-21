@@ -1,5 +1,6 @@
 package com.example.SEENEMA.domain.seat.arcoTheater;
 
+import com.example.SEENEMA.domain.seat.SeatDto;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoHeart;
 import com.example.SEENEMA.domain.seat.arcoTheater.repository.ArcoHeartRepository;
 import com.example.SEENEMA.domain.seat.arcoTheater.repository.ArcoPostRepository;
@@ -43,7 +44,7 @@ public class ArcoService {
     }
 
     @Transactional
-    public ArcoDto.addResponse createViewPost(Long userId, Long theaterId, Long seatId, ArcoDto.addRequest requestDto){
+    public SeatDto.addResponse createViewPost(Long userId, Long theaterId, Long seatId, SeatDto.addRequest requestDto){
         User user = getUser(userId);
         Theater theater = getTheater(theaterId);
         ArcoSeat arcoSeat = getSeat(seatId);
@@ -62,38 +63,38 @@ public class ArcoService {
             persistedImages.add(imageRepository.save(image));
         }
         view.setImage(persistedImages);
-        return new ArcoDto.addResponse(arcoPostRepository.save(view));
+        return new SeatDto.addResponse(arcoPostRepository.save(view));
     }
 
     @Transactional(readOnly = true)
-    public ArcoDto.detailResponse readViewPost(Long theaterId, Long seatId,Long viewNo){
+    public SeatDto.detailResponse readViewPost(Long theaterId, Long seatId, Long viewNo){
 
         ArcoPost view = getSeatViewPost(theaterId,seatId, viewNo);
 
         view.setHeartCount((long) arcoHeartRepository.findByViewPost(view).size());
         // 이미지 컬렉션을 명시적으로 초기화
         Hibernate.initialize(view.getImage());
-        return new ArcoDto.detailResponse(view);
+        return new SeatDto.detailResponse(view);
     }
 
     @Transactional
-    public ArcoDto.detailResponse readViewPost(Long theaterId, Long seatId, Long viewNo, Long userId){
+    public SeatDto.detailResponse readViewPost(Long theaterId, Long seatId, Long viewNo, Long userId){
         // 로그인 한 사용자가 게시글을 조회하는 경우 -> 좋아요 여부 판단 필요
         User u = getUser(userId);
         ArcoPost v = getSeatViewPost(theaterId,seatId, viewNo);
         // 사용자가 이미 좋아요 한 게시글일 경우 detailResponse의 heartedYN
         ArcoHeart tmp = arcoHeartRepository.findByUserAndViewPost(u, v);
         if(tmp != null){
-            ArcoDto.detailResponse response = readViewPost(theaterId, seatId, viewNo);
+            SeatDto.detailResponse response = readViewPost(theaterId, seatId, viewNo);
             response.setHeartedYN(Boolean.TRUE);
             return  response;
         }
         return readViewPost(theaterId, seatId, viewNo);
     }
 
-    public List<ArcoDto.seatViewList> getListBySeat(Long theaterId, Long seatId){
-        List<ArcoDto.seatViewList> response = arcoPostRepository.findByTheater_TheaterIdAndArcoSeat_SeatId(theaterId,seatId).stream()
-                .map(ArcoDto.seatViewList::new)
+    public List<SeatDto.seatViewList> getListBySeat(Long theaterId, Long seatId){
+        List<SeatDto.seatViewList> response = arcoPostRepository.findByTheater_TheaterIdAndArcoSeat_SeatId(theaterId,seatId).stream()
+                .map(SeatDto.seatViewList::new)
                 .collect(Collectors.toList());
         Collections.sort(response, Collections.reverseOrder());
         return response;
