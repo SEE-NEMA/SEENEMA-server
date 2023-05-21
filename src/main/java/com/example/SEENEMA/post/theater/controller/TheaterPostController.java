@@ -1,6 +1,6 @@
 package com.example.SEENEMA.post.theater.controller;
 
-import com.example.SEENEMA.comment.dto.CommentDto;
+import com.example.SEENEMA.post.comment.dto.CommentDto;
 import com.example.SEENEMA.jwt.JwtTokenProvider;
 import com.example.SEENEMA.post.file.ImageService;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
@@ -10,7 +10,6 @@ import com.example.SEENEMA.user.domain.User;
 import com.example.SEENEMA.user.repository.UserRepository;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

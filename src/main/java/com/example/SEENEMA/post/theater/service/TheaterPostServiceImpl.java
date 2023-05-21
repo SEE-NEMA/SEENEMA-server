@@ -1,8 +1,8 @@
 package com.example.SEENEMA.post.theater.service;
 
-import com.example.SEENEMA.comment.domain.Comment;
-import com.example.SEENEMA.comment.dto.CommentDto;
-import com.example.SEENEMA.comment.repository.CommentRepository;
+import com.example.SEENEMA.post.comment.domain.Comment;
+import com.example.SEENEMA.post.comment.dto.CommentDto;
+import com.example.SEENEMA.post.comment.repository.CommentRepository;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
 import com.example.SEENEMA.post.theater.domain.TheaterPostHeart;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;
@@ -10,8 +10,8 @@ import com.example.SEENEMA.post.theater.repository.TheaterPostHeartRepository;
 import com.example.SEENEMA.post.theater.repository.TheaterPostRepository;
 import com.example.SEENEMA.post.file.Image;
 import com.example.SEENEMA.post.file.ImageRepository;
-import com.example.SEENEMA.tag.domain.Tag;
-import com.example.SEENEMA.tag.repository.TagRepository;
+import com.example.SEENEMA.post.tag.domain.Tag;
+import com.example.SEENEMA.post.tag.repository.TagRepository;
 import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.theater.repository.TheaterRepository;
 import com.example.SEENEMA.user.domain.User;

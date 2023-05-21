@@ -1,6 +1,6 @@
-package com.example.SEENEMA.tag.repository;
+package com.example.SEENEMA.post.tag.repository;
 
-import com.example.SEENEMA.tag.domain.Tag;
+import com.example.SEENEMA.post.tag.domain.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

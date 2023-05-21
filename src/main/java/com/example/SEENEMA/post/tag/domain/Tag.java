@@ -1,4 +1,4 @@
-package com.example.SEENEMA.tag.domain;
+package com.example.SEENEMA.post.tag.domain;
 
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
 import com.fasterxml.jackson.annotation.JsonIgnore;

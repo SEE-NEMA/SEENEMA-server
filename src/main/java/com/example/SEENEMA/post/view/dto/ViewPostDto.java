@@ -145,6 +145,7 @@ public class ViewPostDto {
     @Getter
     public static class viewListResponse implements Comparable<viewListResponse>{
         private Long viewNo;
+        private Long theaterId;
         private String nickName;
         private String title;
         private String createdAt;
@@ -153,6 +154,7 @@ public class ViewPostDto {
 
         public viewListResponse(ViewPost view){
             this.viewNo = view.getViewNo();
+            this.theaterId = view.getTheater().getTheaterId();
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();

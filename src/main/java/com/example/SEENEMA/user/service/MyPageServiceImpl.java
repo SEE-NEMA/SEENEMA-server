@@ -1,7 +1,7 @@
 package com.example.SEENEMA.user.service;
 
-import com.example.SEENEMA.comment.domain.Comment;
-import com.example.SEENEMA.comment.repository.CommentRepository;
+import com.example.SEENEMA.post.comment.domain.Comment;
+import com.example.SEENEMA.post.comment.repository.CommentRepository;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
 import com.example.SEENEMA.post.theater.domain.TheaterPostHeart;
 import com.example.SEENEMA.post.theater.dto.TheaterPostDto;

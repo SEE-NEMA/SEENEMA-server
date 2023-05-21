@@ -1,6 +1,6 @@
-package com.example.SEENEMA.comment.repository;
+package com.example.SEENEMA.post.comment.repository;
 
-import com.example.SEENEMA.comment.domain.Comment;
+import com.example.SEENEMA.post.comment.domain.Comment;
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
 import com.example.SEENEMA.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

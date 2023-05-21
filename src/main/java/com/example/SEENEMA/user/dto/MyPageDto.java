@@ -1,6 +1,6 @@
 package com.example.SEENEMA.user.dto;
 
-import com.example.SEENEMA.comment.domain.Comment;
+import com.example.SEENEMA.post.comment.domain.Comment;
 import com.example.SEENEMA.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;

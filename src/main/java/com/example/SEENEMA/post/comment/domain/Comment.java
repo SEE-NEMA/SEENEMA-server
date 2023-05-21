@@ -1,4 +1,4 @@
-package com.example.SEENEMA.comment.domain;
+package com.example.SEENEMA.post.comment.domain;
 
 import com.example.SEENEMA.post.theater.domain.TheaterPost;
 import com.example.SEENEMA.user.domain.User;

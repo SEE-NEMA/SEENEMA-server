@@ -1,7 +1,7 @@
 package com.example.SEENEMA.post.theater.domain;
 
 import com.example.SEENEMA.post.file.Image;
-import com.example.SEENEMA.tag.domain.Tag;
+import com.example.SEENEMA.post.tag.domain.Tag;
 import com.example.SEENEMA.theater.domain.Theater;
 import com.example.SEENEMA.user.domain.User;
 import lombok.*;
