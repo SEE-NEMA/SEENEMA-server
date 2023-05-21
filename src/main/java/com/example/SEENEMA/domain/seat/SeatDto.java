@@ -1,4 +1,4 @@
-package com.example.SEENEMA.domain.seat.arcoTheater;
+package com.example.SEENEMA.domain.seat;
 
 import com.example.SEENEMA.domain.post.file.Image;
 import com.example.SEENEMA.domain.user.domain.User;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ArcoDto {
+public class SeatDto {
 
 /** 게시글 등록을 처리할 Request 클래스 */
     @Getter
