@@ -31,21 +31,20 @@ public class ArcoController {
     private final JwtTokenProvider provider;
     private final UserRepository userRepo;
 
-    @GetMapping("/{id}")
-    public ArcoSeat getSeat(@PathVariable("id") Long id) {
-
-        return arcoRepository.findById(id).orElse(null);
-    }
-
     @ApiOperation(value = "시야 후기 등록")
-    @PostMapping(value="/{theaterId}/upload/{seatId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value="/{theaterId}/{x}/{y}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ArcoDto.addResponse> createViewPost(
             @PathVariable("theaterId") Long theaterId,
-            @PathVariable("seatId") Long seatId,
+            @PathVariable("x") int x,
+            @PathVariable("y") int y,
             @RequestParam(value = "images", required = false) List<MultipartFile> images,
             @ModelAttribute ArcoDto.addRequest viewDto, HttpServletRequest http) {
+
         Optional<User> user = findUser(http); // 토큰 읽어서 유저 정보 읽기
         List<Image> imgUrls = null;
+
+        ArcoSeat seat = arcoRepository.findByXAndY(x, y);
+        Long seatId = seat.getSeatId();
 
         if(images != null && !images.isEmpty()) {
             imgUrls = imageService.uploadFiles(images);
@@ -58,16 +57,25 @@ public class ArcoController {
     }
 
     @ApiOperation(value="시야 리뷰 상세화면")
-    @GetMapping("/{theaterId}/{viewNo}")
-    public ResponseEntity readViewPost(@PathVariable("theaterId") Long theaterId, @PathVariable("viewNo") Long viewNo, HttpServletRequest http){
+    @GetMapping("/{theaterId}/{x}/{y}/{viewNo}")
+    public ResponseEntity readViewPost(
+            @PathVariable("theaterId") Long theaterId,
+            @PathVariable("x") int x,
+            @PathVariable("y") int y,
+            @PathVariable("viewNo") Long viewNo,
+            HttpServletRequest http){
+
+        ArcoSeat seat = arcoRepository.findByXAndY(x, y);
+        Long seatId = seat.getSeatId();
+
         // 비로그인과 로그인 상태 구분
         String token =provider.resolveToken(http);
-        if(token == null) return ResponseEntity.ok(viewPostService.readViewPost(theaterId, viewNo));
-//        return ResponseEntity.ok(viewPostService.readViewPost(theaterId,viewNo));
+        if(token == null) return ResponseEntity.ok(viewPostService.readViewPost(theaterId,seatId, viewNo));
         else{
             Optional<User> user = findUser(http);
-            return ResponseEntity.ok(viewPostService.readViewPost(theaterId, viewNo, user.get().getUserId()));
+            return ResponseEntity.ok(viewPostService.readViewPost(theaterId, seatId, viewNo, user.get().getUserId()));
         }
+
     }
 
     @ApiOperation(value="좌석 조회")
