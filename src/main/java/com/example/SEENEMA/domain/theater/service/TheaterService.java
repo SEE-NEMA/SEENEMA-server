@@ -9,4 +9,6 @@ import java.util.List;
 public interface TheaterService {
     List<TheaterDto.theaterResponse> searchTheater(String theaterName);
     List<TheaterDto.theaterList> getTheater();
+    List<TheaterDto.theaterResponse> searchSeatTheater(String theaterName);
+    List<TheaterDto.theaterList> getSeatTheater();
 }
