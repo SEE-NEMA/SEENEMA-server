@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ShinhanRepository extends JpaRepository<ShinhanSeat, Long> {
     @Query
-    ShinhanSeat findByXAndY(Integer x, Integer y);
+    ShinhanSeat findByXAndYAndZ(Integer x, Integer y, Integer z);
 }

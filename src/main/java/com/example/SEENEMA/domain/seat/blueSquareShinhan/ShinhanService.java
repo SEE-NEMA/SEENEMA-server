@@ -28,11 +28,12 @@ public class ShinhanService {
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
     private final ImageRepository imageRepository;
-    public static String convertToSeatNumber(Integer x, Integer y) {
+    public static String convertToSeatNumber(int x, int y, int z) {
         String column = String.valueOf(x);  // 열은 x 좌표 그대로 사용
         String number = String.valueOf(y);  // 번호는 y 좌표 그대로 사용
+        String floor = String.valueOf(z); // 층은 z 좌표 그대로 사용
 
-        return column + "열 " + number + "번";
+        return floor + "층 " + column + "열 " + number + "번";
     }
     public SeatDto.addResponse createViewPost(Long userId, Long theaterId, Long seatId, SeatDto.addRequest request){
         User user = getUser(userId);

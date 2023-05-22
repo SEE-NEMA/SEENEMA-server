@@ -38,7 +38,7 @@ public class SeatController {
     private final UserRepository userRepo;
 
     @ApiOperation(value="좌석별 게시물 조회")
-    @GetMapping("/{theaterId}/{x}/{y}/{z}")
+    @GetMapping("/{theaterId}/{z}/{x}/{y}")
     public ResponseEntity getListBySeat(
             @PathVariable("theaterId") Long theaterId,
             @PathVariable("z") int z,
@@ -47,6 +47,7 @@ public class SeatController {
 
         /** 아르코 예술극장 */
         if (theaterId == 37) {
+//            System.out.println(x+" / "+y+" / "+z);
             ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(arcoService.getListBySeat(theaterId, seatId));
@@ -89,10 +90,7 @@ public class SeatController {
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
-            //블루스퀘어 seat = 블루스퀘어Repository.findByXAndY(x, y);
-            //Long seatId = seat.getSeatId();
-            //return ResponseEntity.ok(블루스퀘어Service.createViewPost(user.get().getUserId(), theaterId, seatId, viewDto));
-            ShinhanSeat seat =shinhanRepository.findByXAndY(x,y);
+            ShinhanSeat seat =shinhanRepository.findByXAndYAndZ(x, y, z);
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(shinhanService.createViewPost(user.get().getUserId(), theaterId, seatId, viewDto));
         }
