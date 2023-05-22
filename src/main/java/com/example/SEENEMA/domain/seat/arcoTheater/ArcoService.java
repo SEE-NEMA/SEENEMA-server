@@ -9,7 +9,6 @@ import com.example.SEENEMA.domain.post.file.ImageRepository;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoSeat;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoPost;
 import com.example.SEENEMA.domain.seat.arcoTheater.repository.ArcoRepository;
-import com.example.SEENEMA.domain.post.view.repository.ViewPostHeartRepository;
 import com.example.SEENEMA.domain.theater.domain.Theater;
 import com.example.SEENEMA.domain.theater.repository.TheaterRepository;
 import com.example.SEENEMA.domain.user.domain.User;
@@ -33,7 +32,6 @@ public class ArcoService {
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
     private final ImageRepository imageRepository;
-    private final ViewPostHeartRepository heartRepository;
     private final ArcoHeartRepository arcoHeartRepository;
 
     public static String convertToSeatNumber(int x, int y, int z) {
@@ -53,10 +51,10 @@ public class ArcoService {
 
         requestDto.setUser(user);
         requestDto.setTheater(theater);
-        requestDto.setArcoSeat(arcoSeat);
         requestDto.setImage(images);
 
-        ArcoPost view = requestDto.toEntity();
+        ArcoPost view = requestDto.toArcoPostEntity();
+        view.setArcoSeat(arcoSeat);
 
         // ViewPost 엔티티에 저장된 Image 엔티티들을 영속화
         List<Image> persistedImages = new ArrayList<>();

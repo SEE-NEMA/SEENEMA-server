@@ -22,7 +22,6 @@ public class SeatDto {
         private User user; // 작성자 id
         private Theater theater; // 공연장
         private String play; // 공연
-        private ArcoSeat arcoSeat; // 좌석
         private String title; // 제목
         private String content; // 내용
         private Integer viewScore;   // 시야 점수
@@ -31,12 +30,11 @@ public class SeatDto {
         private Integer soundScore;  // 음향 점수
         private List<Image> image; // 이미지 url
 
-        public ArcoPost toEntity(){
+        public ArcoPost toArcoPostEntity(){
             return ArcoPost.builder()
                     .user(user)
                     .theater(theater)
                     .play(play)
-                    .arcoSeat(arcoSeat)
                     .title(title)
                     .content(content)
                     .viewScore(viewScore)

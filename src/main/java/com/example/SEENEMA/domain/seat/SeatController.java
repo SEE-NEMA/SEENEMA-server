@@ -33,7 +33,7 @@ public class SeatController {
     private final UserRepository userRepo;
 
     @ApiOperation(value="좌석별 게시물 조회")
-    @GetMapping("/{theaterId}/{x}/{y}/{z}")
+    @GetMapping("/{theaterId}/{z}/{x}/{y}")
     public ResponseEntity getListBySeat(
             @PathVariable("theaterId") Long theaterId,
             @PathVariable("z") int z,
