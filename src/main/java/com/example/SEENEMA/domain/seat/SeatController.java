@@ -32,6 +32,22 @@ public class SeatController {
     private final JwtTokenProvider provider;
     private final UserRepository userRepo;
 
+
+    @ApiOperation(value="공연장별 게시물 조회")
+    @GetMapping("/{theaterId}/lists")
+    public ResponseEntity getListByTheater(@PathVariable("theaterId") Long theaterId) {
+
+        /** 아르코 예술극장 */
+        if (theaterId == 37) {
+            return ResponseEntity.ok(arcoService.getListByTheater(theaterId));
+        }
+        /** 블루스퀘어 신한카드홀 */
+        else if (theaterId == 12) {
+            //return ResponseEntity.ok(블루스퀘어Service.getListBySeat(theaterId, seatId));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @ApiOperation(value="좌석별 게시물 조회")
     @GetMapping("/{theaterId}/{z}/{x}/{y}")
     public ResponseEntity getListBySeat(

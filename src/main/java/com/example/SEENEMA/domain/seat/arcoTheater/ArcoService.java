@@ -1,5 +1,6 @@
 package com.example.SEENEMA.domain.seat.arcoTheater;
 
+import com.example.SEENEMA.domain.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.domain.seat.SeatDto;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoHeart;
 import com.example.SEENEMA.domain.seat.arcoTheater.repository.ArcoHeartRepository;
@@ -99,6 +100,13 @@ public class ArcoService {
         return response;
     }
 
+    public List<SeatDto.seatViewList> getListByTheater(Long theaterId){
+        List<SeatDto.seatViewList> response = arcoPostRepository.findByTheater_TheaterId(theaterId).stream()
+                .map(SeatDto.seatViewList::new)
+                .collect(Collectors.toList());
+        Collections.sort(response, Collections.reverseOrder());
+        return response;
+    }
     private ArcoPost getSeatViewPost(Long theaterId, Long seatId, Long viewNo) {
         return arcoPostRepository.findByTheater_TheaterIdAndArcoSeat_SeatIdAndViewNo(theaterId,seatId,viewNo);
     }
