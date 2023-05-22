@@ -1,6 +1,7 @@
 package com.example.SEENEMA.domain.seat;
 
 import com.example.SEENEMA.domain.post.file.Image;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanPost;
 import com.example.SEENEMA.domain.user.domain.User;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoSeat;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoPost;
@@ -8,6 +9,7 @@ import com.example.SEENEMA.domain.theater.domain.Theater;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,14 +17,14 @@ import java.util.List;
 @Setter
 public class SeatDto {
 
-/** 게시글 등록을 처리할 Request 클래스 */
+    /** 게시글 등록을 처리할 Request 클래스 */
     @Getter
     @Setter
     public static class addRequest{
         private User user; // 작성자 id
         private Theater theater; // 공연장
         private String play; // 공연
-        private ArcoSeat arcoSeat; // 좌석
+//        private Seat seat; // 좌석
         private String title; // 제목
         private String content; // 내용
         private Integer viewScore;   // 시야 점수
@@ -31,12 +33,33 @@ public class SeatDto {
         private Integer soundScore;  // 음향 점수
         private List<Image> image; // 이미지 url
 
-        public ArcoPost toEntity(){
+        public ArcoPost toArcoPostEntity(){
             return ArcoPost.builder()
                     .user(user)
                     .theater(theater)
                     .play(play)
-                    .arcoSeat(arcoSeat)
+//                    .arcoSeat(seat)
+                    .title(title)
+                    .content(content)
+                    .viewScore(viewScore)
+                    .seatScore(seatScore)
+                    .lightScore(lightScore)
+                    .soundScore(soundScore)
+                    .image(image)
+                    .build();
+        }
+        /*
+        public ShinhanPost toShinhanPostEntity(){
+            return ShinhanPost.builder()
+                    .user.....;
+        }
+        */
+        public ShinhanPost toShinhanPostEntity(){
+            return ShinhanPost.builder()
+                    .user(user)
+                    .theater(theater)
+                    .play(play)
+//                    .shinhanSeat(seat)
                     .title(title)
                     .content(content)
                     .viewScore(viewScore)
@@ -50,6 +73,7 @@ public class SeatDto {
 
     /** 게시글 정보를 리턴할 Response 클래스 */
     @Getter
+    @Setter
     public static class addResponse{
         private Long userId; // 작성자 id
         private String nickName; // 작성자 닉네임
@@ -85,7 +109,25 @@ public class SeatDto {
             this.image = new ArrayList<>(view.getImage());
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
-
+        }
+        //public addResponse(ShinhanPost view){}
+        public addResponse(ShinhanPost view){
+            this.userId = view.getUser().getUserId();
+            this.nickName = view.getUser().getNickname();
+            this.theaterName = view.getTheater().getTheaterName();
+            this.play = view.getPlay();
+            this.seatName = view.getShinhanSeat().getSeatNumber();
+            this.title = view.getTitle();
+            this.content = view.getContent();
+            this.viewScore = view.getViewScore();
+            this.seatScore = view.getSeatScore();
+            this.lightScore = view.getLightScore();
+            this.soundScore = view.getSoundScore();
+            this.heartedYN = Boolean.FALSE;
+            this.heartCount = view.getHeartCount();
+            this.image = new ArrayList<>(view.getImage());
+            this.createdAt = view.getCreatedAt().toString();
+            this.editedAt = view.getEditedAt().toString();
         }
     }
 
@@ -105,6 +147,7 @@ public class SeatDto {
         private List<Image> image;
         private Long heartCount;       //좋아요 갯수
         private Boolean heartedYN;      // 로그인한 사용자의 좋아요 여부
+        private LocalDateTime createAt;
 
         public detailResponse(ArcoPost view){
             this.viewNo = view.getViewNo();
@@ -119,8 +162,36 @@ public class SeatDto {
             this.image = view.getImage();
             this.heartedYN = Boolean.FALSE;
             this.heartCount = view.getHeartCount();
+            this.createAt = view.getCreatedAt();
+        }
+        //public detailResponse(ShinhanPost view){}
+        public detailResponse(ShinhanPost view){
+            this.viewNo = view.getViewNo();
+            this.nickName = view.getUser().getNickname();
+            this.title = view.getTitle();
+            this.content = view.getContent();
+            this.seatName = view.getShinhanSeat().getSeatNumber();
+            this.viewScore = view.getViewScore();
+            this.seatScore = view.getSeatScore();
+            this.lightScore = view.getLightScore();
+            this.soundScore = view.getSoundScore();
+            this.image = view.getImage();
+            this.heartedYN = Boolean.FALSE;
+            this.heartCount = view.getHeartCount();
         }
     }
+    /** 게시글 목록(seatViewList의 List)과 게시글들의 점수 평균, postedYN(게시글 유무)를 리턴할 Response 클래스*/
+    @Getter
+    @Setter
+    public static class postList{
+        private Integer average;
+        private Boolean postedYN;
+        private List<seatViewList> postingList = new ArrayList<>();
+        public postList(List<seatViewList> list){
+            this.postingList = list;
+        }
+    }
+
 
     /** 게시글 목록을 리턴할 Response 클래스 */
     @Getter
@@ -130,7 +201,7 @@ public class SeatDto {
         private String title;
         private String createdAt;
         private Long heartCount;
-        private Integer viewScore;   // 시야 점수
+        private Integer average;    //평점
 
         public seatViewList(ArcoPost view){
             this.viewNo = view.getViewNo();
@@ -138,9 +209,18 @@ public class SeatDto {
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();
             this.heartCount = view.getHeartCount();
-            this.viewScore = view.getViewScore();
+//            this.viewScore = view.getViewScore();
+            this.average = (Integer) (view.getViewScore()+view.getViewScore()+view.getLightScore()+view.getSoundScore())/4;
         }
-
+        //public seatViewList(ShinhanPost view){}
+        public seatViewList(ShinhanPost view){
+            this.viewNo = view.getViewNo();
+            this.nickName = view.getUser().getNickname();
+            this.title = view.getTitle();
+            this.createdAt = view.getCreatedAt().toString();
+            this.heartCount = view.getHeartCount();
+//            this.viewScore = view.getViewScore();
+        }
         @Override
         public int compareTo(seatViewList listDTO) {
             if(listDTO.getViewNo() < viewNo) return 1;
