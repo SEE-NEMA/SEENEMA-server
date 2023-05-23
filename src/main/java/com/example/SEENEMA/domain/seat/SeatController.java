@@ -289,19 +289,19 @@ public class SeatController {
 
         Optional<User> user = findUser(http);
         String msg = null;
-        Long seatId = null;
 
-        /** 아르코 예술극장 */
         if (theaterId == 37) {
+            ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
             msg = arcoService.deleteSeatPost(theaterId, seatId, viewNo, user.get().getUserId());
-        }
-        /** 블루스퀘어 신한카드홀 */
-        else if (theaterId == 12) {
+        } else if (theaterId == 12) {
         }
 
-        if(msg.equals("FAIL"))
+        if (msg == null) {
+            return ResponseEntity.ok(ResponseMessage.DELETE.getMsg());
+        } else if (msg.equals("FAIL")) {
             return ResponseEntity.ok("삭제 실패");
-        else{
+        } else {
             return ResponseEntity.ok(ResponseMessage.DELETE.getMsg());
         }
     }
