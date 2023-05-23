@@ -3,6 +3,9 @@ package com.example.SEENEMA.domain.seat;
 import com.example.SEENEMA.domain.post.file.Image;
 import com.example.SEENEMA.domain.post.file.ImageService;
 import com.example.SEENEMA.domain.seat.arcoTheater.ArcoService;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.ShinhanService;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanSeat;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanRepository;
 import com.example.SEENEMA.domain.user.domain.User;
 import com.example.SEENEMA.global.jwt.JwtTokenProvider;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoSeat;
@@ -28,6 +31,8 @@ import java.util.Optional;
 public class SeatController {
     private final ArcoRepository arcoRepository;
     private final ArcoService arcoService;
+    private final ShinhanRepository shinhanRepository;
+    private final ShinhanService shinhanService;
     private final ImageService imageService;
     private final JwtTokenProvider provider;
     private final UserRepository userRepo;
@@ -42,6 +47,7 @@ public class SeatController {
 
         /** 아르코 예술극장 */
         if (theaterId == 37) {
+//            System.out.println(x+" / "+y+" / "+z);
             ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(arcoService.getListBySeat(theaterId, seatId));
@@ -84,9 +90,9 @@ public class SeatController {
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
-            //블루스퀘어 seat = 블루스퀘어Repository.findByXAndY(x, y);
-            //Long seatId = seat.getSeatId();
-            //return ResponseEntity.ok(블루스퀘어Service.createViewPost(user.get().getUserId(), theaterId, seatId, viewDto));
+            ShinhanSeat seat =shinhanRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            return ResponseEntity.ok(shinhanService.createViewPost(user.get().getUserId(), theaterId, seatId, viewDto));
         }
         return ResponseEntity.notFound().build();
     }

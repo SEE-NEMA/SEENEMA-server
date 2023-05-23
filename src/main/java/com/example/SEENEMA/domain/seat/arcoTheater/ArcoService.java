@@ -51,10 +51,11 @@ public class ArcoService {
 
         requestDto.setUser(user);
         requestDto.setTheater(theater);
+//        requestDto.setArcoSeat(arcoSeat);
         requestDto.setImage(images);
 
         ArcoPost view = requestDto.toArcoPostEntity();
-        view.setArcoSeat(arcoSeat);
+        view.setArcoSeat(arcoSeat); // requestDto에 Seat 정보 지워서 설정 따로 필요
 
         // ViewPost 엔티티에 저장된 Image 엔티티들을 영속화
         List<Image> persistedImages = new ArrayList<>();
@@ -91,12 +92,27 @@ public class ArcoService {
         return readViewPost(theaterId, seatId, viewNo);
     }
 
-    public List<SeatDto.seatViewList> getListBySeat(Long theaterId, Long seatId){
-        List<SeatDto.seatViewList> response = arcoPostRepository.findByTheater_TheaterIdAndArcoSeat_SeatId(theaterId,seatId).stream()
+    public SeatDto.postList getListBySeat(Long theaterId, Long seatId){
+        List<SeatDto.seatViewList> seatViewLists = arcoPostRepository.findByTheater_TheaterIdAndArcoSeat_SeatId(theaterId,seatId).stream()
                 .map(SeatDto.seatViewList::new)
                 .collect(Collectors.toList());
-        Collections.sort(response, Collections.reverseOrder());
-        return response;
+        Collections.sort(seatViewLists, Collections.reverseOrder());
+        SeatDto.postList response = new SeatDto.postList(seatViewLists);
+        if(seatViewLists.isEmpty()) {
+            response.setPostedYN(Boolean.FALSE);
+            response.setAverage(0);
+            return response;
+        }
+        else {
+            response.setPostedYN(Boolean.TRUE);
+            int avr = 0;
+            for(SeatDto.seatViewList s : seatViewLists){
+                avr += s.getAverage();
+            }
+            avr/=seatViewLists.size();
+            response.setAverage(avr);
+            return response;
+        }
     }
 
     private ArcoPost getSeatViewPost(Long theaterId, Long seatId, Long viewNo) {
