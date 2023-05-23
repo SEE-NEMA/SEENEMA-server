@@ -12,8 +12,8 @@ import java.util.List;
 @Repository
 public interface ArcoHeartRepository extends JpaRepository<ArcoHeart, Long> {
     @Query
-    List<ArcoHeart> findByViewPost(ArcoPost viewPost);
+    List<ArcoHeart> findBySeatPost(ArcoPost seatPost);
     @Query
-    ArcoHeart findByUserAndViewPost(User user, ArcoPost viewPost);
+    ArcoHeart findByUserAndSeatPost(User user, ArcoPost seatPost);
     List<ArcoHeart> findByUser(User user);
 }

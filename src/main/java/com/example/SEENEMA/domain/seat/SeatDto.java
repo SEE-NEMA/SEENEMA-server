@@ -24,7 +24,6 @@ public class SeatDto {
         private User user; // 작성자 id
         private Theater theater; // 공연장
         private String play; // 공연
-//        private Seat seat; // 좌석
         private String title; // 제목
         private String content; // 내용
         private Integer viewScore;   // 시야 점수
@@ -69,6 +68,20 @@ public class SeatDto {
                     .image(image)
                     .build();
         }
+    }
+    /** 게시글 수정을 처리할 Request 클래스 */
+    @Getter
+    @Setter
+    public static class updateRequest {
+        private String play;
+        private String title;
+        private String content;
+        private Integer viewScore;   // 시야 점수
+        private Integer seatScore;   // 좌석 점수
+        private Integer lightScore;  // 조명 점수
+        private Integer soundScore;  // 음향 점수
+        private List<Image> image;
+
     }
 
     /** 게시글 정보를 리턴할 Response 클래스 */
@@ -209,17 +222,15 @@ public class SeatDto {
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();
             this.heartCount = view.getHeartCount();
-//            this.viewScore = view.getViewScore();
             this.average = (Integer) (view.getViewScore()+view.getViewScore()+view.getLightScore()+view.getSoundScore())/4;
         }
-        //public seatViewList(ShinhanPost view){}
+
         public seatViewList(ShinhanPost view){
             this.viewNo = view.getViewNo();
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();
             this.heartCount = view.getHeartCount();
-//            this.viewScore = view.getViewScore();
         }
         @Override
         public int compareTo(seatViewList listDTO) {
