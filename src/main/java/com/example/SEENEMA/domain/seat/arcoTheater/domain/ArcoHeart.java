@@ -23,11 +23,11 @@ public class ArcoHeart {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "view_no")
-    private ArcoPost viewPost;
+    private ArcoPost seatPost;
 
     @Builder
-    public ArcoHeart(User user, ArcoPost viewPost){
+    public ArcoHeart(User user, ArcoPost seatPost){
         this.user = user;
-        this.viewPost = viewPost;
+        this.seatPost = seatPost;
     }
 }

@@ -84,4 +84,16 @@ public class ArcoPost {
         this.heartCount = 0L;
     }
 
+    public void updateSeatPost(String play,String title, String content,
+                               Integer viewScore, Integer seatScore, Integer lightScore, Integer soundScore,List<Image> image) {
+        this.play = play;
+        this.title = title;
+        this.content = content;
+        this.viewScore = viewScore;
+        this.seatScore = seatScore;
+        this.lightScore = lightScore;
+        this.soundScore = soundScore;
+        this.image = image;
+    }
+
 }
