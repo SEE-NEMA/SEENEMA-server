@@ -147,7 +147,7 @@ public class ArcoService {
         arcoHeartRepository.save(heart);    // 사용자와 게시글 좋아요 정보 저장
         v.setHeartCount(v.getHeartCount() + 1L);    // 좋아요 갯수 + 1
         arcoPostRepository.save(v);
-        return readSeatPost(theaterId, viewNo, userId);
+        return readSeatPost(theaterId, seatId, viewNo, userId);
     }
 
     @Transactional
