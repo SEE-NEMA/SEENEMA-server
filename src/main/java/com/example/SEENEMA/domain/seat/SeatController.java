@@ -68,8 +68,10 @@ public class SeatController {
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
+            ShinhanSeat seat = shinhanRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            return ResponseEntity.ok(shinhanService.getListBySeat(theaterId, seatId));
         }
-
         return ResponseEntity.notFound().build();
     }
     @ApiOperation(value = "시야 후기 등록 전 사용자 인증")
@@ -112,7 +114,7 @@ public class SeatController {
         else if (theaterId == 12) {
             ShinhanSeat seat =shinhanRepository.findByXAndYAndZ(x, y, z);
             Long seatId = seat.getSeatId();
-            return ResponseEntity.ok(shinhanService.createViewPost(user.get().getUserId(), theaterId, seatId, viewDto));
+            return ResponseEntity.ok(shinhanService.createSeatPost(user.get().getUserId(), theaterId, seatId, viewDto));
         }
         return ResponseEntity.notFound().build();
     }
@@ -128,7 +130,6 @@ public class SeatController {
             HttpServletRequest http){
 
         Long seatId = null;
-
         /** 아르코 예술극장 */
         if (theaterId == 37) {
             ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
@@ -141,7 +142,6 @@ public class SeatController {
 
         // 비로그인과 로그인 상태 구분
         String token =provider.resolveToken(http);
-
         if (token == null) {
             switch (theaterId.intValue()) {
                 case 37: // 아르코 예술극장
@@ -186,10 +186,6 @@ public class SeatController {
             Long seatId = seat.getSeatId();
             return arcoService.authUserForEdit(theaterId, seatId, viewNo, user.get().getUserId());
         }
-        /** 블루스퀘어 신한카드홀 */
-        else if (theaterId == 12) {
-        }
-
         return "NOT FOUND";
     }
 
@@ -278,7 +274,6 @@ public class SeatController {
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
         }
-
         return ResponseEntity.notFound().build();
     }
 
@@ -291,9 +286,7 @@ public class SeatController {
             @PathVariable("y") int y,
             @PathVariable("viewNo") Long viewNo,
             HttpServletRequest http){
-
         Optional<User> user = findUser(http);
-
         /** 아르코 예술극장 */
         if (theaterId == 37) {
             ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);

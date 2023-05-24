@@ -3,8 +3,10 @@ package com.example.SEENEMA.domain.seat.blueSquareShinhan;
 import com.example.SEENEMA.domain.post.file.Image;
 import com.example.SEENEMA.domain.post.file.ImageRepository;
 import com.example.SEENEMA.domain.seat.SeatDto;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanHeart;
 import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanPost;
 import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanSeat;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanHeartRepository;
 import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanPostRepository;
 import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanRepository;
 import com.example.SEENEMA.domain.theater.domain.Theater;
@@ -12,12 +14,15 @@ import com.example.SEENEMA.domain.theater.repository.TheaterRepository;
 import com.example.SEENEMA.domain.user.domain.User;
 import com.example.SEENEMA.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,6 +30,7 @@ import java.util.Optional;
 public class ShinhanService {
     private final ShinhanRepository shinhanRepository;
     private final ShinhanPostRepository shinhanPostRepository;
+    private final ShinhanHeartRepository shinhanHeartRepository;
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
     private final ImageRepository imageRepository;
@@ -35,7 +41,7 @@ public class ShinhanService {
 
         return floor + "층 " + column + "열 " + number + "번";
     }
-    public SeatDto.addResponse createViewPost(Long userId, Long theaterId, Long seatId, SeatDto.addRequest request){
+    public SeatDto.addResponse createSeatPost(Long userId, Long theaterId, Long seatId, SeatDto.addRequest request){
         User user = getUser(userId);
         Theater theater = getTheater(theaterId);
         ShinhanSeat seat = getSeat(seatId).get();
@@ -56,6 +62,50 @@ public class ShinhanService {
         view.setImage(persistedImages);
         return new SeatDto.addResponse(shinhanPostRepository.save(view));
     }
+    @Transactional(readOnly = true)
+    public SeatDto.detailResponse readSeatPost(Long theaterId, Long seatId, Long viewNo){
+        ShinhanPost view = shinhanPostRepository.findById(viewNo).get();
+        view.setHeartCount((long) shinhanHeartRepository.findByViewPost(view).size());
+        // 이미지 컬렉션을 명시적으로 초기화
+        Hibernate.initialize(view.getImage());
+        return new SeatDto.detailResponse(view);
+    }
+    @Transactional(readOnly = true)
+    public SeatDto.detailResponse readSeatPost(Long theaterId, Long seatId, Long viewNo, Long userId){
+        // 로그인한 사용자가 게시글 조회하는 경우 -> 좋아요 여부 판단 필요
+        User u = getUser(userId);
+        ShinhanPost v = getSeatViewPost(viewNo);
+        ShinhanHeart tmp = shinhanHeartRepository.findByUserAndViewPost(u, v);
+        if(tmp != null){
+            SeatDto.detailResponse response = readSeatPost(theaterId, seatId, viewNo);
+            response.setHeartedYN(Boolean.TRUE);
+            return response;
+        }
+        return readSeatPost(theaterId, seatId, viewNo);
+    }
+
+    public SeatDto.postList getListBySeat(Long theaterId, Long seatId){
+        List<SeatDto.seatViewList> seatViewLists = shinhanPostRepository.findByTheater_TheaterIdAndShinhanSeat_SeatId(theaterId, seatId).stream()
+                .map(SeatDto.seatViewList::new)
+                .collect(Collectors.toList());
+        Collections.sort(seatViewLists, Collections.reverseOrder());
+        SeatDto.postList response = new SeatDto.postList(seatViewLists);
+        if(seatViewLists.isEmpty()){
+            response.setPostedYN(Boolean.TRUE);
+            response.setAverage(0);
+            return response;
+        }
+        else{
+            response.setPostedYN(Boolean.TRUE);
+            int avr = 0;
+            for(SeatDto.seatViewList s : seatViewLists)
+                avr += s.getAverage();
+            avr /= seatViewLists.size();
+            response.setAverage(avr);
+            return response;
+        }
+    }
+
     private User getUser(Long userId){
         return userRepository.findById(userId).orElseThrow();
     }
@@ -75,5 +125,7 @@ public class ShinhanService {
     private Optional<ShinhanSeat> getSeat(Long seatId){
         return shinhanRepository.findById(seatId);
     }
-
+    private ShinhanPost getSeatViewPost(Long viewNo){
+        return shinhanPostRepository.findById(viewNo).get();
+    }
 }
