@@ -20,9 +20,7 @@ import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 @Service
 @Transactional
@@ -163,6 +161,49 @@ public class ArcoService {
         v.setHeartCount(v.getHeartCount() - 1L);
         arcoPostRepository.save(v);
         return readSeatPost(theaterId, seatId, viewNo, userId);
+    }
+
+    public List<SeatDto.seatAverage> getAverageList(Long theaterId) {
+        List<ArcoPost> posts = arcoPostRepository.findByTheater_TheaterId(theaterId);
+        Map<Long, List<ArcoPost>> seatPostMap = new HashMap<>();
+        List<SeatDto.seatAverage> seatAverages = new ArrayList<>();
+
+        // 좌석별 게시물 그룹화
+        for (ArcoPost post : posts) {
+            Long seatId = post.getArcoSeat().getSeatId();
+            if (seatPostMap.containsKey(seatId)) {
+                seatPostMap.get(seatId).add(post);
+            } else {
+                List<ArcoPost> postList = new ArrayList<>();
+                postList.add(post);
+                seatPostMap.put(seatId, postList);
+            }
+        }
+
+        // 좌석별 평균 계산
+        for (Map.Entry<Long, List<ArcoPost>> entry : seatPostMap.entrySet()) {
+            Long seatId = entry.getKey();
+            List<ArcoPost> postList = entry.getValue();
+
+            SeatDto.seatAverage seatAverage = new SeatDto.seatAverage();
+            seatAverage.setSeatName(postList.get(0).getArcoSeat().getSeatNumber());
+
+            if (postList.isEmpty()) {
+                seatAverage.setPostedYN(false);
+                seatAverage.setAverage(0);
+            } else {
+                seatAverage.setPostedYN(true);
+                int totalScore = 0;
+                for (ArcoPost post : postList) {
+                    totalScore += (post.getViewScore() + post.getViewScore() + post.getLightScore() + post.getSoundScore());
+                }
+                int average = totalScore / (postList.size() * 4);
+                seatAverage.setAverage(average);
+            }
+            seatAverages.add(seatAverage);
+        }
+
+        return seatAverages;
     }
 
     public SeatDto.postList getListBySeat(Long theaterId, Long seatId){
