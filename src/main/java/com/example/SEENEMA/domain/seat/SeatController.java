@@ -37,6 +37,19 @@ public class SeatController {
     private final JwtTokenProvider provider;
     private final UserRepository userRepo;
 
+    @ApiOperation(value = "좌석 평균 목록")
+    @GetMapping("/{theaterId}")
+    public ResponseEntity<List<SeatDto.seatAverage>> getAverageList(@PathVariable("theaterId") Long theaterId) {
+
+        if (theaterId == 37) {
+            List<SeatDto.seatAverage> averageList = arcoService.getAverageList(theaterId);
+            return ResponseEntity.ok(averageList);
+        }
+        else if (theaterId == 12) {
+
+        }
+        return ResponseEntity.notFound().build();
+    }
 
     @ApiOperation(value="공연장별 게시물 조회")
     @GetMapping("/{theaterId}/lists")
@@ -74,6 +87,7 @@ public class SeatController {
         }
         return ResponseEntity.notFound().build();
     }
+
     @ApiOperation(value = "시야 후기 등록 전 사용자 인증")
     @PostMapping("/auth")
     public String authUserForPost(HttpServletRequest http){

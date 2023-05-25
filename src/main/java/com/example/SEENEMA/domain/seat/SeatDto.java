@@ -47,12 +47,7 @@ public class SeatDto {
                     .image(image)
                     .build();
         }
-        /*
-        public ShinhanPost toShinhanPostEntity(){
-            return ShinhanPost.builder()
-                    .user.....;
-        }
-        */
+
         public ShinhanPost toShinhanPostEntity(){
             return ShinhanPost.builder()
                     .user(user)
@@ -177,7 +172,7 @@ public class SeatDto {
             this.heartCount = view.getHeartCount();
             this.createAt = view.getCreatedAt();
         }
-        //public detailResponse(ShinhanPost view){}
+
         public detailResponse(ShinhanPost view){
             this.viewNo = view.getViewNo();
             this.nickName = view.getUser().getNickname();
@@ -203,6 +198,15 @@ public class SeatDto {
         public postList(List<seatViewList> list){
             this.postingList = list;
         }
+    }
+
+    @Getter
+    @Setter
+    public static class seatAverage{
+        private String seatName;
+        private Boolean postedYN;
+        private Integer average;
+
     }
 
 
