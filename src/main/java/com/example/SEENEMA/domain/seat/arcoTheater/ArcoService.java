@@ -66,25 +66,25 @@ public class ArcoService {
     }
 
     @Transactional(readOnly = true)
-    public SeatDto.detailResponse readSeatPost(Long theaterId, Long seatId, Long viewNo){
+    public SeatDto.addResponse readSeatPost(Long theaterId, Long seatId, Long viewNo){
 
         ArcoPost view = getSeatPost(theaterId,seatId, viewNo);
 
         view.setHeartCount((long) arcoHeartRepository.findBySeatPost(view).size());
         // 이미지 컬렉션을 명시적으로 초기화
         Hibernate.initialize(view.getImage());
-        return new SeatDto.detailResponse(view);
+        return new SeatDto.addResponse(view);
     }
 
     @Transactional
-    public SeatDto.detailResponse readSeatPost(Long theaterId, Long seatId, Long viewNo, Long userId){
+    public SeatDto.addResponse readSeatPost(Long theaterId, Long seatId, Long viewNo, Long userId){
         // 로그인 한 사용자가 게시글을 조회하는 경우 -> 좋아요 여부 판단 필요
         User u = getUser(userId);
         ArcoPost v = getSeatPost(theaterId,seatId, viewNo);
         // 사용자가 이미 좋아요 한 게시글일 경우 detailResponse의 heartedYN
         ArcoHeart tmp = arcoHeartRepository.findByUserAndSeatPost(u, v);
         if(tmp != null){
-            SeatDto.detailResponse response = readSeatPost(theaterId, seatId, viewNo);
+            SeatDto.addResponse response = readSeatPost(theaterId, seatId, viewNo);
             response.setHeartedYN(Boolean.TRUE);
             return  response;
         }
@@ -128,7 +128,7 @@ public class ArcoService {
     }
 
     @Transactional
-    public SeatDto.detailResponse heartSeatPost(Long theaterId, Long seatId, Long viewNo, Long userId){
+    public SeatDto.addResponse heartSeatPost(Long theaterId, Long seatId, Long viewNo, Long userId){
         // 게시글 좋아요
         User u = getUser(userId);
         ArcoPost v = getSeatPost(theaterId, seatId, viewNo);
@@ -149,7 +149,7 @@ public class ArcoService {
     }
 
     @Transactional
-    public SeatDto.detailResponse cancelHeart(Long theaterId, Long seatId, Long viewNo, Long userId){
+    public SeatDto.addResponse cancelHeart(Long theaterId, Long seatId, Long viewNo, Long userId){
         User u = getUser(userId);
         ArcoPost v = getSeatPost(theaterId,seatId, viewNo);
         // 좋아요 취소

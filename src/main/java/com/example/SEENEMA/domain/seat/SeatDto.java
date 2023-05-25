@@ -139,55 +139,6 @@ public class SeatDto {
         }
     }
 
-    /** 게시글 상세정보를 리턴할 Response 클래스 */
-    @Getter
-    @Setter
-    public static class detailResponse{
-        private Long viewNo;
-        private String nickName;
-        private String title;
-        private String content;
-        private String seatName;
-        private Integer viewScore;   // 시야 점수
-        private Integer seatScore;   // 좌석 점수
-        private Integer lightScore;  // 조명 점수
-        private Integer soundScore;  // 음향 점수
-        private List<Image> image;
-        private Long heartCount;       //좋아요 갯수
-        private Boolean heartedYN;      // 로그인한 사용자의 좋아요 여부
-        private LocalDateTime createAt;
-
-        public detailResponse(ArcoPost view){
-            this.viewNo = view.getViewNo();
-            this.nickName = view.getUser().getNickname();
-            this.title = view.getTitle();
-            this.content = view.getContent();
-            this.seatName = view.getArcoSeat().getSeatNumber();
-            this.viewScore = view.getViewScore();
-            this.seatScore = view.getSeatScore();
-            this.lightScore = view.getLightScore();
-            this.soundScore = view.getSoundScore();
-            this.image = view.getImage();
-            this.heartedYN = Boolean.FALSE;
-            this.heartCount = view.getHeartCount();
-            this.createAt = view.getCreatedAt();
-        }
-
-        public detailResponse(ShinhanPost view){
-            this.viewNo = view.getViewNo();
-            this.nickName = view.getUser().getNickname();
-            this.title = view.getTitle();
-            this.content = view.getContent();
-            this.seatName = view.getShinhanSeat().getSeatNumber();
-            this.viewScore = view.getViewScore();
-            this.seatScore = view.getSeatScore();
-            this.lightScore = view.getLightScore();
-            this.soundScore = view.getSoundScore();
-            this.image = view.getImage();
-            this.heartedYN = Boolean.FALSE;
-            this.heartCount = view.getHeartCount();
-        }
-    }
     /** 게시글 목록(seatViewList의 List)과 게시글들의 점수 평균, postedYN(게시글 유무)를 리턴할 Response 클래스*/
     @Getter
     @Setter
