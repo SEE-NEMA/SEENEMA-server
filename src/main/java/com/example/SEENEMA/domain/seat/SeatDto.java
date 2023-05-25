@@ -153,11 +153,12 @@ public class SeatDto {
 
     @Getter
     @Setter
-    public static class seatAverage{
-        private String seatName;
+    public static class seatAverage {
+        private int z;
+        private int x;
+        private int y;
         private Boolean postedYN;
         private Integer average;
-
     }
 
 

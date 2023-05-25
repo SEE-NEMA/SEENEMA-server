@@ -186,7 +186,13 @@ public class ArcoService {
             List<ArcoPost> postList = entry.getValue();
 
             SeatDto.seatAverage seatAverage = new SeatDto.seatAverage();
-            seatAverage.setSeatName(postList.get(0).getArcoSeat().getSeatNumber());
+            ArcoSeat seat = arcoRepository.findById(seatId).orElse(null);
+
+            if (seat != null) {
+                seatAverage.setX(seat.getX());
+                seatAverage.setY(seat.getY());
+                seatAverage.setZ(seat.getZ());
+            }
 
             if (postList.isEmpty()) {
                 seatAverage.setPostedYN(false);
@@ -205,6 +211,8 @@ public class ArcoService {
 
         return seatAverages;
     }
+
+
 
     public SeatDto.postList getListBySeat(Long theaterId, Long seatId){
         List<SeatDto.seatViewList> seatViewLists = arcoPostRepository.findByTheater_TheaterIdAndArcoSeat_SeatId(theaterId,seatId).stream()
