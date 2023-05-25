@@ -119,6 +119,37 @@ public class ShinhanService {
         }
     }
 
+    @Transactional
+    public SeatDto.addResponse heartSeatPost(Long theaterId, Long seatId, Long viewNo, Long userId){
+        // 좋아요
+        User u = getUser(userId);
+        ShinhanPost p = getSeatPost(viewNo);
+        // 이미 좋아요 한 경우 무시
+        ShinhanHeart tmp = shinhanHeartRepository.findByUserAndViewPost(u, p);
+        if(tmp != null) return readSeatPost(theaterId, seatId, viewNo, userId);
+
+        ShinhanHeart h = ShinhanHeart.builder()
+                .viewPost(p)
+                .user(u)
+                .build();
+        shinhanHeartRepository.save(h);
+        p.setHeartCount(p.getHeartCount() + 1L);
+        shinhanPostRepository.save(p);
+        return readSeatPost(theaterId, seatId, viewNo, userId);
+    }
+
+    @Transactional
+    public SeatDto.addResponse cancelHeart(Long  theaterId, Long seatId, Long viewNo, Long userId){
+        // 좋아요 취소
+        User u =getUser(userId);
+        ShinhanPost p = getSeatPost(viewNo);
+        ShinhanHeart tmp = shinhanHeartRepository.findByUserAndViewPost(u, p);
+        if(tmp != null) shinhanHeartRepository.delete(tmp);
+        p.setHeartCount(p.getHeartCount() - 1L);
+        shinhanPostRepository.save(p);
+        return readSeatPost(theaterId, seatId, viewNo, userId);
+    }
+
     public SeatDto.postList getListBySeat(Long theaterId, Long seatId){
         List<SeatDto.seatViewList> seatViewLists = shinhanPostRepository.findByTheater_TheaterIdAndShinhanSeat_SeatId(theaterId, seatId).stream()
                 .map(SeatDto.seatViewList::new)

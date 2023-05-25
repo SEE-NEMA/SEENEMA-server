@@ -298,6 +298,9 @@ public class SeatController {
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
+            ShinhanSeat seat = shinhanRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            return ResponseEntity.ok(shinhanService.heartSeatPost(theaterId, seatId, viewNo, user.get().getUserId()));
         }
         return ResponseEntity.notFound().build();
     }
@@ -320,6 +323,9 @@ public class SeatController {
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
+            ShinhanSeat seat = shinhanRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            return ResponseEntity.ok(shinhanService.cancelHeart(theaterId, seatId, viewNo, user.get().getUserId()));
         }
 
         return ResponseEntity.notFound().build();
