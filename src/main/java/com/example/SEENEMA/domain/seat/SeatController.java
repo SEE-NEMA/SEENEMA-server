@@ -144,14 +144,15 @@ public class SeatController {
             HttpServletRequest http){
 
         Long seatId = null;
-        /** 아르코 예술극장 */
-        if (theaterId == 37) {
-            ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
-            seatId = seat.getSeatId();
-            return ResponseEntity.ok(arcoService.readSeatPost(theaterId, seatId, viewNo));
-        }
-        /** 블루스퀘어 신한카드홀 */
-        else if (theaterId == 12) {
+        switch (theaterId.intValue()) {
+            case 37: // 아르코 예술극장
+                ArcoSeat arcoSeat = arcoRepository.findByXAndYAndZ(x, y, z);
+                seatId = arcoSeat.getSeatId(); break;
+            case 12: // 블루스퀘어 신한카드홀
+                ShinhanSeat shinhanSeat = shinhanRepository.findByXAndYAndZ(x, y, z);
+                seatId = shinhanSeat.getSeatId(); break;
+            default:
+                seatId = 0L;
         }
 
         // 비로그인과 로그인 상태 구분
@@ -161,7 +162,7 @@ public class SeatController {
                 case 37: // 아르코 예술극장
                     return ResponseEntity.ok(arcoService.readSeatPost(theaterId, seatId, viewNo));
                 case 12: // 블루스퀘어 신한카드홀
-
+                    return ResponseEntity.ok(shinhanService.readSeatPost(theaterId, seatId, viewNo));
                 default:
                     return ResponseEntity.badRequest().build();
             }
@@ -171,7 +172,7 @@ public class SeatController {
                 case 37:
                     return ResponseEntity.ok(arcoService.readSeatPost(theaterId, seatId, viewNo, user.get().getUserId()));
                 case 12:
-
+                    return ResponseEntity.ok(shinhanService.readSeatPost(theaterId, seatId, viewNo, user.get().getUserId()));
                 default:
                     return ResponseEntity.badRequest().build();
             }
@@ -193,12 +194,16 @@ public class SeatController {
         String basicAuth = authUserForPost(http); // 기본 인증 : 토큰 유무 / 토큰 유효성
         if(basicAuth.equals("FAIL")) return "FAIL";
         Optional<User> user = findUser(http);
-
         /** 아르코 예술극장 */
         if (theaterId == 37) {
             ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
             Long seatId = seat.getSeatId();
             return arcoService.authUserForEdit(theaterId, seatId, viewNo, user.get().getUserId());
+        }
+        else if (theaterId == 12) {
+            ShinhanSeat seat = shinhanRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            return shinhanService.authUserForEdit(theaterId, seatId, viewNo, user.get().getUserId());
         }
         return "NOT FOUND";
     }
@@ -234,6 +239,9 @@ public class SeatController {
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
+            ShinhanSeat seat = shinhanRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            return ResponseEntity.ok(shinhanService.updateSeatPost(theaterId, seatId, viewNo, seatDto, user.get().getUserId()));
         }
 
         return ResponseEntity.notFound().build();
@@ -257,6 +265,9 @@ public class SeatController {
             Long seatId = seat.getSeatId();
             msg = arcoService.deleteSeatPost(theaterId, seatId, viewNo, user.get().getUserId());
         } else if (theaterId == 12) {
+            ShinhanSeat seat = shinhanRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            msg = shinhanService.deleteSeatPost(theaterId, seatId, viewNo, user.get().getUserId());
         }
 
         if (msg == null) {

@@ -120,7 +120,6 @@ public class SeatDto {
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
         }
-        //public addResponse(ShinhanPost view){}
         public addResponse(ShinhanPost view){
             this.viewNo = view.getViewNo();
             this.userId = view.getUser().getUserId();
