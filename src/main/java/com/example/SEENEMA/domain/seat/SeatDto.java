@@ -83,6 +83,7 @@ public class SeatDto {
     @Getter
     @Setter
     public static class addResponse{
+        private Long viewNo;
         private Long userId; // 작성자 id
         private String nickName; // 작성자 닉네임
         private String theaterName; // 공연장
@@ -101,6 +102,7 @@ public class SeatDto {
         private String editedAt; // 수정일
 
         public addResponse(ArcoPost view){
+            this.viewNo = view.getViewNo();
             this.userId = view.getUser().getUserId();
             this.nickName = view.getUser().getNickname();
             this.theaterName = view.getTheater().getTheaterName();
@@ -120,6 +122,7 @@ public class SeatDto {
         }
         //public addResponse(ShinhanPost view){}
         public addResponse(ShinhanPost view){
+            this.viewNo = view.getViewNo();
             this.userId = view.getUser().getUserId();
             this.nickName = view.getUser().getNickname();
             this.theaterName = view.getTheater().getTheaterName();
