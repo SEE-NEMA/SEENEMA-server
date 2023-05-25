@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.spring.web.readers.operation.ResponseMessagesReader;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -164,12 +161,73 @@ public class ShinhanService {
         else{
             response.setPostedYN(Boolean.TRUE);
             int avr = 0;
-            for(SeatDto.seatViewList s : seatViewLists)
+            for(SeatDto.seatViewList s : seatViewLists) {
+                System.out.println(s.getViewNo()+s.getAverage());
                 avr += s.getAverage();
+            }
             avr /= seatViewLists.size();
             response.setAverage(avr);
             return response;
         }
+    }
+
+    public List<SeatDto.seatViewList> getListByTheater(Long theaterId){
+        // 공연장별 게시글 조회
+        List<SeatDto.seatViewList> response = shinhanPostRepository.findByTheater_TheaterId(theaterId).stream()
+                .map(SeatDto.seatViewList::new)
+                .collect(Collectors.toList());
+        Collections.sort(response, Collections.reverseOrder());
+        return response;
+    }
+
+    public List<SeatDto.seatAverage> getAverageList(Long theaterId) {
+        // 공연장 전체 좌석 평균 목록
+        List<ShinhanPost> posts = shinhanPostRepository.findByTheater_TheaterId(theaterId);
+        Map<Long, List<ShinhanPost>> seatPostMap = new HashMap<>();
+        List<SeatDto.seatAverage> seatAverages = new ArrayList<>();
+
+        // 좌석별 게시물 그룹화
+        for(ShinhanPost post : posts){
+            Long seatId = post.getShinhanSeat().getSeatId();
+            if(seatPostMap.containsKey(seatId)){
+                seatPostMap.get(seatId).add(post);
+            }
+            else{
+                List<ShinhanPost> postList = new ArrayList<>();
+                postList.add(post);
+                seatPostMap.put(seatId, postList);
+            }
+        }
+
+        // 좌석별 평균 계산
+        for(Map.Entry<Long, List<ShinhanPost>> entry : seatPostMap.entrySet()){
+            Long seatId = entry.getKey();
+            List<ShinhanPost> postList = entry.getValue();
+
+            SeatDto.seatAverage seatAverage = new SeatDto.seatAverage();
+            ShinhanSeat seat = shinhanRepository.findById(seatId).orElse(null);
+
+            if(seat != null){
+                seatAverage.setX(seat.getX());
+                seatAverage.setY(seat.getY());
+                seatAverage.setZ(seat.getZ());
+            }
+            if(postList.isEmpty()){
+                seatAverage.setPostedYN(Boolean.FALSE);
+                seatAverage.setAverage(0);
+            }
+            else{
+                seatAverage.setPostedYN(Boolean.TRUE);
+                int totalScore = 0;
+                for(ShinhanPost p : postList)
+                    totalScore += (p.getViewScore() + p.getSoundScore() + p.getLightScore() + p.getSeatScore());
+                int average = totalScore / (postList.size() * 4);
+                seatAverage.setAverage(average);
+            }
+            seatAverages.add(seatAverage);
+        }
+
+        return seatAverages;
     }
 
     private User getUser(Long userId){

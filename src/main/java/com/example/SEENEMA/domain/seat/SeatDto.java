@@ -172,7 +172,7 @@ public class SeatDto {
         private String title;
         private String createdAt;
         private Long heartCount;
-        private Integer average;    //평점
+        private Integer average = 0;    //평점
 
         public seatViewList(ArcoPost view){
             this.viewNo = view.getViewNo();

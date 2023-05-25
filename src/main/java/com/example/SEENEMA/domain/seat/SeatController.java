@@ -40,15 +40,17 @@ public class SeatController {
     @ApiOperation(value = "좌석 평균 목록")
     @GetMapping("/{theaterId}")
     public ResponseEntity<List<SeatDto.seatAverage>> getAverageList(@PathVariable("theaterId") Long theaterId) {
-
+        List<SeatDto.seatAverage> averageList = new ArrayList<>();
         if (theaterId == 37) {
-            List<SeatDto.seatAverage> averageList = arcoService.getAverageList(theaterId);
-            return ResponseEntity.ok(averageList);
+            averageList = arcoService.getAverageList(theaterId);
+//            return ResponseEntity.ok(averageList);
         }
         else if (theaterId == 12) {
-
+            averageList = shinhanService.getAverageList(theaterId);
+//            return ResponseEntity.ok(averageList);
         }
-        return ResponseEntity.notFound().build();
+        if(!averageList.isEmpty()) return ResponseEntity.ok(averageList);
+        else return ResponseEntity.notFound().build();
     }
 
     @ApiOperation(value="공연장별 게시물 조회")
@@ -61,6 +63,7 @@ public class SeatController {
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
+            return ResponseEntity.ok(shinhanService.getListByTheater(theaterId));
         }
         return ResponseEntity.notFound().build();
     }
