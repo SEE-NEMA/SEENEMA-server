@@ -189,6 +189,7 @@ public class SeatDto {
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();
             this.heartCount = view.getHeartCount();
+            this.average = (Integer) (view.getViewScore()+view.getViewScore()+view.getLightScore()+view.getSoundScore())/4;
         }
         @Override
         public int compareTo(seatViewList listDTO) {
