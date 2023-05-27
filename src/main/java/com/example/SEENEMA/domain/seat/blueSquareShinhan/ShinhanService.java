@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springfox.documentation.spring.web.readers.operation.ResponseMessagesReader;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 public class ShinhanService {
     private final ShinhanRepository shinhanRepository;
     private final ShinhanPostRepository shinhanPostRepository;
-//    private final ShinhanHeartRepository shinhanHeartRepository;
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
     private final ImageRepository imageRepository;
@@ -46,7 +44,6 @@ public class ShinhanService {
 
         request.setUser(user);
         request.setTheater(theater);
-//        request.setShinhanSeat(seat);
         request.setImage(images);
 
         ShinhanPost view = request.toShinhanPostEntity();
@@ -62,25 +59,10 @@ public class ShinhanService {
     @Transactional(readOnly = true)
     public SeatDto.addResponse readSeatPost(Long theaterId, Long seatId, Long viewNo){
         ShinhanPost view = shinhanPostRepository.findById(viewNo).get();
-//        view.setHeartCount((long) shinhanHeartRepository.findByViewPost(view).size());
         // 이미지 컬렉션을 명시적으로 초기화
         Hibernate.initialize(view.getImage());
         return new SeatDto.addResponse(view);
     }
-//    @Transactional(readOnly = true)
-//    public SeatDto.addResponse readSeatPost(Long theaterId, Long seatId, Long viewNo, Long userId){
-//        // 로그인한 사용자가 게시글 조회하는 경우 -> 좋아요 여부 판단 필요
-//        User u = getUser(userId);
-//        ShinhanPost v = getSeatPost(viewNo);
-//        ShinhanHeart tmp = shinhanHeartRepository.findByUserAndViewPost(u, v);
-//        if(tmp != null){
-//            SeatDto.addResponse response = readSeatPost(theaterId, seatId, viewNo);
-//            response.setHeartedYN(Boolean.TRUE);
-//            return response;
-//        }
-//        return readSeatPost(theaterId, seatId, viewNo);
-//    }
-
     @Transactional
     public String authUserForEdit(Long theaterId, Long seatId, Long viewNo, Long userId){
         ShinhanPost shinhanPost = getSeatPost(viewNo);
@@ -105,7 +87,6 @@ public class ShinhanService {
         // 삭제
         ShinhanPost seatPost = getSeatPost(viewNo);
         if(seatPost.getUser().getUserId().equals(userId)){
-//            deleteHeartByViewNo(theaterId, seatId, viewNo);
             shinhanPostRepository.delete(seatPost);
             return ResponseMessage.DELETE.getMsg();
         }
@@ -114,36 +95,6 @@ public class ShinhanService {
         }
     }
 
-//    @Transactional
-//    public SeatDto.addResponse heartSeatPost(Long theaterId, Long seatId, Long viewNo, Long userId){
-//        // 좋아요
-//        User u = getUser(userId);
-//        ShinhanPost p = getSeatPost(viewNo);
-//        // 이미 좋아요 한 경우 무시
-//        ShinhanHeart tmp = shinhanHeartRepository.findByUserAndViewPost(u, p);
-//        if(tmp != null) return readSeatPost(theaterId, seatId, viewNo, userId);
-//
-//        ShinhanHeart h = ShinhanHeart.builder()
-//                .viewPost(p)
-//                .user(u)
-//                .build();
-//        shinhanHeartRepository.save(h);
-//        p.setHeartCount(p.getHeartCount() + 1L);
-//        shinhanPostRepository.save(p);
-//        return readSeatPost(theaterId, seatId, viewNo, userId);
-//    }
-
-//    @Transactional
-//    public SeatDto.addResponse cancelHeart(Long  theaterId, Long seatId, Long viewNo, Long userId){
-//        // 좋아요 취소
-//        User u =getUser(userId);
-//        ShinhanPost p = getSeatPost(viewNo);
-//        ShinhanHeart tmp = shinhanHeartRepository.findByUserAndViewPost(u, p);
-//        if(tmp != null) shinhanHeartRepository.delete(tmp);
-//        p.setHeartCount(p.getHeartCount() - 1L);
-//        shinhanPostRepository.save(p);
-//        return readSeatPost(theaterId, seatId, viewNo, userId);
-//    }
 
     public SeatDto.postList getListBySeat(Long theaterId, Long seatId){
         List<SeatDto.seatViewList> seatViewLists = shinhanPostRepository.findByTheater_TheaterIdAndShinhanSeat_SeatId(theaterId, seatId).stream()
@@ -250,9 +201,4 @@ public class ShinhanService {
     private ShinhanPost getSeatPost(Long viewNo){
         return shinhanPostRepository.findById(viewNo).get();
     }
-//    private void deleteHeartByViewNo(Long theaterId, Long seatId, Long viewNo){
-//        List<ShinhanHeart> tmp = shinhanHeartRepository.findAll();
-//        for(ShinhanHeart h : tmp)
-//            if(h.getViewPost() == getSeatPost(viewNo)) shinhanHeartRepository.delete(h);
-//    }
 }

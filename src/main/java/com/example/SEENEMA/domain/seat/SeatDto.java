@@ -8,7 +8,6 @@ import com.example.SEENEMA.domain.theater.domain.Theater;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,8 +91,6 @@ public class SeatDto {
         private Integer seatScore;   // 좌석 점수
         private Integer lightScore;  // 조명 점수
         private Integer soundScore;  // 음향 점수
-//        private Long heartCount;       //좋아요 갯수
-//        private Boolean heartedYN;      // 로그인한 사용자의 좋아요 여부
         private List<Image> image;
         private String createdAt;  // 작성일
         private String editedAt; // 수정일
@@ -111,8 +108,6 @@ public class SeatDto {
             this.seatScore = view.getSeatScore();
             this.lightScore = view.getLightScore();
             this.soundScore = view.getSoundScore();
-//            this.heartedYN = Boolean.FALSE;
-//            this.heartCount = view.getHeartCount();
             this.image = new ArrayList<>(view.getImage());
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
@@ -130,8 +125,6 @@ public class SeatDto {
             this.seatScore = view.getSeatScore();
             this.lightScore = view.getLightScore();
             this.soundScore = view.getSoundScore();
-//            this.heartedYN = Boolean.FALSE;
-//            this.heartCount = view.getHeartCount();
             this.image = new ArrayList<>(view.getImage());
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
@@ -168,7 +161,6 @@ public class SeatDto {
         private String nickName;
         private String title;
         private String createdAt;
-//        private Long heartCount;
         private Integer average = 0;    //평점
 
         public seatViewList(ArcoPost view){
@@ -176,7 +168,6 @@ public class SeatDto {
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();
-//            this.heartCount = view.getHeartCount();
             this.average = (Integer) (view.getViewScore()+view.getViewScore()+view.getLightScore()+view.getSoundScore())/4;
         }
 
@@ -185,7 +176,6 @@ public class SeatDto {
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();
-//            this.heartCount = view.getHeartCount();
             this.average = (Integer) (view.getViewScore()+view.getViewScore()+view.getLightScore()+view.getSoundScore())/4;
         }
         @Override

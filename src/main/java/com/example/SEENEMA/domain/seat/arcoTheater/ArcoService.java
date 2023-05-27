@@ -3,8 +3,6 @@ package com.example.SEENEMA.domain.seat.arcoTheater;
 
 import com.example.SEENEMA.domain.post.view.dto.ResponseMessage;
 import com.example.SEENEMA.domain.seat.SeatDto;
-//import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoHeart;
-//import com.example.SEENEMA.domain.seat.arcoTheater.repository.ArcoHeartRepository;
 import com.example.SEENEMA.domain.seat.arcoTheater.repository.ArcoPostRepository;
 import com.example.SEENEMA.domain.post.file.Image;
 import com.example.SEENEMA.domain.post.file.ImageRepository;
@@ -32,7 +30,6 @@ public class ArcoService {
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
     private final ImageRepository imageRepository;
-//    private final ArcoHeartRepository arcoHeartRepository;
 
     public static String convertToSeatNumber(int x, int y, int z) {
         String column = String.valueOf(x);  // 열은 x 좌표 그대로 사용
@@ -67,29 +64,13 @@ public class ArcoService {
 
     @Transactional(readOnly = true)
     public SeatDto.addResponse readSeatPost(Long theaterId, Long seatId, Long viewNo){
-
         ArcoPost view = getSeatPost(theaterId,seatId, viewNo);
 
-//        view.setHeartCount((long) arcoHeartRepository.findBySeatPost(view).size());
         // 이미지 컬렉션을 명시적으로 초기화
         Hibernate.initialize(view.getImage());
         return new SeatDto.addResponse(view);
     }
 
-//    @Transactional
-//    public SeatDto.addResponse readSeatPost(Long theaterId, Long seatId, Long viewNo, Long userId){
-//        // 로그인 한 사용자가 게시글을 조회하는 경우 -> 좋아요 여부 판단 필요
-//        User u = getUser(userId);
-//        ArcoPost v = getSeatPost(theaterId,seatId, viewNo);
-//        // 사용자가 이미 좋아요 한 게시글일 경우 detailResponse의 heartedYN
-//        ArcoHeart tmp = arcoHeartRepository.findByUserAndSeatPost(u, v);
-//        if(tmp != null){
-//            SeatDto.addResponse response = readSeatPost(theaterId, seatId, viewNo);
-//            response.setHeartedYN(Boolean.TRUE);
-//            return  response;
-//        }
-//        return readSeatPost(theaterId, seatId, viewNo);
-//    }
 
     @Transactional
     public String authUserForEdit(Long theaterId, Long seatId, Long viewNo, Long userId){
@@ -118,7 +99,6 @@ public class ArcoService {
         // 시야 후기 게시글 삭제
         ArcoPost seatPost = getSeatPost(theaterId, seatId, viewNo);
         if(seatPost.getUser().getUserId().equals(userId)) {
-//            deleteHeartByViewNo(theaterId, seatId, viewNo);
             arcoPostRepository.delete(seatPost);
             return ResponseMessage.DELETE.getMsg();
         }
@@ -127,41 +107,6 @@ public class ArcoService {
         }
     }
 
-//    @Transactional
-//    public SeatDto.addResponse heartSeatPost(Long theaterId, Long seatId, Long viewNo, Long userId){
-//        // 게시글 좋아요
-//        User u = getUser(userId);
-//        ArcoPost v = getSeatPost(theaterId, seatId, viewNo);
-//        // 사용자가 이미 좋아요 한 게시글일 경우 무시
-//        ArcoHeart tmp = arcoHeartRepository.findByUserAndSeatPost(u, v);
-//        if(tmp != null){
-//            return readSeatPost(theaterId, seatId, viewNo, userId);
-//        }
-//
-//        ArcoHeart heart = ArcoHeart.builder()
-//                .seatPost(v)
-//                .user(u)
-//                .build();
-//        arcoHeartRepository.save(heart);    // 사용자와 게시글 좋아요 정보 저장
-//        v.setHeartCount(v.getHeartCount() + 1L);    // 좋아요 갯수 + 1
-//        arcoPostRepository.save(v);
-//        return readSeatPost(theaterId, seatId, viewNo, userId);
-//    }
-//
-//    @Transactional
-//    public SeatDto.addResponse cancelHeart(Long theaterId, Long seatId, Long viewNo, Long userId){
-//        User u = getUser(userId);
-//        ArcoPost v = getSeatPost(theaterId,seatId, viewNo);
-//        // 좋아요 취소
-//        ArcoHeart tmp = arcoHeartRepository.findByUserAndSeatPost(u, v);
-//        if(tmp != null){
-//            System.out.println(tmp.getUser().getNickname()+tmp.getSeatPost().getTitle());
-//            arcoHeartRepository.delete(tmp);
-//        }
-//        v.setHeartCount(v.getHeartCount() - 1L);
-//        arcoPostRepository.save(v);
-//        return readSeatPost(theaterId, seatId, viewNo, userId);
-//    }
 
     public List<SeatDto.seatAverage> getAverageList(Long theaterId) {
         List<ArcoPost> posts = arcoPostRepository.findByTheater_TheaterId(theaterId);
@@ -268,10 +213,4 @@ public class ArcoService {
     private ArcoSeat getSeat(Long seatId){
         return arcoRepository.findById(seatId).orElseThrow();
     }
-//    private void deleteHeartByViewNo(Long theaterId, Long seatId, Long viewNo){
-//        List<ArcoHeart> tmp = arcoHeartRepository.findAll();
-//        for (ArcoHeart h : tmp) {
-//            if (h.getSeatPost() == getSeatPost(theaterId, seatId, viewNo)) arcoHeartRepository.delete(h);
-//        }
-//    }
 }
