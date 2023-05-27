@@ -167,18 +167,6 @@ public class SeatController {
             default:
                 return ResponseEntity.badRequest().build();
         }
-//        } else {
-//            Optional<User> user = findUser(http);
-//            switch (theaterId.intValue()) {
-//                case 37:
-//                    return ResponseEntity.ok(arcoService.readSeatPost(theaterId, seatId, viewNo, user.get().getUserId()));
-//                case 12:
-//                    return ResponseEntity.ok(shinhanService.readSeatPost(theaterId, seatId, viewNo, user.get().getUserId()));
-//                default:
-//                    return ResponseEntity.badRequest().build();
-//            }
-//        }
-//
     }
 
 
