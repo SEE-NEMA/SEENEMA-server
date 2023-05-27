@@ -158,7 +158,6 @@ public class SeatController {
                 seatId = 0L;
         }
 
-        // 비로그인과 로그인 상태 구분
         switch (theaterId.intValue()) {
             case 37: // 아르코 예술극장
                 return ResponseEntity.ok(arcoService.readSeatPost(theaterId, seatId, viewNo));
