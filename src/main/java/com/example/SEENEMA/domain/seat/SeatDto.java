@@ -120,7 +120,6 @@ public class SeatDto {
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
         }
-        //public addResponse(ShinhanPost view){}
         public addResponse(ShinhanPost view){
             this.viewNo = view.getViewNo();
             this.userId = view.getUser().getUserId();
@@ -173,7 +172,7 @@ public class SeatDto {
         private String title;
         private String createdAt;
         private Long heartCount;
-        private Integer average;    //평점
+        private Integer average = 0;    //평점
 
         public seatViewList(ArcoPost view){
             this.viewNo = view.getViewNo();
@@ -190,6 +189,7 @@ public class SeatDto {
             this.title = view.getTitle();
             this.createdAt = view.getCreatedAt().toString();
             this.heartCount = view.getHeartCount();
+            this.average = (Integer) (view.getViewScore()+view.getViewScore()+view.getLightScore()+view.getSoundScore())/4;
         }
         @Override
         public int compareTo(seatViewList listDTO) {

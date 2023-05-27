@@ -12,7 +12,7 @@ public interface ShinhanHeartRepository extends JpaRepository<ShinhanHeart, Long
     @Query
     List<ShinhanHeart> findByViewPost(ShinhanPost shinhanPost);
     @Query
-    ShinhanPost findByUserAndViewPost(User user,ShinhanPost shinhanPost);
+    ShinhanHeart findByUserAndViewPost(User user,ShinhanPost shinhanPost);
     @Query
     List<ShinhanHeart> findByUser(User user);
 }

@@ -201,7 +201,7 @@ public class ArcoService {
                 seatAverage.setPostedYN(true);
                 int totalScore = 0;
                 for (ArcoPost post : postList) {
-                    totalScore += (post.getViewScore() + post.getViewScore() + post.getLightScore() + post.getSoundScore());
+                    totalScore += (post.getViewScore() + post.getSeatScore() + post.getLightScore() + post.getSoundScore());
                 }
                 int average = totalScore / (postList.size() * 4);
                 seatAverage.setAverage(average);
