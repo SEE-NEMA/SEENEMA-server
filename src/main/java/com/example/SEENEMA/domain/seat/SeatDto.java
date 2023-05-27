@@ -2,6 +2,7 @@ package com.example.SEENEMA.domain.seat;
 
 import com.example.SEENEMA.domain.post.file.Image;
 import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanPost;
+import com.example.SEENEMA.domain.seat.chungmu.domain.ChungmuPost;
 import com.example.SEENEMA.domain.user.domain.User;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoPost;
 import com.example.SEENEMA.domain.theater.domain.Theater;
@@ -47,6 +48,21 @@ public class SeatDto {
 
         public ShinhanPost toShinhanPostEntity(){
             return ShinhanPost.builder()
+                    .user(user)
+                    .theater(theater)
+                    .play(play)
+                    .title(title)
+                    .content(content)
+                    .viewScore(viewScore)
+                    .seatScore(seatScore)
+                    .lightScore(lightScore)
+                    .soundScore(soundScore)
+                    .image(image)
+                    .build();
+        }
+
+        public ChungmuPost toChungmuPostEntity(){
+            return ChungmuPost.builder()
                     .user(user)
                     .theater(theater)
                     .play(play)
@@ -129,6 +145,24 @@ public class SeatDto {
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
         }
+
+        public addResponse(ChungmuPost view){
+            this.viewNo = view.getViewNo();
+            this.userId = view.getUser().getUserId();
+            this.nickName = view.getUser().getNickname();
+            this.theaterName = view.getTheater().getTheaterName();
+            this.play = view.getPlay();
+            this.seatName = view.getChungmuSeat().getSeatNumber();
+            this.title = view.getTitle();
+            this.content = view.getContent();
+            this.viewScore = view.getViewScore();
+            this.seatScore = view.getSeatScore();
+            this.lightScore = view.getLightScore();
+            this.soundScore = view.getSoundScore();
+            this.image = new ArrayList<>(view.getImage());
+            this.createdAt = view.getCreatedAt().toString();
+            this.editedAt = view.getEditedAt().toString();
+        }
     }
 
     /** 게시글 목록(seatViewList의 List)과 게시글들의 점수 평균, postedYN(게시글 유무)를 리턴할 Response 클래스*/
@@ -172,6 +206,14 @@ public class SeatDto {
         }
 
         public seatViewList(ShinhanPost view){
+            this.viewNo = view.getViewNo();
+            this.nickName = view.getUser().getNickname();
+            this.title = view.getTitle();
+            this.createdAt = view.getCreatedAt().toString();
+            this.average = (Integer) (view.getViewScore()+view.getViewScore()+view.getLightScore()+view.getSoundScore())/4;
+        }
+
+        public seatViewList(ChungmuPost view){
             this.viewNo = view.getViewNo();
             this.nickName = view.getUser().getNickname();
             this.title = view.getTitle();
