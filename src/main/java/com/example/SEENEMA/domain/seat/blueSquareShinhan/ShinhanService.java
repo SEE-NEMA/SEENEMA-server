@@ -10,7 +10,9 @@ import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanPostR
 import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanRepository;
 import com.example.SEENEMA.domain.theater.domain.Theater;
 import com.example.SEENEMA.domain.theater.repository.TheaterRepository;
+import com.example.SEENEMA.domain.user.domain.Reward;
 import com.example.SEENEMA.domain.user.domain.User;
+import com.example.SEENEMA.domain.user.repository.RewardRepository;
 import com.example.SEENEMA.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
@@ -29,6 +31,7 @@ public class ShinhanService {
     private final UserRepository userRepository;
     private final TheaterRepository theaterRepository;
     private final ImageRepository imageRepository;
+    private final RewardRepository rewardRepo;
     public static String convertToSeatNumber(int x, int y, int z) {
         String column = String.valueOf(x);  // 열은 x 좌표 그대로 사용
         String number = String.valueOf(y);  // 번호는 y 좌표 그대로 사용
@@ -54,6 +57,12 @@ public class ShinhanService {
             persistedImages.add(imageRepository.save(image));
         }
         view.setImage(persistedImages);
+
+        // 리워드 지급
+        Reward reward = rewardRepo.findByUser(user);
+        reward.setPoint(reward.getPoint() + 100L);
+        rewardRepo.save(reward);
+
         return new SeatDto.addResponse(shinhanPostRepository.save(view));
     }
     @Transactional(readOnly = true)
