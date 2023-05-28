@@ -10,6 +10,5 @@ import java.util.List;
 public interface RewardRepository extends JpaRepository<Reward, Long> {
     @Query
     Reward findByUser(User user);
-    @Query
     List<Reward> findAll();
 }
