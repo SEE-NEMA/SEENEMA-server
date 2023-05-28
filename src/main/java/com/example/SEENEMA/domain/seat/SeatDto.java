@@ -3,6 +3,7 @@ package com.example.SEENEMA.domain.seat;
 import com.example.SEENEMA.domain.post.file.Image;
 import com.example.SEENEMA.domain.seat.blueSquareMasterCard.domain.MastercardPost;
 import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanPost;
+import com.example.SEENEMA.domain.seat.chungmu.domain.ChungmuPost;
 import com.example.SEENEMA.domain.user.domain.User;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoPost;
 import com.example.SEENEMA.domain.theater.domain.Theater;
@@ -48,6 +49,20 @@ public class SeatDto {
 
         public ShinhanPost toShinhanPostEntity(){
             return ShinhanPost.builder()
+                    .user(user)
+                    .theater(theater)
+                    .play(play)
+                    .title(title)
+                    .content(content)
+                    .viewScore(viewScore)
+                    .seatScore(seatScore)
+                    .lightScore(lightScore)
+                    .soundScore(soundScore)
+                    .image(image)
+                    .build();
+        }
+        public ChungmuPost toChungmuPostEntity(){
+           return ChungmuPost.builder()
                     .user(user)
                     .theater(theater)
                     .play(play)
@@ -144,6 +159,23 @@ public class SeatDto {
             this.createdAt = view.getCreatedAt().toString();
             this.editedAt = view.getEditedAt().toString();
         }
+        public addResponse(ChungmuPost view){
+            this.viewNo = view.getViewNo();
+            this.userId = view.getUser().getUserId();
+            this.nickName = view.getUser().getNickname();
+            this.theaterName = view.getTheater().getTheaterName();
+            this.play = view.getPlay();
+            this.seatName = view.getChungmuSeat().getSeatNumber();
+            this.title = view.getTitle();
+            this.content = view.getContent();
+            this.viewScore = view.getViewScore();
+            this.seatScore = view.getSeatScore();
+            this.lightScore = view.getLightScore();
+            this.soundScore = view.getSoundScore();
+            this.image = new ArrayList<>(view.getImage());
+            this.createdAt = view.getCreatedAt().toString();
+            this.editedAt = view.getEditedAt().toString();
+        }
         public addResponse(MastercardPost view){
             this.viewNo = view.getViewNo();
             this.userId = view.getUser().getUserId();
@@ -210,6 +242,15 @@ public class SeatDto {
             this.createdAt = view.getCreatedAt().toString();
             this.average = (Integer) (view.getViewScore()+view.getViewScore()+view.getLightScore()+view.getSoundScore())/4;
         }
+      
+        public seatViewList(ChungmuPost view){
+            this.viewNo = view.getViewNo();
+            this.nickName = view.getUser().getNickname();
+            this.title = view.getTitle();
+            this.createdAt = view.getCreatedAt().toString();
+            this.average = (Integer) (view.getViewScore()+view.getViewScore()+view.getLightScore()+view.getSoundScore())/4;
+        }
+      
         public seatViewList(MastercardPost view){
             this.viewNo = view.getViewNo();
             this.nickName = view.getUser().getNickname();
@@ -217,6 +258,7 @@ public class SeatDto {
             this.createdAt = view.getCreatedAt().toString();
             this.average = (Integer) (view.getViewScore()+view.getViewScore()+view.getLightScore()+view.getSoundScore())/4;
         }
+      
         @Override
         public int compareTo(seatViewList listDTO) {
             if(listDTO.getViewNo() < viewNo) return 1;
