@@ -67,9 +67,9 @@ public class UserController {
 
     @ApiOperation(value = "마이페이지")
     @GetMapping("/mypage")
-    public ResponseEntity<MyPageDto.MyPageResponse> loadMyPage(HttpServletRequest http){
+    public ResponseEntity<MyPageDto.WithPoints> loadMyPage(HttpServletRequest http){
         Optional<User> user = findUser(http);
-        return ResponseEntity.ok(service.loadMyPage(user.get()));
+        return ResponseEntity.ok(service.loadMyPageWithPoints(user.get()));
     }
     @ApiOperation(value = "프로필 수정을 위한 수정 전 정보 보여주는 페이지")
     @GetMapping("/profile")
