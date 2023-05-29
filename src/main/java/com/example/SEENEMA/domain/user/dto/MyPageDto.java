@@ -22,6 +22,19 @@ public class MyPageDto {
         }
     }
     @Getter
+    @Setter
+    public static class WithPoints{
+        private Long userId;
+        private String email;
+        private String nickname;
+        private Long points;
+        public WithPoints(User user){
+            this.userId = user.getUserId();
+            this.email = user.getEmail();
+            this.nickname = user.getNickname();
+        }
+    }
+    @Getter
     public static class EditProfileRequest{
         private String nickname;
     }

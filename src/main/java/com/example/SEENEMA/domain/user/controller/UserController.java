@@ -1,6 +1,8 @@
 package com.example.SEENEMA.domain.user.controller;
 
 import com.example.SEENEMA.domain.post.theater.dto.TheaterPostDto;
+import com.example.SEENEMA.domain.user.domain.Reward;
+import com.example.SEENEMA.domain.user.repository.RewardRepository;
 import com.example.SEENEMA.global.jwt.JwtTokenProvider;
 import com.example.SEENEMA.domain.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.domain.user.domain.User;
@@ -24,6 +26,7 @@ import java.util.Optional;
 @RequestMapping("/api/v1/user")
 public class UserController {
     private final UserRepository repo;
+    private final RewardRepository rewardRepo;
     private final JwtTokenProvider provider;
     private final PasswordEncoder passwordEncoder;
     private final MyPageService service;
@@ -37,12 +40,13 @@ public class UserController {
         for(User u : userList){
             if(u.getEmail().equals(id)) return "아이디 중복";
         }
-        repo.save(User.builder()
+        User member = repo.save(User.builder()
                 .email(user.get("email"))
                 .password(passwordEncoder.encode(user.get("password")))
                 .nickname(user.get("email"))    // 초기 nickname=email자동설정
                 .roles(Collections.singletonList("ROLE_USER")) // 기본 사용자는 USER로 설정
                 .build());
+        rewardRepo.save(new Reward(member));
         return "회원가입 정상 완료";
     }
     @ApiOperation(value = "로그인")
@@ -63,9 +67,9 @@ public class UserController {
 
     @ApiOperation(value = "마이페이지")
     @GetMapping("/mypage")
-    public ResponseEntity<MyPageDto.MyPageResponse> loadMyPage(HttpServletRequest http){
+    public ResponseEntity<MyPageDto.WithPoints> loadMyPage(HttpServletRequest http){
         Optional<User> user = findUser(http);
-        return ResponseEntity.ok(service.loadMyPage(user.get()));
+        return ResponseEntity.ok(service.loadMyPageWithPoints(user.get()));
     }
     @ApiOperation(value = "프로필 수정을 위한 수정 전 정보 보여주는 페이지")
     @GetMapping("/profile")

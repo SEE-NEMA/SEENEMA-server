@@ -4,6 +4,9 @@ import com.example.SEENEMA.domain.post.file.Image;
 import com.example.SEENEMA.domain.post.file.ImageService;
 import com.example.SEENEMA.domain.post.view.dto.ResponseMessage;
 import com.example.SEENEMA.domain.seat.arcoTheater.ArcoService;
+import com.example.SEENEMA.domain.seat.blueSquareMasterCard.MastercardService;
+import com.example.SEENEMA.domain.seat.blueSquareMasterCard.domain.MastercardSeat;
+import com.example.SEENEMA.domain.seat.blueSquareMasterCard.repository.MastercardRepository;
 import com.example.SEENEMA.domain.seat.blueSquareShinhan.ShinhanService;
 import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanSeat;
 import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanRepository;
@@ -34,10 +37,15 @@ import java.util.Optional;
 public class SeatController {
     private final ArcoRepository arcoRepository;
     private final ArcoService arcoService;
+  
     private final ShinhanRepository shinhanRepository;
     private final ShinhanService shinhanService;
+  
     private final ChungmuRepository chungmuRepository;
     private final ChungmuService chungmuService;
+  
+    private final MastercardRepository mastercardRepository;
+    private final MastercardService mastercardService;
 
     private final ImageService imageService;
     private final JwtTokenProvider provider;
@@ -53,8 +61,10 @@ public class SeatController {
             averageList = arcoService.getAverageList(theaterId);
 //            return ResponseEntity.ok(averageList);
         }
-        /** 블루스퀘어 신한카드홀 */
-        else if (theaterId == 12) {
+        else if(theaterId == 11){   // 블퀘 마스터카드홀
+            averageList = mastercardService.getAverageList(theaterId);
+        }
+        else if (theaterId == 12) { // 블퀘 신한카드홀
             averageList = shinhanService.getAverageList(theaterId);
 //            return ResponseEntity.ok(averageList);
         }
@@ -74,6 +84,10 @@ public class SeatController {
         /** 아르코 예술극장 */
         if (theaterId == 37) {
             return ResponseEntity.ok(arcoService.getListByTheater(theaterId));
+        }
+        /** 블루스퀘어 마스터카드홀*/
+        else if (theaterId == 11) {
+            return ResponseEntity.ok(mastercardService.getListByTheater(theaterId));
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
@@ -99,6 +113,12 @@ public class SeatController {
             ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(arcoService.getListBySeat(theaterId, seatId));
+        }
+        /** 블루스퀘어 마스터카드홀 */
+        else if (theaterId == 11) {
+            MastercardSeat seat = mastercardRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            return ResponseEntity.ok(mastercardService.getListBySeat(theaterId, seatId));
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
@@ -151,6 +171,12 @@ public class SeatController {
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(arcoService.createSeatPost(user.get().getUserId(), theaterId, seatId, viewDto));
         }
+        /** 블루스퀘어 마스터카드홀 */
+        else if (theaterId == 11) {
+            MastercardSeat seat = mastercardRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            return ResponseEntity.ok(mastercardService.createSeatPost(user.get().getUserId(), theaterId, seatId, viewDto));
+        }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
             ShinhanSeat seat =shinhanRepository.findByXAndYAndZ(x, y, z);
@@ -182,7 +208,10 @@ public class SeatController {
             case 37: /** 아르코 예술극장 */
                 ArcoSeat arcoSeat = arcoRepository.findByXAndYAndZ(x, y, z);
                 seatId = arcoSeat.getSeatId(); break;
-            case 12: /** 블루스퀘어 신한카드홀 */
+            case 11: // 블루스퀘어 마스터카드홀
+                MastercardSeat mastercardSeat = mastercardRepository.findByXAndYAndZ(x, y, z);
+                seatId = mastercardSeat.getSeatId(); break;
+            case 12: // 블루스퀘어 신한카드홀
                 ShinhanSeat shinhanSeat = shinhanRepository.findByXAndYAndZ(x, y, z);
                 seatId = shinhanSeat.getSeatId(); break;
             case 30: /** 충무아트센터 대극장 */
@@ -196,7 +225,9 @@ public class SeatController {
         switch (theaterId.intValue()) {
             case 37: /** 아르코 예술극장 */
                 return ResponseEntity.ok(arcoService.readSeatPost(theaterId, seatId, viewNo));
-            case 12: /** 블루스퀘어 신한카드홀 */
+            case 11: // 블루스퀘어 마스터카드홀
+                return ResponseEntity.ok(mastercardService.readSeatPost(theaterId, seatId, viewNo));
+            case 12: // 블루스퀘어 신한카드홀
                 return ResponseEntity.ok(shinhanService.readSeatPost(theaterId, seatId, viewNo));
             case 30: /** 충무아트센터 대극장 */
                 return ResponseEntity.ok(chungmuService.readSeatPost(theaterId, seatId, viewNo));
@@ -225,6 +256,12 @@ public class SeatController {
             ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
             Long seatId = seat.getSeatId();
             return arcoService.authUserForEdit(theaterId, seatId, viewNo, user.get().getUserId());
+        }
+        /** 블루스퀘어 마스터카드홀 */
+        else if (theaterId == 11) {
+            MastercardSeat seat = mastercardRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            return mastercardService.authUserForEdit(theaterId, seatId, viewNo, user.get().getUserId());
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
@@ -270,6 +307,12 @@ public class SeatController {
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(arcoService.updateSeatPost(theaterId, seatId, viewNo, seatDto, user.get().getUserId()));
         }
+        /** 블루스퀘어 마스터카드홀 */
+        else if (theaterId == 11) {
+            MastercardSeat seat = mastercardRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            return ResponseEntity.ok(mastercardService.updateSeatPost(theaterId, seatId, viewNo, seatDto, user.get().getUserId()));
+        }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
             ShinhanSeat seat = shinhanRepository.findByXAndYAndZ(x, y, z);
@@ -304,6 +347,12 @@ public class SeatController {
             ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
             Long seatId = seat.getSeatId();
             msg = arcoService.deleteSeatPost(theaterId, seatId, viewNo, user.get().getUserId());
+        }
+        /** 블루스퀘어 마스터카드홀 */
+        else if (theaterId == 11) {
+            MastercardSeat seat = mastercardRepository.findByXAndYAndZ(x, y, z);
+            Long seatId = seat.getSeatId();
+            msg = mastercardService.deleteSeatPost(theaterId, seatId, viewNo, user.get().getUserId());
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {

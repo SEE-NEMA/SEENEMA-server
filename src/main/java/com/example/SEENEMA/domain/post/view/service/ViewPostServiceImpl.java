@@ -3,6 +3,7 @@ package com.example.SEENEMA.domain.post.view.service;
 import com.example.SEENEMA.domain.post.view.domain.ViewPost;
 import com.example.SEENEMA.domain.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.domain.post.view.repository.ViewPostRepository;
+import com.example.SEENEMA.domain.user.domain.Reward;
 import com.example.SEENEMA.domain.user.domain.User;
 import com.example.SEENEMA.domain.post.file.Image;
 import com.example.SEENEMA.domain.post.view.domain.ViewPostHeart;
@@ -11,6 +12,7 @@ import com.example.SEENEMA.domain.post.file.ImageRepository;
 import com.example.SEENEMA.domain.post.view.repository.ViewPostHeartRepository;
 import com.example.SEENEMA.domain.theater.domain.Theater;
 import com.example.SEENEMA.domain.theater.repository.TheaterRepository;
+import com.example.SEENEMA.domain.user.repository.RewardRepository;
 import com.example.SEENEMA.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class ViewPostServiceImpl implements ViewPostService {
     private final TheaterRepository theaterRepository;
     private final ImageRepository imageRepository;
     private final ViewPostHeartRepository heartRepository;
+    private final RewardRepository rewardRepo;
     @Override
     @Transactional
     public ViewPostDto.addResponse createViewPost(Long userId, Long theaterId, ViewPostDto.addRequest requestDto){
@@ -51,6 +54,12 @@ public class ViewPostServiceImpl implements ViewPostService {
             persistedImages.add(imageRepository.save(image));
         }
         view.setImage(persistedImages);
+
+        // 리워드 지급
+        Reward reward = rewardRepo.findByUser(user);
+        reward.setPoint(reward.getPoint() + 100L);
+        rewardRepo.save(reward);
+
         return new ViewPostDto.addResponse(viewPostRepository.save(view));
     }
 
