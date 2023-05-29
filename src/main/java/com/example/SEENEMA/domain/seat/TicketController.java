@@ -28,7 +28,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor // 생성자 주입
-@RequestMapping("/api/v1/seats")
+@RequestMapping("/api/v1/seats/ticket")
 public class TicketController {
 
     private final ArcoRepository arcoRepository;
@@ -44,7 +44,7 @@ public class TicketController {
 
 
     @ApiOperation(value = "시야 후기 등록")
-    @PostMapping(value="/{theaterId}/{z}/{x}/{y}/ticket/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value="/{theaterId}/{z}/{x}/{y}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SeatDto.addResponse> createSeatPost(
             @PathVariable("theaterId") Long theaterId,
             @PathVariable("z") int z,
