@@ -1,6 +1,11 @@
 package com.example.SEENEMA.domain.user.dto;
 
 import com.example.SEENEMA.domain.post.comment.domain.Comment;
+import com.example.SEENEMA.domain.seat.SeatDto;
+import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoPost;
+import com.example.SEENEMA.domain.seat.blueSquareMasterCard.domain.MastercardPost;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanPost;
+import com.example.SEENEMA.domain.seat.chungmu.domain.ChungmuPost;
 import com.example.SEENEMA.domain.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -63,6 +68,51 @@ public class MyPageDto {
             if(listDTO.getCommentId() < commentId) return 1;
             else if(listDTO.getCommentId() > commentId) return -1;
             return 0;
+        }
+    }
+    @Setter
+    @Getter
+    public static class MySeatList extends SeatDto.seatViewList {
+        private String seatName;
+        private int x;
+        private int y;
+        private int z;
+        private Long theaterId;
+
+        public MySeatList(ArcoPost view) {
+            super(view);
+            this.seatName = view.getTheater().getTheaterName().toString() + "  " + view.getArcoSeat().getSeatNumber();
+            this.x = view.getArcoSeat().getX();
+            this.y = view.getArcoSeat().getY();
+            this.z = view.getArcoSeat().getZ();
+            this.theaterId = view.getTheater().getTheaterId();
+        }
+
+        public MySeatList(ShinhanPost view) {
+            super(view);
+            this.seatName = view.getTheater().getTheaterName().toString() + "  " + view.getShinhanSeat().getSeatNumber();
+            this.x = view.getShinhanSeat().getX();
+            this.y = view.getShinhanSeat().getY();
+            this.z = view.getShinhanSeat().getZ();
+            this.theaterId = view.getTheater().getTheaterId();
+        }
+
+        public MySeatList(ChungmuPost view) {
+            super(view);
+            this.seatName = view.getTheater().getTheaterName().toString() + "  " + view.getChungmuSeat().getSeatNumber();
+            this.x = view.getChungmuSeat().getX();
+            this.y = view.getChungmuSeat().getY();
+            this.z = view.getChungmuSeat().getZ();
+            this.theaterId = view.getTheater().getTheaterId();
+        }
+
+        public MySeatList(MastercardPost view) {
+            super(view);
+            this.seatName = view.getTheater().getTheaterName().toString() + "  " + view.getMastercardSeat().getSeatNumber();
+            this.x = view.getMastercardSeat().getX();
+            this.y = view.getMastercardSeat().getY();
+            this.z = view.getMastercardSeat().getZ();
+            this.theaterId = view.getTheater().getTheaterId();
         }
     }
 }

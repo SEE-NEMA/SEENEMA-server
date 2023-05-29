@@ -11,6 +11,14 @@ import com.example.SEENEMA.domain.post.view.domain.ViewPost;
 import com.example.SEENEMA.domain.post.view.dto.ViewPostDto;
 import com.example.SEENEMA.domain.post.view.repository.ViewPostHeartRepository;
 import com.example.SEENEMA.domain.post.view.repository.ViewPostRepository;
+import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoPost;
+import com.example.SEENEMA.domain.seat.arcoTheater.repository.ArcoPostRepository;
+import com.example.SEENEMA.domain.seat.blueSquareMasterCard.domain.MastercardPost;
+import com.example.SEENEMA.domain.seat.blueSquareMasterCard.repository.MastercardPostRepository;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.domain.ShinhanPost;
+import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanPostRepository;
+import com.example.SEENEMA.domain.seat.chungmu.domain.ChungmuPost;
+import com.example.SEENEMA.domain.seat.chungmu.repository.ChungmuPostRepository;
 import com.example.SEENEMA.domain.user.domain.User;
 import com.example.SEENEMA.domain.post.view.domain.ViewPostHeart;
 import com.example.SEENEMA.domain.user.dto.MyPageDto;
@@ -37,6 +45,10 @@ public class MyPageServiceImpl implements MyPageService{
     private final ViewPostRepository viewPostRepo;
     private final ViewPostHeartRepository viewHeartRepo;
     private final RewardRepository rewardRepo;
+    private final ArcoPostRepository arcoPostRepo;
+    private final ChungmuPostRepository chungmuPostRepo;
+    private final ShinhanPostRepository shinhanPostRepo;
+    private final MastercardPostRepository mastercardPostRepo;
     @Override
     public MyPageDto.MyPageResponse loadMyPage(User user) {
         MyPageDto.MyPageResponse response = new MyPageDto.MyPageResponse(user);
@@ -129,6 +141,35 @@ public class MyPageServiceImpl implements MyPageService{
             response.add(tmp);
         }
         Collections.sort(response, Collections.reverseOrder());
+        return response;
+    }
+
+    @Override
+    public List<MyPageDto.MySeatList> listMySeatReview(User user) {
+        List<MyPageDto.MySeatList> response = new ArrayList<>();
+        List<ArcoPost> arcoPosts = arcoPostRepo.findByUser(user);
+        List<ChungmuPost> chungmuPosts = chungmuPostRepo.findByUser(user);
+        List<ShinhanPost> shinhanPosts = shinhanPostRepo.findByUser(user);
+        List<MastercardPost> mastercardPosts = mastercardPostRepo.findByUser(user);
+
+        for(ArcoPost a : arcoPosts){
+            MyPageDto.MySeatList tmp = new MyPageDto.MySeatList(a);
+            response.add(tmp);
+        }
+        for(ChungmuPost c : chungmuPosts){
+            MyPageDto.MySeatList tmp = new MyPageDto.MySeatList(c);
+            response.add(tmp);
+        }
+        for(ShinhanPost s : shinhanPosts){
+            MyPageDto.MySeatList tmp = new MyPageDto.MySeatList(s);
+            response.add(tmp);
+        }
+        for(MastercardPost m : mastercardPosts){
+            MyPageDto.MySeatList tmp = new MyPageDto.MySeatList(m);
+            response.add(tmp);
+        }
+        Collections.sort(response, Collections.reverseOrder());
+
         return response;
     }
 }
