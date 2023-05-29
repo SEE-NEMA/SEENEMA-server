@@ -10,7 +10,9 @@ import com.example.SEENEMA.domain.seat.blueSquareMasterCard.repository.Mastercar
 import com.example.SEENEMA.domain.seat.blueSquareMasterCard.repository.MastercardRepository;
 import com.example.SEENEMA.domain.theater.domain.Theater;
 import com.example.SEENEMA.domain.theater.repository.TheaterRepository;
+import com.example.SEENEMA.domain.user.domain.Reward;
 import com.example.SEENEMA.domain.user.domain.User;
+import com.example.SEENEMA.domain.user.repository.RewardRepository;
 import com.example.SEENEMA.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
@@ -29,6 +31,7 @@ public class MastercardService {
     private final UserRepository userRepo;
     private final TheaterRepository theaterRepo;
     private final ImageRepository imageRepo;
+    private final RewardRepository rewardRepo;
     public static String convertToSeatNumber(int x, int y, int z) {
         String column = String.valueOf(x);  // 열은 x 좌표 그대로 사용
         String number = String.valueOf(y);  // 번호는 y 좌표 그대로 사용
@@ -57,6 +60,12 @@ public class MastercardService {
         for(Image image : images)
             persistedImages.add(imageRepo.save(image));
         view.setImage(persistedImages);
+
+        // 리워드 지급
+        Reward reward = rewardRepo.findByUser(user);
+        reward.setPoint(reward.getPoint() + 100L);
+        rewardRepo.save(reward);
+
         return new SeatDto.addResponse(postRepo.save(view));
     }
     @Transactional(readOnly = true)

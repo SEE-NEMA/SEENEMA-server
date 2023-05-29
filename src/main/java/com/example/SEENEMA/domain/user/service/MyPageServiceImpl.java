@@ -14,6 +14,7 @@ import com.example.SEENEMA.domain.post.view.repository.ViewPostRepository;
 import com.example.SEENEMA.domain.user.domain.User;
 import com.example.SEENEMA.domain.post.view.domain.ViewPostHeart;
 import com.example.SEENEMA.domain.user.dto.MyPageDto;
+import com.example.SEENEMA.domain.user.repository.RewardRepository;
 import com.example.SEENEMA.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +36,16 @@ public class MyPageServiceImpl implements MyPageService{
     private final CommentRepository commentRepo;
     private final ViewPostRepository viewPostRepo;
     private final ViewPostHeartRepository viewHeartRepo;
+    private final RewardRepository rewardRepo;
     @Override
     public MyPageDto.MyPageResponse loadMyPage(User user) {
         MyPageDto.MyPageResponse response = new MyPageDto.MyPageResponse(user);
+        return response;
+    }
+    @Override
+    public MyPageDto.WithPoints loadMyPageWithPoints(User user){
+        MyPageDto.WithPoints response = new MyPageDto.WithPoints(user);
+        response.setPoints(rewardRepo.findByUser(user).getPoint());
         return response;
     }
 

@@ -11,6 +11,7 @@ import java.util.List;
 @Service
 public interface MyPageService {
     MyPageDto.MyPageResponse loadMyPage(User user);
+    MyPageDto.WithPoints loadMyPageWithPoints(User user);
     String checkNickname(User user, MyPageDto.EditProfileRequest request);
     MyPageDto.MyPageResponse editProfile(User user, MyPageDto.EditProfileRequest request);
     List<TheaterPostDto.listResponse> listMyTheaterReview(User user);

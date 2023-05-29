@@ -14,7 +14,9 @@ import com.example.SEENEMA.domain.post.tag.domain.Tag;
 import com.example.SEENEMA.domain.post.tag.repository.TagRepository;
 import com.example.SEENEMA.domain.theater.domain.Theater;
 import com.example.SEENEMA.domain.theater.repository.TheaterRepository;
+import com.example.SEENEMA.domain.user.domain.Reward;
 import com.example.SEENEMA.domain.user.domain.User;
+import com.example.SEENEMA.domain.user.repository.RewardRepository;
 import com.example.SEENEMA.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +38,11 @@ public class TheaterPostServiceImpl implements TheaterPostService{
     private final CommentRepository commentRepo;
     private final ImageRepository imageRepository;
     private final TheaterPostHeartRepository heartRepo;
+    private final RewardRepository rewardRepo;
 
     @Override
     @Transactional
-    public TheaterPostDto.addResponse createTheaterPost(Long userId, TheaterPostDto.addRequest request){
+    public TheaterPostDto.addResponse createTheaterPost(Long userId, TheaterPostDto.addRequest request) {
         // 공연장 후기 게시글 작성
         User user = getUser(userId);
 
@@ -59,10 +62,15 @@ public class TheaterPostServiceImpl implements TheaterPostService{
 
         // ViewPost 엔티티에 저장된 Image 엔티티들을 영속화
         List<Image> persistedImages = new ArrayList<>();
-        for(Image image : images) {
+        for (Image image : images) {
             persistedImages.add(imageRepository.save(image));
         }
         theaterPost.setImage(persistedImages);
+
+        // 리워드 지급
+        Reward reward = rewardRepo.findByUser(user);
+        reward.setPoint(reward.getPoint() + 100L);
+        rewardRepo.save(reward);
 
         return new TheaterPostDto.addResponse(theaterPostRepo.save(theaterPost));
     }
