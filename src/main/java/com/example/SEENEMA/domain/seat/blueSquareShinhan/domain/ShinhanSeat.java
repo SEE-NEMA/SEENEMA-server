@@ -26,6 +26,11 @@ public class ShinhanSeat {
     @OneToMany(mappedBy = "shinhanSeat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShinhanPost> shinhanPosts = new ArrayList<>();
 
+    public ShinhanSeat(int x, int y, int z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
     public String getSeatNumber(){
         return ShinhanService.convertToSeatNumber(x, y, z);
     }

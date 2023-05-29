@@ -168,24 +168,28 @@ public class SeatController {
         /** 아르코 예술극장 */
         if (theaterId == 37) {
             ArcoSeat seat = arcoRepository.findByXAndYAndZ(x, y, z);
+            if(seat==null) seat = arcoRepository.save(new ArcoSeat(x,y,z));
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(arcoService.createSeatPost(user.get().getUserId(), theaterId, seatId, viewDto));
         }
         /** 블루스퀘어 마스터카드홀 */
         else if (theaterId == 11) {
             MastercardSeat seat = mastercardRepository.findByXAndYAndZ(x, y, z);
+            if(seat==null) seat = mastercardRepository.save(new MastercardSeat(x, y, z));
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(mastercardService.createSeatPost(user.get().getUserId(), theaterId, seatId, viewDto));
         }
         /** 블루스퀘어 신한카드홀 */
         else if (theaterId == 12) {
             ShinhanSeat seat =shinhanRepository.findByXAndYAndZ(x, y, z);
+            if(seat==null) seat = shinhanRepository.save(new ShinhanSeat(x,y,z));
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(shinhanService.createSeatPost(user.get().getUserId(), theaterId, seatId, viewDto));
         }
         /** 충무아트센터 대극장 */
         else if (theaterId == 30) {
             ChungmuSeat seat = chungmuRepository.findByXAndYAndZ(x, y, z);
+            if(seat==null) seat = chungmuRepository.save(new ChungmuSeat(x, y, z));
             Long seatId = seat.getSeatId();
             return ResponseEntity.ok(chungmuService.createSeatPost(user.get().getUserId(), theaterId, seatId, viewDto));
         }

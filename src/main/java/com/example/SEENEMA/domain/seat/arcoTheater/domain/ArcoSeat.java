@@ -24,6 +24,11 @@ public class ArcoSeat {
     private int z;
     @OneToMany(mappedBy = "arcoSeat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArcoPost> arcoPosts = new ArrayList<>();
+    public ArcoSeat(int x, int y, int z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
 
     public String getSeatNumber() {
         return ArcoService.convertToSeatNumber(x, y, z);
