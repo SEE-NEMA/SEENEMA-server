@@ -24,7 +24,11 @@ public class ChungmuSeat {
     private int y;
     @OneToMany(mappedBy = "chungmuSeat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChungmuPost> chungmuPosts = new ArrayList<>();
-
+    public ChungmuSeat(int x, int y, int z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
     public String getSeatNumber() {
         return ChungmuService.convertToSeatNumber(x, y, z);
     }

@@ -19,4 +19,5 @@ public interface MyPageService {
     List<ViewPostDto.viewListResponse> listMyViewReview(User user);
     List<TheaterPostDto.listResponse> listHeartedTheaterReview(User user);
     List<ViewPostDto.viewListResponse> listHeartedViewReview(User user);
+    List<MyPageDto.MySeatList> listMySeatReview(User user);
 }

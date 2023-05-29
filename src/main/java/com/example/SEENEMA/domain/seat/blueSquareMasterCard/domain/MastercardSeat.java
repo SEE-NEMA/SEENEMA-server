@@ -24,5 +24,10 @@ public class MastercardSeat {
     private int z;
     @OneToMany(mappedBy = "mastercardSeat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MastercardPost> mastercardPosts = new ArrayList<>();
+    public MastercardSeat(int x, int y, int z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
     public String getSeatNumber() { return MastercardService.convertToSeatNumber(x, y, z); }
 }
