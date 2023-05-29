@@ -28,7 +28,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor // 생성자 주입
-@RequestMapping("/api/v1/view-review")
+@RequestMapping("/api/v1/seats")
 public class TicketController {
 
     private final ArcoRepository arcoRepository;
