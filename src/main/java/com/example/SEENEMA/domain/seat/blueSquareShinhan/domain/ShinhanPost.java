@@ -58,8 +58,6 @@ public class ShinhanPost {
     @LastModifiedDate // 수정일 자동화
     @Column
     private LocalDateTime editedAt; // 최종 수정 일시
-    @Column
-    private Long heartCount;
 
     @Builder
     public ShinhanPost(User user, Theater theater, String play, ShinhanSeat shinhanSeat, String title, String content,
@@ -77,7 +75,6 @@ public class ShinhanPost {
         this.soundScore = soundScore;
         this.image = image;
         this.createdAt = createdAt;
-        this.heartCount = 0L;
     }
     public void updateSeatPost(String play, String title, String content,
                                Integer viewScore, Integer seatScore, Integer lightScore, Integer soundScore,

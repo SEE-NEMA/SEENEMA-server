@@ -63,8 +63,6 @@ public class ArcoPost {
     @LastModifiedDate // 수정일 자동화
     @Column
     private LocalDateTime editedAt; // 최종 수정 일시
-    @Column
-    private Long heartCount;
 
     @Builder
     public ArcoPost(User user, Theater theater, String play, ArcoSeat arcoSeat, String title, String content,
@@ -81,7 +79,6 @@ public class ArcoPost {
         this.soundScore = soundScore;
         this.image = image;
         this.createdAt = createdAt;
-        this.heartCount = 0L;
     }
 
     public void updateSeatPost(String play,String title, String content,
