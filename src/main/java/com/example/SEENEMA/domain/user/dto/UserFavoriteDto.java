@@ -2,6 +2,8 @@ package com.example.SEENEMA.domain.user.dto;
 
 import com.example.SEENEMA.domain.mainPage.domain.Concert;
 import com.example.SEENEMA.domain.mainPage.domain.Musical;
+import com.example.SEENEMA.domain.user.domain.User;
+import com.example.SEENEMA.domain.user.domain.UserFavorite;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,11 +19,17 @@ public class UserFavoriteDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class favoriteRequest {
-
-        private String user;
+        private User user;
         private List<Concert> concertFavorites;
         private List<Musical> musicalFavorites;
 
+        public UserFavorite toEntity(){
+            return UserFavorite.builder()
+                    .user(user)
+                    .concertFavorites(concertFavorites)
+                    .musicalFavorites(musicalFavorites)
+                    .build();
+        }
     }
 
     @Getter

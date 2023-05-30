@@ -4,7 +4,11 @@ import com.example.SEENEMA.domain.mainPage.domain.Concert;
 import com.example.SEENEMA.domain.mainPage.domain.Musical;
 import com.example.SEENEMA.domain.mainPage.repository.ConcertRepository;
 import com.example.SEENEMA.domain.mainPage.repository.MusicalRepository;
+import com.example.SEENEMA.domain.user.domain.User;
+import com.example.SEENEMA.domain.user.domain.UserFavorite;
 import com.example.SEENEMA.domain.user.dto.UserFavoriteDto;
+import com.example.SEENEMA.domain.user.repository.UserFavoriteRepository;
+import com.example.SEENEMA.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,8 +26,20 @@ public class UserFavoriteService {
 
     private final MusicalRepository musicalRepository;
     private final ConcertRepository concertRepository;
+    private final UserFavoriteRepository userFavoriteRepository;
+    private final UserRepository userRepository;
 
     public UserFavoriteDto.favoriteResponse recommend(Long userId, String nickName, UserFavoriteDto.favoriteRequest request) {
+
+        User user = getUser(userId);
+
+        // UserFavorite 엔티티 생성
+        UserFavorite userFavorite = request.toEntity();
+        userFavorite.setUser(user); // user 정보 설정
+
+        // UserFavorite 엔티티 저장
+        UserFavorite savedUserFavorite = userFavoriteRepository.save(userFavorite);
+
         List<Concert> recommendedConcerts = new ArrayList<>();
         List<Musical> recommendedMusicals = new ArrayList<>();
 
@@ -76,5 +92,8 @@ public class UserFavoriteService {
         return response;
     }
 
+    private User getUser(Long userId){
+        return userRepository.findById(userId).orElseThrow();
+    }
 
 }
