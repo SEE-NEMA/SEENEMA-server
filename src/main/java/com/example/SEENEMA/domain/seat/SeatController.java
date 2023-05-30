@@ -70,7 +70,7 @@ public class SeatController {
         }
         /** 충무아트센터 대극장 */
         else if (theaterId == 30){
-            averageList = shinhanService.getAverageList(theaterId);
+            averageList = chungmuService.getAverageList(theaterId);
         }
 
         if(!averageList.isEmpty()) return ResponseEntity.ok(averageList);
