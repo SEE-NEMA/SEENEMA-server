@@ -162,11 +162,10 @@ public class TheaterPostServiceImpl implements TheaterPostService{
         // 공연장 후기 게시글 조회
         TheaterPost t = getTheaterPost(postNo);
         log.info(t.getTags().toString());
-        t.setViewCount(t.getViewCount()+1L);
-        t.setHeartCount((long) heartRepo.findByTheaterPost(t).size());
+        theaterPostRepo.updateViewCount(t.getViewCount() + 1, t.getPostNo());
         t.getImage().size();
         TheaterPostDto.addResponse response = new TheaterPostDto.addResponse(t);
-
+        response.setViewCount(t.getViewCount() + 1);
         // 댓글 가져오기
         List<CommentDto.readComment> comments = findCommentByTheaterPost(t);
         response.setComments(comments);
