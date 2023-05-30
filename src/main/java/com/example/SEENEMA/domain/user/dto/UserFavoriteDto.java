@@ -2,7 +2,9 @@ package com.example.SEENEMA.domain.user.dto;
 
 import com.example.SEENEMA.domain.mainPage.domain.Concert;
 import com.example.SEENEMA.domain.mainPage.domain.Musical;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -12,7 +14,11 @@ import java.util.List;
 public class UserFavoriteDto {
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class favoriteRequest {
+
+        private String user;
         private List<Concert> concertFavorites;
         private List<Musical> musicalFavorites;
 

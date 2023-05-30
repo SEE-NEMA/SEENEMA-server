@@ -29,38 +29,44 @@ public class UserFavoriteService {
 
         if (request.getConcertFavorites() != null && !request.getConcertFavorites().isEmpty()) {
             for (Concert concert : request.getConcertFavorites()) {
-                List<Concert> concertsByCast = concertRepository.findByCastContaining(concert.getCast());
-                List<Concert> concertsByGenre = concertRepository.findByGenreContaining(concert.getGenre());
-
-                if (!concertsByCast.isEmpty()) {
-                    recommendedConcerts.add(concertsByCast.get(0));
-                } else {
-                    recommendedConcerts.add(null); // cast에 해당하는 공연 없음 표시
+                if (concert.getCast() != null) {
+                    List<Concert> concertsByCast = concertRepository.findByCastContaining(concert.getCast());
+                    if (!concertsByCast.isEmpty()) {
+                        recommendedConcerts.add(concertsByCast.get(0));
+                    } else {
+                        recommendedConcerts.add(null); // cast에 해당하는 공연 없음 표시
+                    }
                 }
 
-                if (!concertsByGenre.isEmpty()) {
-                    recommendedConcerts.add(concertsByGenre.get(0));
-                } else {
-                    recommendedConcerts.add(null); // genre에 해당하는 공연 없음 표시
+                if (concert.getGenre() != null) {
+                    List<Concert> concertsByGenre = concertRepository.findByGenreContaining(concert.getGenre());
+                    if (!concertsByGenre.isEmpty()) {
+                        recommendedConcerts.add(concertsByGenre.get(0));
+                    } else {
+                        recommendedConcerts.add(null); // genre에 해당하는 공연 없음 표시
+                    }
                 }
             }
         }
 
         if (request.getMusicalFavorites() != null && !request.getMusicalFavorites().isEmpty()) {
             for (Musical musical : request.getMusicalFavorites()) {
-                List<Musical> musicalsByCast = musicalRepository.findByCastContaining(musical.getCast());
-                List<Musical> musicalsByGenre = musicalRepository.findByGenreContaining(musical.getGenre());
-
-                if (!musicalsByCast.isEmpty()) {
-                    recommendedMusicals.add(musicalsByCast.get(0));
-                } else {
-                    recommendedMusicals.add(null); // cast에 해당하는 공연 없음 표시
+                if (musical.getCast() != null) {
+                    List<Musical> musicalsByCast = musicalRepository.findByCastContaining(musical.getCast());
+                    if (!musicalsByCast.isEmpty()) {
+                        recommendedMusicals.add(musicalsByCast.get(0));
+                    } else {
+                        recommendedMusicals.add(null); // cast에 해당하는 공연 없음 표시
+                    }
                 }
 
-                if (!musicalsByGenre.isEmpty()) {
-                    recommendedMusicals.add(musicalsByGenre.get(0));
-                } else {
-                    recommendedMusicals.add(null); // genre에 해당하는 공연 없음 표시
+                if (musical.getGenre() != null) {
+                    List<Musical> musicalsByGenre = musicalRepository.findByGenreContaining(musical.getGenre());
+                    if (!musicalsByGenre.isEmpty()) {
+                        recommendedMusicals.add(musicalsByGenre.get(0));
+                    } else {
+                        recommendedMusicals.add(null); // genre에 해당하는 공연 없음 표시
+                    }
                 }
             }
         }
