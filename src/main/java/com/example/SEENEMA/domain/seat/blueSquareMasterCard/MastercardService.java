@@ -68,7 +68,7 @@ public class MastercardService {
 
         return new SeatDto.addResponse(postRepo.save(view));
     }
-    @Transactional(readOnly = true)
+    @Transactional
     public SeatDto.addResponse readSeatPost(Long userId, Long theaterId, Long seatId, Long viewNo){
         MastercardPost view = postRepo.findByViewNo(viewNo);
         // 리워드 차감
