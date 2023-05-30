@@ -109,10 +109,18 @@ public class MainPageServiceImpl implements MainPageService {
                 for (Element row : rows) {
                     PlayDto.musicalList musical = new PlayDto.musicalList();
 
-                    musical.setImgUrl(row.selectFirst("td[width=\"90\"] img").attr("src"));
                     String imgURL_before = row.selectFirst("td[width=\"90\"] img").attr("onclick");
                     String imgURL_after = imgURL_before.split("'")[1];
-                    System.out.println(imgURL_after);
+                    Connection conForImg = Jsoup.connect("http://www.playdb.co.kr/playdb/playdbDetail.asp?sReqPlayno="+imgURL_after);
+                    try{
+                        Document imgDoc = conForImg.get();
+                        Elements rowsIMG = imgDoc.select("div.pddetail > h2");
+                        imgURL_after = rowsIMG.select("img").attr("src");
+                        musical.setImgUrl(imgURL_after);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     musical.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
 
                     String[] parts = row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
@@ -142,6 +150,7 @@ public class MainPageServiceImpl implements MainPageService {
                 e.printStackTrace();
             }
         }
+//        saveMusicals(musicalList);
         return musicalList;
     }
 
@@ -238,7 +247,18 @@ public class MainPageServiceImpl implements MainPageService {
                     for (Element row : rows) {
                         PlayDto.concertList concert = new PlayDto.concertList();
 
-                        concert.setImgUrl(row.selectFirst("td[width=\"90\"] img").attr("src"));
+                        String imgURL_before = row.selectFirst("td[width=\"90\"] img").attr("onclick");
+                        String imgURL_after = imgURL_before.split("'")[1];
+                        Connection conForImg = Jsoup.connect("http://www.playdb.co.kr/playdb/playdbDetail.asp?sReqPlayno="+imgURL_after);
+                        try{
+                            Document imgDoc = conForImg.get();
+                            Elements rowsIMG = imgDoc.select("div.pddetail > h2");
+                            imgURL_after = rowsIMG.select("img").attr("src");
+                            concert.setImgUrl(imgURL_after);
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                         concert.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
 
                         String[] parts = row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
