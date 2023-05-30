@@ -71,9 +71,19 @@ public class ArcoService {
         return new SeatDto.addResponse(arcoPostRepository.save(view));
     }
 
-    @Transactional(readOnly = true)
-    public SeatDto.addResponse readSeatPost(Long theaterId, Long seatId, Long viewNo){
-        ArcoPost view = getSeatPost(theaterId,seatId, viewNo);
+    @Transactional
+    public SeatDto.addResponse readSeatPost(Long userId, Long theaterId, Long seatId, Long viewNo) {
+       ArcoPost view = getSeatPost(theaterId, seatId, viewNo);
+
+        // 리워드 차감
+        User user = getUser(userId);
+
+        // 게시글 작성자와 조회하는 사용자가 다를 경우에만 리워드 차감
+        if (!view.getUser().getUserId().equals(user.getUserId())) {
+            Reward reward = rewardRepo.findByUser(user);
+            reward.setPoint(reward.getPoint() - 10L);
+            rewardRepo.save(reward);
+        }
 
         // 이미지 컬렉션을 명시적으로 초기화
         Hibernate.initialize(view.getImage());

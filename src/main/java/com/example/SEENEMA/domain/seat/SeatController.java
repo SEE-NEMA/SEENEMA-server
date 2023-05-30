@@ -202,6 +202,8 @@ public class SeatController {
             @PathVariable("viewNo") Long viewNo,
             HttpServletRequest http){
 
+        Optional<User> user = findUser(http); // 토큰 읽어서 유저 정보 읽기
+
         Long seatId = null;
 
         switch (theaterId.intValue()) {
@@ -224,13 +226,13 @@ public class SeatController {
 
         switch (theaterId.intValue()) {
             case 37: /** 아르코 예술극장 */
-                return ResponseEntity.ok(arcoService.readSeatPost(theaterId, seatId, viewNo));
+                return ResponseEntity.ok(arcoService.readSeatPost(user.get().getUserId(),theaterId, seatId, viewNo));
             case 11: // 블루스퀘어 마스터카드홀
-                return ResponseEntity.ok(mastercardService.readSeatPost(theaterId, seatId, viewNo));
+                return ResponseEntity.ok(mastercardService.readSeatPost(user.get().getUserId(),theaterId, seatId, viewNo));
             case 12: // 블루스퀘어 신한카드홀
-                return ResponseEntity.ok(shinhanService.readSeatPost(theaterId, seatId, viewNo));
+                return ResponseEntity.ok(shinhanService.readSeatPost(user.get().getUserId(), theaterId, seatId,  viewNo));
             case 30: /** 충무아트센터 대극장 */
-                return ResponseEntity.ok(chungmuService.readSeatPost(theaterId, seatId, viewNo));
+                return ResponseEntity.ok(chungmuService.readSeatPost(user.get().getUserId(),theaterId, seatId, viewNo));
             default:
                 return ResponseEntity.badRequest().build();
         }
