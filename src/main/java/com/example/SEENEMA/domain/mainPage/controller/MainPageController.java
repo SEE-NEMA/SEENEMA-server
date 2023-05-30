@@ -49,5 +49,8 @@ public class MainPageController {
         return ResponseEntity.ok(service.getConcertInfo(no));
     }
 
-
+    @GetMapping("/test/musicals")
+    public ResponseEntity<List<PlayDto.musicalList>> getTestMusical(){
+        return ResponseEntity.ok(service.getMusicals());
+    }
 }

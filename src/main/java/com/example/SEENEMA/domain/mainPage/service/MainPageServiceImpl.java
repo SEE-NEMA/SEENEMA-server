@@ -110,6 +110,9 @@ public class MainPageServiceImpl implements MainPageService {
                     PlayDto.musicalList musical = new PlayDto.musicalList();
 
                     musical.setImgUrl(row.selectFirst("td[width=\"90\"] img").attr("src"));
+                    String imgURL_before = row.selectFirst("td[width=\"90\"] img").attr("onclick");
+                    String imgURL_after = imgURL_before.split("'")[1];
+                    System.out.println(imgURL_after);
                     musical.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
 
                     String[] parts = row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
