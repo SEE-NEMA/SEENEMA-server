@@ -49,5 +49,4 @@ public class MainPageController {
         return ResponseEntity.ok(service.getConcertInfo(no));
     }
 
-
 }
