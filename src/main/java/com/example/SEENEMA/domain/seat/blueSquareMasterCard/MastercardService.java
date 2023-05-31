@@ -69,6 +69,14 @@ public class MastercardService {
         return new SeatDto.addResponse(postRepo.save(view));
     }
     @Transactional
+    public SeatDto.addResponse readSeatPost(Long theaterId, Long seatId, Long viewNo){
+        MastercardPost view = postRepo.findByViewNo(viewNo);
+        // 이미지 컬렉션을 명시적으로 초기화
+        Hibernate.initialize(view.getImage());
+        return new SeatDto.addResponse(view);
+    }
+
+    @Transactional
     public SeatDto.addResponse readSeatPost(Long userId, Long theaterId, Long seatId, Long viewNo){
         MastercardPost view = postRepo.findByViewNo(viewNo);
         // 리워드 차감

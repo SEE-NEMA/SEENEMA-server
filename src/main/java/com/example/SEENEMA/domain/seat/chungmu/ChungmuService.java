@@ -70,6 +70,14 @@ public class ChungmuService {
 
         return new SeatDto.addResponse(chungmuPostRepository.save(view));
     }
+    @Transactional
+    public SeatDto.addResponse readSeatPost(Long theaterId, Long seatId, Long viewNo){
+        ChungmuPost view = getSeatPost(theaterId,seatId, viewNo);
+
+        // 이미지 컬렉션을 명시적으로 초기화
+        Hibernate.initialize(view.getImage());
+        return new SeatDto.addResponse(view);
+    }
 
     @Transactional
     public SeatDto.addResponse readSeatPost(Long userId, Long theaterId, Long seatId, Long viewNo) {
