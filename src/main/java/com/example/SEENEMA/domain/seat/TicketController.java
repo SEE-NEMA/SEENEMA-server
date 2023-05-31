@@ -11,7 +11,9 @@ import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanRepos
 import com.example.SEENEMA.domain.seat.chungmu.ChungmuService;
 import com.example.SEENEMA.domain.seat.chungmu.domain.ChungmuSeat;
 import com.example.SEENEMA.domain.seat.chungmu.repository.ChungmuRepository;
+import com.example.SEENEMA.domain.user.domain.Reward;
 import com.example.SEENEMA.domain.user.domain.User;
+import com.example.SEENEMA.domain.user.repository.RewardRepository;
 import com.example.SEENEMA.domain.user.repository.UserRepository;
 import com.example.SEENEMA.global.jwt.JwtTokenProvider;
 import io.swagger.annotations.ApiOperation;
@@ -41,6 +43,7 @@ public class TicketController {
     private final ImageService imageService;
     private final JwtTokenProvider provider;
     private final UserRepository userRepo;
+    private final RewardRepository rewardRepo;
 
 
     @ApiOperation(value = "시야 후기 등록")
@@ -54,6 +57,12 @@ public class TicketController {
             @ModelAttribute SeatDto.addRequest viewDto, HttpServletRequest http) {
 
         Optional<User> user = findUser(http); // 토큰 읽어서 유저 정보 읽기
+
+        // 리워드 지급
+        Reward reward = rewardRepo.findByUser(user.get());
+        reward.setPoint(reward.getPoint() + 150L);
+        rewardRepo.save(reward);
+
         List<Image> imgUrls = null;
 
         if(images != null && !images.isEmpty()) {
