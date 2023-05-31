@@ -2,8 +2,12 @@ package com.example.SEENEMA.domain.mainPage.service;
 
 import com.example.SEENEMA.domain.mainPage.domain.Concert;
 import com.example.SEENEMA.domain.mainPage.domain.Musical;
+import com.example.SEENEMA.domain.mainPage.domain.ConcertRanking;
+import com.example.SEENEMA.domain.mainPage.domain.MusicalRanking;
 import com.example.SEENEMA.domain.mainPage.dto.PlayDto;
+import com.example.SEENEMA.domain.mainPage.repository.ConcertRankingRepository;
 import com.example.SEENEMA.domain.mainPage.repository.ConcertRepository;
+import com.example.SEENEMA.domain.mainPage.repository.MusicalRankingRepository;
 import com.example.SEENEMA.domain.mainPage.repository.MusicalRepository;
 import com.example.SEENEMA.domain.mainPage.dto.MainPageDto;
 import lombok.RequiredArgsConstructor;
@@ -32,54 +36,114 @@ import java.util.stream.Collectors;
 public class MainPageServiceImpl implements MainPageService {
     private final String interparkMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
     private final String interparkConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pType=D&pCate=01003";
-    private final String playdbURL= "http://www.playdb.co.kr/playdb/playdblist.asp";
+    private final String playdbURL = "http://www.playdb.co.kr/playdb/playdblist.asp";
     private final MusicalRepository musicalRepository;
     private final ConcertRepository concertRepository;
+    private final ConcertRankingRepository concertRankingRepository;
+    private final MusicalRankingRepository musicalRankingRepository;
     private final int MAX_PAGE = 100;
 
-    /** 공연 랭킹 크롤링 */
-    @Override
-    public MainPageDto.responseDTO readRanking() {
-        // 타겟 사이트에 연결 후 html 파일 읽어오기
+    /**
+     * 공연 랭킹 크롤링
+     */
+
+    public List<MainPageDto.musicalRanking> getMusicalRank() {
+        List<MainPageDto.musicalRanking> musicalRankings = new ArrayList<>();
+
         Connection musicalConnection = Jsoup.connect(interparkMusical);
-        Connection concertConnection = Jsoup.connect(interparkConcert);
-        MainPageDto.responseDTO response = new MainPageDto.responseDTO();
-        try{
+
+        try {
             Document doc = musicalConnection.get();
-            List<MainPageDto.readRanking> musicalRank = getRankList(doc);    // 뮤지컬 랭킹 읽기 및 add
-            response.setMusicalRank(musicalRank);
-            doc = concertConnection.get();
-            List<MainPageDto.readRanking> concertRank = getRankList(doc);     // 콘서트 랭킹 읽기 및 add
-            response.setConcertRank(concertRank);
-        }catch(IOException e){
+            Elements divClass = doc.select("td.prds");
+
+            for (Element e : divClass) {
+                int rank = Integer.parseInt(e.select("div.ranks i").text());
+                if (rank > 10) {
+                    break;  // rank가 10보다 크면 반복문 종료
+                }
+                String title = e.select("div.prdInfo a b").text();
+                String imgUrl = e.select("a").select("img").attr("src");
+
+                MainPageDto.musicalRanking dto = new MainPageDto.musicalRanking();
+                dto.setRanking(rank);
+                dto.setTitle(title);
+                dto.setImgUrl(imgUrl);
+
+                musicalRankings.add(dto);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return response;
+
+        return musicalRankings;
     }
 
-    // 랭킹 정보 읽어온 후, 알맞게 MainPageDto.readRanking으로 변환 후 return
-    // int rank, String title, String imgUrl
-    private List<MainPageDto.readRanking> getRankList(Document doc) {
-        Elements divClass = doc.select("td.prds");
-        List<MainPageDto.readRanking> result = new ArrayList<>();
+    public List<MainPageDto.concertRanking> getConcertRank() {
+        List<MainPageDto.concertRanking> concertRankings = new ArrayList<>();
 
-        for (Element e : divClass) {
-            MainPageDto.readRanking tmp = new MainPageDto.readRanking();
-            int rank = Integer.parseInt(e.select("div.ranks i").text());
-            String title = e.select("div.prdInfo a b").text();
-            String imgUrl = e.select("a").select("img").attr("src");
+        Connection concertConnection = Jsoup.connect(interparkConcert);
 
-            tmp.setRank(rank);
-            tmp.setTitle(title);
-            tmp.setImgUrl(imgUrl);
+        try {
+            Document doc = concertConnection.get();
+            Elements divClass = doc.select("td.prds");
 
-            result.add(tmp);
+            for (Element e : divClass) {
+                int rank = Integer.parseInt(e.select("div.ranks i").text());
+                if (rank > 10) {
+                    break;  // rank가 10보다 크면 반복문 종료
+                }
+                String title = e.select("div.prdInfo a b").text();
+                String imgUrl = e.select("a").select("img").attr("src");
 
-            if (rank >= 10) {
-                return result;
+                MainPageDto.concertRanking dto = new MainPageDto.concertRanking();
+                dto.setRanking(rank);
+                dto.setTitle(title);
+                dto.setImgUrl(imgUrl);
+
+                concertRankings.add(dto);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        return null;
+        return concertRankings;
+    }
+
+    public void saveMusicalRanking(List<MainPageDto.musicalRanking> musicalList) {
+        List<MusicalRanking> musicalRankings = new ArrayList<>();
+        for (MainPageDto.musicalRanking dto : musicalList) {
+            MusicalRanking musicalRanking = MusicalRanking.builder()
+                    .ranking(dto.getRanking())
+                    .title(dto.getTitle())
+                    .imgUrl(dto.getImgUrl())
+                    .build();
+            musicalRankings.add(musicalRanking);
+        }
+        musicalRankingRepository.saveAll(musicalRankings);
+    }
+
+    public void saveConcertRanking(List<MainPageDto.concertRanking> concertList) {
+        List<ConcertRanking> concertRankings = new ArrayList<>();
+        for (MainPageDto.concertRanking dto : concertList) {
+            ConcertRanking concertRanking = ConcertRanking.builder()
+                    .ranking(dto.getRanking())
+                    .title(dto.getTitle())
+                    .imgUrl(dto.getImgUrl())
+                    .build();
+            concertRankings.add(concertRanking);
+        }
+        concertRankingRepository.saveAll(concertRankings);
+    }
+
+    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
+    public void scheduledMusicalrank() {
+        List<MainPageDto.musicalRanking> musical = getMusicalRank();
+        saveMusicalRanking(musical);
+    }
+    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
+    public void scheduledConcertrank() {
+        List<MainPageDto.concertRanking> concert = getConcertRank();
+        saveConcertRanking(concert);
     }
 
 

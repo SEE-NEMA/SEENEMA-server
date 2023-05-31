@@ -8,7 +8,6 @@ import java.util.List;
 
 @Service
 public interface MainPageService {
-    MainPageDto.responseDTO readRanking();
     List<PlayDto.musicalList> getMusicals();
     List<PlayDto.concertList> getConcerts();
 
