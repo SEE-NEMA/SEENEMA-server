@@ -65,13 +65,29 @@ public class ShinhanService {
 
         return new SeatDto.addResponse(shinhanPostRepository.save(view));
     }
-    @Transactional(readOnly = true)
+    @Transactional
     public SeatDto.addResponse readSeatPost(Long theaterId, Long seatId, Long viewNo){
         ShinhanPost view = shinhanPostRepository.findById(viewNo).get();
         // 이미지 컬렉션을 명시적으로 초기화
         Hibernate.initialize(view.getImage());
         return new SeatDto.addResponse(view);
     }
+    @Transactional
+    public SeatDto.addResponse readSeatPost(Long userId, Long theaterId, Long seatId, Long viewNo) {
+        ShinhanPost view = shinhanPostRepository.findById(viewNo).get();
+
+        // 이미지 컬렉션을 명시적으로 초기화
+        Hibernate.initialize(view.getImage());
+
+        // 리워드 차감
+        User user = getUser(userId);
+        Reward reward = rewardRepo.findByUser(user);
+        reward.setPoint(reward.getPoint() - 10L);
+        rewardRepo.save(reward);
+
+        return new SeatDto.addResponse(view);
+    }
+
     @Transactional
     public String authUserForEdit(Long theaterId, Long seatId, Long viewNo, Long userId){
         ShinhanPost shinhanPost = getSeatPost(viewNo);
