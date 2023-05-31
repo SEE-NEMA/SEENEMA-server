@@ -25,11 +25,16 @@ public class MusicalRanking {
     @Column(name = "imgUrl")
     private String imgUrl;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "no")
+    private Musical musical;
+
     @Builder
-    public MusicalRanking(int id, int ranking, String title, String imgUrl){
+    public MusicalRanking(int id, int ranking, String title, String imgUrl, Musical musical){
         this.id = id;
         this.ranking= ranking;
         this.title = title;
         this.imgUrl = imgUrl;
+        this.musical = musical;
     }
 }

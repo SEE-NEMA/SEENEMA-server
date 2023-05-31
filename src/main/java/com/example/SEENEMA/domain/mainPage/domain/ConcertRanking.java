@@ -24,12 +24,15 @@ public class ConcertRanking {
 
     @Column(name = "imgUrl")
     private String imgUrl;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "no")
+    private Concert concert;
     @Builder
-    public ConcertRanking(int id, int ranking, String title, String imgUrl){
+    public ConcertRanking(int id, int ranking, String title, String imgUrl, Concert concert){
         this.id = id;
         this.ranking= ranking;
         this.title = title;
         this.imgUrl = imgUrl;
+        this.concert = concert;
     }
 }

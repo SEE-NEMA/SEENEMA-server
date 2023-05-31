@@ -12,4 +12,5 @@ public interface MusicalRepository extends JpaRepository<Musical, Long> {
     List<Musical> findByTitleAndDateAndPlace(String title, String date, String place);
     List<Musical> findByCastContaining(String cast);
     List<Musical> findByGenreContaining(String genre);
+    List<Musical> findByTitleContainingIgnoreCase(String title);
 }

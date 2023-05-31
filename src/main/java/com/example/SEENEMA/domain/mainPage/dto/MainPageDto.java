@@ -1,6 +1,8 @@
 package com.example.SEENEMA.domain.mainPage.dto;
 
+import com.example.SEENEMA.domain.mainPage.domain.Concert;
 import com.example.SEENEMA.domain.mainPage.domain.ConcertRanking;
+import com.example.SEENEMA.domain.mainPage.domain.Musical;
 import com.example.SEENEMA.domain.mainPage.domain.MusicalRanking;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +21,7 @@ public class MainPageDto {
         private int ranking;      // 순위
         private String title;   // 공연 명
         private String imgUrl; // 이미지
+        private Concert concert;
 
         public void concertRanking(ConcertRanking concertRanking) {
             this.ranking = concertRanking.getRanking();
@@ -32,6 +35,7 @@ public class MainPageDto {
         private int ranking;      // 순위
         private String title;   // 공연 명
         private String imgUrl; // 이미지
+        private Musical musical;
 
         public void musicalRanking(MusicalRanking musicalRanking){
             this.ranking = musicalRanking.getRanking();

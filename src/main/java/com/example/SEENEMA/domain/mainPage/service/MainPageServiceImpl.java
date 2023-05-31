@@ -109,15 +109,21 @@ public class MainPageServiceImpl implements MainPageService {
     public void saveMusicalRanking(List<MainPageDto.musicalRanking> musicalList) {
         List<MusicalRanking> musicalRankings = new ArrayList<>();
         for (MainPageDto.musicalRanking dto : musicalList) {
-            if(!musicalRankingRepository.findByTitleAndImgUrl(dto.getTitle(),dto.getImgUrl()).isEmpty()){
+            if (!musicalRankingRepository.findByTitleAndImgUrl(dto.getTitle(), dto.getImgUrl()).isEmpty()) {
                 continue;
             }
-            MusicalRanking musicalRanking = MusicalRanking.builder()
-                    .ranking(dto.getRanking())
-                    .title(dto.getTitle())
-                    .imgUrl(dto.getImgUrl())
-                    .build();
-            musicalRankings.add(musicalRanking);
+
+            List<Musical> matchingMusicals = musicalRepository.findByTitleContainingIgnoreCase(dto.getTitle());
+            if (!matchingMusicals.isEmpty()) {
+                Musical musical = matchingMusicals.get(0); // 첫 번째 일치하는 Musical 객체만 가져옴
+                MusicalRanking musicalRanking = MusicalRanking.builder()
+                        .ranking(dto.getRanking())
+                        .title(dto.getTitle())
+                        .imgUrl(dto.getImgUrl())
+                        .musical(musical)
+                        .build();
+                musicalRankings.add(musicalRanking);
+            }
         }
         musicalRankingRepository.saveAll(musicalRankings);
     }
@@ -125,19 +131,24 @@ public class MainPageServiceImpl implements MainPageService {
     public void saveConcertRanking(List<MainPageDto.concertRanking> concertList) {
         List<ConcertRanking> concertRankings = new ArrayList<>();
         for (MainPageDto.concertRanking dto : concertList) {
-            if(!concertRankingRepository.findByTitleAndImgUrl(dto.getTitle(),dto.getImgUrl()).isEmpty()){
+            if (!concertRankingRepository.findByTitleAndImgUrl(dto.getTitle(), dto.getImgUrl()).isEmpty()) {
                 continue;
             }
-            ConcertRanking concertRanking = ConcertRanking.builder()
-                    .ranking(dto.getRanking())
-                    .title(dto.getTitle())
-                    .imgUrl(dto.getImgUrl())
-                    .build();
-            concertRankings.add(concertRanking);
+
+            List<Concert> matchingConcerts = concertRepository.findByTitleContainingIgnoreCase(dto.getTitle());
+            if (!matchingConcerts.isEmpty()) {
+                Concert concert = matchingConcerts.get(0); // 첫 번째 일치하는 Concert 객체만 가져옴
+                ConcertRanking concertRanking = ConcertRanking.builder()
+                        .ranking(dto.getRanking())
+                        .title(dto.getTitle())
+                        .imgUrl(dto.getImgUrl())
+                        .concert(concert)
+                        .build();
+                concertRankings.add(concertRanking);
+            }
         }
         concertRankingRepository.saveAll(concertRankings);
     }
-
     @Scheduled(fixedDelay = 3600000)
     public void scheduledMusicalrank() {
         List<MainPageDto.musicalRanking> musical = getMusicalRank();
