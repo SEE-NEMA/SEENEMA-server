@@ -43,10 +43,7 @@ public class MainPageServiceImpl implements MainPageService {
     private final MusicalRankingRepository musicalRankingRepository;
     private final int MAX_PAGE = 100;
 
-    /**
-     * 공연 랭킹 크롤링
-     */
-
+    /** 공연 랭킹 크롤링 */
     public List<MainPageDto.musicalRanking> getMusicalRank() {
         List<MainPageDto.musicalRanking> musicalRankings = new ArrayList<>();
 
@@ -112,6 +109,9 @@ public class MainPageServiceImpl implements MainPageService {
     public void saveMusicalRanking(List<MainPageDto.musicalRanking> musicalList) {
         List<MusicalRanking> musicalRankings = new ArrayList<>();
         for (MainPageDto.musicalRanking dto : musicalList) {
+            if(!musicalRankingRepository.findByTitleAndImgUrl(dto.getTitle(),dto.getImgUrl()).isEmpty()){
+                continue;
+            }
             MusicalRanking musicalRanking = MusicalRanking.builder()
                     .ranking(dto.getRanking())
                     .title(dto.getTitle())
@@ -125,6 +125,9 @@ public class MainPageServiceImpl implements MainPageService {
     public void saveConcertRanking(List<MainPageDto.concertRanking> concertList) {
         List<ConcertRanking> concertRankings = new ArrayList<>();
         for (MainPageDto.concertRanking dto : concertList) {
+            if(!concertRankingRepository.findByTitleAndImgUrl(dto.getTitle(),dto.getImgUrl()).isEmpty()){
+                continue;
+            }
             ConcertRanking concertRanking = ConcertRanking.builder()
                     .ranking(dto.getRanking())
                     .title(dto.getTitle())
@@ -135,12 +138,12 @@ public class MainPageServiceImpl implements MainPageService {
         concertRankingRepository.saveAll(concertRankings);
     }
 
-    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
+    @Scheduled(fixedDelay = 3600000)
     public void scheduledMusicalrank() {
         List<MainPageDto.musicalRanking> musical = getMusicalRank();
         saveMusicalRanking(musical);
     }
-    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
+    @Scheduled(fixedDelay = 3600000)
     public void scheduledConcertrank() {
         List<MainPageDto.concertRanking> concert = getConcertRank();
         saveConcertRanking(concert);
