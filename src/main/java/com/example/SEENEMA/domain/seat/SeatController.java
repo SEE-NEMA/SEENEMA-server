@@ -240,6 +240,7 @@ public class SeatController {
             return ResponseEntity.ok("not_enough_point");
         }
 
+
         Long seatId = null;
 
         switch (theaterId.intValue()) {

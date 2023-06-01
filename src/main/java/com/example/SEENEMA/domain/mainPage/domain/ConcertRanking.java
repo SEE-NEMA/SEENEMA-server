@@ -24,7 +24,7 @@ public class ConcertRanking {
 
     @Column(name = "imgUrl")
     private String imgUrl;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "no")
     private Concert concert;
     @Builder

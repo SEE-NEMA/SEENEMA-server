@@ -25,12 +25,12 @@ public class MusicalRanking {
     @Column(name = "imgUrl")
     private String imgUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "no")
     private Musical musical;
 
     @Builder
-    public MusicalRanking(int id, int ranking, String title, String imgUrl, Musical musical){
+    public MusicalRanking(int id, int ranking, String title, String imgUrl,Musical musical){
         this.id = id;
         this.ranking= ranking;
         this.title = title;
