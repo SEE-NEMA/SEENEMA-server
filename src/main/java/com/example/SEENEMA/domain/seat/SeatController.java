@@ -239,8 +239,6 @@ public class SeatController {
         if(r.getPoint()<5L){
             return ResponseEntity.ok("not_enough_point");
         }
-        //r.setPoint(r.getPoint()-5L);
-        rewardRepo.save(r);
 
         Long seatId = null;
 
