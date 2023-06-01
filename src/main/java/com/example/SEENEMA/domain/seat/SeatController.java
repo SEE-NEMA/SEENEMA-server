@@ -13,7 +13,9 @@ import com.example.SEENEMA.domain.seat.blueSquareShinhan.repository.ShinhanRepos
 import com.example.SEENEMA.domain.seat.chungmu.ChungmuService;
 import com.example.SEENEMA.domain.seat.chungmu.domain.ChungmuSeat;
 import com.example.SEENEMA.domain.seat.chungmu.repository.ChungmuRepository;
+import com.example.SEENEMA.domain.user.domain.Reward;
 import com.example.SEENEMA.domain.user.domain.User;
+import com.example.SEENEMA.domain.user.repository.RewardRepository;
 import com.example.SEENEMA.global.jwt.JwtTokenProvider;
 import com.example.SEENEMA.domain.seat.arcoTheater.domain.ArcoSeat;
 import com.example.SEENEMA.domain.seat.arcoTheater.repository.ArcoRepository;
@@ -50,6 +52,7 @@ public class SeatController {
     private final ImageService imageService;
     private final JwtTokenProvider provider;
     private final UserRepository userRepo;
+    private final RewardRepository rewardRepo;
 
     @ApiOperation(value = "좌석 평균 목록")
     @GetMapping("/{theaterId}")
@@ -106,7 +109,22 @@ public class SeatController {
             @PathVariable("theaterId") Long theaterId,
             @PathVariable("z") int z,
             @PathVariable("x") int x,
-            @PathVariable("y") int y ) {
+            @PathVariable("y") int y,
+            HttpServletRequest http) {
+
+        // 로그인 안 하면 로그인 요구
+        String token = provider.resolveToken(http);
+        if(token==null){
+            return ResponseEntity.ok("should_login");
+        }
+        Optional<User> user = findUser(http);
+        Reward r = rewardRepo.findByUser(user.get());
+        // 잔여 포인트가 10 미만인 경우 볼 수 없음
+        if(r.getPoint()<10L){
+            return ResponseEntity.ok("not_enough_point");
+        }
+        r.setPoint(r.getPoint()-10L);
+        rewardRepo.save(r);
 
         /** 아르코 예술극장 */
         if (theaterId == 37) {
@@ -210,6 +228,20 @@ public class SeatController {
             @PathVariable("viewNo") Long viewNo,
             HttpServletRequest http){
 
+        // 로그인 안 하면 로그인 요구
+        String token = provider.resolveToken(http);
+        if(token==null){
+            return ResponseEntity.ok("should_login");
+        }
+        Optional<User> user = findUser(http);
+        Reward r = rewardRepo.findByUser(user.get());
+        // 잔여 포인트가 10 미만인 경우 볼 수 없음
+        if(r.getPoint()<5L){
+            return ResponseEntity.ok("not_enough_point");
+        }
+        r.setPoint(r.getPoint()-5L);
+        rewardRepo.save(r);
+
         Long seatId = null;
 
         switch (theaterId.intValue()) {
@@ -230,38 +262,18 @@ public class SeatController {
                 seatId = 0L;
         }
 
-        // 로그인 한 사용자가 게시글을 조회하는 경우와 비로그인 상태 구분
-        String token = provider.resolveToken(http);
-
-        if (token == null) {
-            switch (theaterId.intValue()) {
-                case 37: /** 아르코 예술극장 */
-                    return ResponseEntity.ok(arcoService.readSeatPost(theaterId, seatId, viewNo));
-                case 11: // 블루스퀘어 마스터카드홀
-                    return ResponseEntity.ok(mastercardService.readSeatPost(theaterId, seatId, viewNo));
-                case 12: // 블루스퀘어 신한카드홀
-                    return ResponseEntity.ok(shinhanService.readSeatPost(theaterId, seatId, viewNo));
-                case 30: /** 충무아트센터 대극장 */
-                    return ResponseEntity.ok(chungmuService.readSeatPost(theaterId, seatId, viewNo));
-                default:
-                    return ResponseEntity.badRequest().build();
+        switch (theaterId.intValue()) {
+            case 37: /** 아르코 예술극장 */
+                return ResponseEntity.ok(arcoService.readSeatPost(user.get().getUserId(), theaterId, seatId, viewNo));
+            case 11: // 블루스퀘어 마스터카드홀
+                return ResponseEntity.ok(mastercardService.readSeatPost(user.get().getUserId(), theaterId, seatId, viewNo));
+            case 12: // 블루스퀘어 신한카드홀
+                return ResponseEntity.ok(shinhanService.readSeatPost(user.get().getUserId(), theaterId, seatId, viewNo));
+            case 30: /** 충무아트센터 대극장 */
+                return ResponseEntity.ok(chungmuService.readSeatPost(user.get().getUserId(), theaterId, seatId, viewNo));
+            default:
+                return ResponseEntity.badRequest().build();
             }
-        } else {
-            Optional<User> user = findUser(http);
-
-            switch (theaterId.intValue()) {
-                case 37: /** 아르코 예술극장 */
-                    return ResponseEntity.ok(arcoService.readSeatPost(user.get().getUserId(), theaterId, seatId, viewNo));
-                case 11: // 블루스퀘어 마스터카드홀
-                    return ResponseEntity.ok(mastercardService.readSeatPost(user.get().getUserId(), theaterId, seatId, viewNo));
-                case 12: // 블루스퀘어 신한카드홀
-                    return ResponseEntity.ok(shinhanService.readSeatPost(user.get().getUserId(), theaterId, seatId, viewNo));
-                case 30: /** 충무아트센터 대극장 */
-                    return ResponseEntity.ok(chungmuService.readSeatPost(user.get().getUserId(), theaterId, seatId, viewNo));
-                default:
-                    return ResponseEntity.badRequest().build();
-            }
-        }
     }
 
 
