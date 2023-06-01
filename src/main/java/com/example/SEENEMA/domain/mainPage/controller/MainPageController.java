@@ -21,8 +21,16 @@ public class MainPageController {
 
     @ApiOperation(value = "SEE-NEMA 메인페이지")
     @GetMapping("/")
-    public ResponseEntity<MainPageDto.responseDTO> readRanking(){
-        return ResponseEntity.ok(service.readRanking());
+    public ResponseEntity<MainPageDto> readRanking() {
+        MainPageDto response = new MainPageDto();
+
+        List<MainPageDto.concertRanking> concertRankings = service.getConcertRank();
+        response.setConcertRank(concertRankings);
+
+        List<MainPageDto.musicalRanking> musicalRankings = service.getMusicalRank();
+        response.setMusicalRank(musicalRankings);
+
+        return ResponseEntity.ok(response);
     }
 
     @ApiOperation(value = "뮤지컬 목록")
