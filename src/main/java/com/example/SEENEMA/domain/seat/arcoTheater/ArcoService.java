@@ -90,7 +90,7 @@ public class ArcoService {
         // 게시글 작성자와 조회하는 사용자가 다를 경우에만 리워드 차감
         if (!view.getUser().getUserId().equals(user.getUserId())) {
             Reward reward = rewardRepo.findByUser(user);
-            reward.setPoint(reward.getPoint() - 5L);
+            reward.setPoint(reward.getPoint() - 10L);
             rewardRepo.save(reward);
         }
 

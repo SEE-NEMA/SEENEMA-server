@@ -236,11 +236,9 @@ public class SeatController {
         Optional<User> user = findUser(http);
         Reward r = rewardRepo.findByUser(user.get());
         // 잔여 포인트가 10 미만인 경우 볼 수 없음
-        if(r.getPoint()<5L){
+        if(r.getPoint()<10L){
             return ResponseEntity.ok("not_enough_point");
         }
-        r.setPoint(r.getPoint()-5L);
-        rewardRepo.save(r);
 
         Long seatId = null;
 
