@@ -30,7 +30,7 @@ public class MusicalRanking {
     private Musical musical;
 
     @Builder
-    public MusicalRanking(int id, int ranking, String title, String imgUrl, Musical musical){
+    public MusicalRanking(int id, int ranking, String title, String imgUrl,Musical musical){
         this.id = id;
         this.ranking= ranking;
         this.title = title;
