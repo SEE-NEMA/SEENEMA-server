@@ -44,89 +44,89 @@ public class MainPageServiceImpl implements MainPageService {
     private final int MAX_PAGE = 20;
 
     /** 공연 랭킹 크롤링 */
-    public List<MainPageDto.musicalRanking> getMusicalRank() {
-        List<MainPageDto.musicalRanking> musicalRankings = new ArrayList<>();
-
-        Connection musicalConnection = Jsoup.connect(interparkMusical);
-
-        try {
-            Document doc = musicalConnection.get();
-            Elements divClass = doc.select("td.prds");
-
-            for (Element e : divClass) {
-                int rank = Integer.parseInt(e.select("div.ranks i").text());
-                if (rank > 10) {
-                    break;  // rank가 10보다 크면 반복문 종료
-                }
-                String title = e.select("div.prdInfo a b").text();
-                String imgUrl = e.select("a").select("img").attr("src");
-
-                MainPageDto.musicalRanking dto = new MainPageDto.musicalRanking();
-                dto.setRanking(rank);
-                dto.setTitle(title);
-                dto.setImgUrl(imgUrl);
-
-                musicalRankings.add(dto);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return musicalRankings;
-    }
-
-    public List<MainPageDto.concertRanking> getConcertRank() {
-        List<MainPageDto.concertRanking> concertRankings = new ArrayList<>();
-
-        Connection concertConnection = Jsoup.connect(interparkConcert);
-
-        try {
-            Document doc = concertConnection.get();
-            Elements divClass = doc.select("td.prds");
-
-            for (Element e : divClass) {
-                int rank = Integer.parseInt(e.select("div.ranks i").text());
-                if (rank > 10) {
-                    break;  // rank가 10보다 크면 반복문 종료
-                }
-                String title = e.select("div.prdInfo a b").text();
-                String imgUrl = e.select("a").select("img").attr("src");
-
-                MainPageDto.concertRanking dto = new MainPageDto.concertRanking();
-                dto.setRanking(rank);
-                dto.setTitle(title);
-                dto.setImgUrl(imgUrl);
-
-                concertRankings.add(dto);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return concertRankings;
-    }
-
-    public void saveMusicalRanking(List<MainPageDto.musicalRanking> musicalList) {
-        List<MusicalRanking> musicalRankings = new ArrayList<>();
-        for (MainPageDto.musicalRanking dto : musicalList) {
-            if (!musicalRankingRepository.findByTitleAndImgUrl(dto.getTitle(), dto.getImgUrl()).isEmpty()) {
-                continue;
-            }
-
-            List<Musical> matchingMusicals = musicalRepository.findByTitleContainingIgnoreCase(dto.getTitle());
-            if (!matchingMusicals.isEmpty()) {
-                Musical musical = matchingMusicals.get(0); // 첫 번째 일치하는 Musical 객체만 가져옴
-                MusicalRanking musicalRanking = MusicalRanking.builder()
-                        .ranking(dto.getRanking())
-                        .title(dto.getTitle())
-                        .imgUrl(dto.getImgUrl())
-                        .musical(musical)
-                        .build();
-                musicalRankings.add(musicalRanking);
-            }
-        }
-        musicalRankingRepository.saveAll(musicalRankings);
-    }
+//    public List<MainPageDto.musicalRanking> getMusicalRank() {
+//        List<MainPageDto.musicalRanking> musicalRankings = new ArrayList<>();
+//
+//        Connection musicalConnection = Jsoup.connect(interparkMusical);
+//
+//        try {
+//            Document doc = musicalConnection.get();
+//            Elements divClass = doc.select("td.prds");
+//
+//            for (Element e : divClass) {
+//                int rank = Integer.parseInt(e.select("div.ranks i").text());
+//                if (rank > 10) {
+//                    break;  // rank가 10보다 크면 반복문 종료
+//                }
+//                String title = e.select("div.prdInfo a b").text();
+//                String imgUrl = e.select("a").select("img").attr("src");
+//
+//                MainPageDto.musicalRanking dto = new MainPageDto.musicalRanking();
+//                dto.setRanking(rank);
+//                dto.setTitle(title);
+//                dto.setImgUrl(imgUrl);
+//
+//                musicalRankings.add(dto);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return musicalRankings;
+//    }
+//
+//    public List<MainPageDto.concertRanking> getConcertRank() {
+//        List<MainPageDto.concertRanking> concertRankings = new ArrayList<>();
+//
+//        Connection concertConnection = Jsoup.connect(interparkConcert);
+//
+//        try {
+//            Document doc = concertConnection.get();
+//            Elements divClass = doc.select("td.prds");
+//
+//            for (Element e : divClass) {
+//                int rank = Integer.parseInt(e.select("div.ranks i").text());
+//                if (rank > 10) {
+//                    break;  // rank가 10보다 크면 반복문 종료
+//                }
+//                String title = e.select("div.prdInfo a b").text();
+//                String imgUrl = e.select("a").select("img").attr("src");
+//
+//                MainPageDto.concertRanking dto = new MainPageDto.concertRanking();
+//                dto.setRanking(rank);
+//                dto.setTitle(title);
+//                dto.setImgUrl(imgUrl);
+//
+//                concertRankings.add(dto);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return concertRankings;
+//    }
+//
+//    public void saveMusicalRanking(List<MainPageDto.musicalRanking> musicalList) {
+//        List<MusicalRanking> musicalRankings = new ArrayList<>();
+//        for (MainPageDto.musicalRanking dto : musicalList) {
+//            if (!musicalRankingRepository.findByTitleAndImgUrl(dto.getTitle(), dto.getImgUrl()).isEmpty()) {
+//                continue;
+//            }
+//
+//            List<Musical> matchingMusicals = musicalRepository.findByTitleContainingIgnoreCase(dto.getTitle());
+//            if (!matchingMusicals.isEmpty()) {
+//                Musical musical = matchingMusicals.get(0); // 첫 번째 일치하는 Musical 객체만 가져옴
+//                MusicalRanking musicalRanking = MusicalRanking.builder()
+//                        .ranking(dto.getRanking())
+//                        .title(dto.getTitle())
+//                        .imgUrl(dto.getImgUrl())
+//                        .musical(musical)
+//                        .build();
+//                musicalRankings.add(musicalRanking);
+//            }
+//        }
+//        musicalRankingRepository.saveAll(musicalRankings);
+//    }
     public List<MainPageDto.musicalRanking> getMusicalRankingsFromDatabase() {
         List<MainPageDto.musicalRanking> musicalRankings = new ArrayList<>();
 
@@ -182,11 +182,11 @@ public class MainPageServiceImpl implements MainPageService {
 //        }
 //        concertRankingRepository.saveAll(concertRankings);
 //    }
-    @Scheduled(fixedDelay = 3600000)
-    public void scheduledMusicalrank() {
-        List<MainPageDto.musicalRanking> musical = getMusicalRank();
-        saveMusicalRanking(musical);
-    }
+//    @Scheduled(fixedDelay = 3600000)
+//    public void scheduledMusicalrank() {
+//        List<MainPageDto.musicalRanking> musical = getMusicalRank();
+//        saveMusicalRanking(musical);
+//    }
 //    @Scheduled(fixedDelay = 3600000)
 //    public void scheduledConcertrank() {
 //        List<MainPageDto.concertRanking> concert = getConcertRank();
@@ -319,21 +319,21 @@ public class MainPageServiceImpl implements MainPageService {
 //        deleteMusicals();
 //    }
 //
-//    /** 뮤지컬 목록에 title,place,imgurl만 출력*/
-//    public List<PlayDto.musicalList> getMusicalList(){
-//        List<Musical> musicals = musicalRepository.findAll();
-//        return musicals.stream().map(musical -> new PlayDto.musicalList(musical.getNo(),musical.getImgUrl(), musical.getTitle(), musical.getPlace(), musical.getDate())).collect(Collectors.toList());
-//    }
-//
-//    /** 뮤지컬 상세 정보*/
-//    public PlayDto.musicalInfo getMusicalInfo(Long no){
-//        Musical musical = getMusical(no);
-//        return new PlayDto.musicalInfo(musical);
-//    }
-//
-//    private Musical getMusical(Long no){
-//        return musicalRepository.findById(no).orElseThrow();
-//    }
+    /** 뮤지컬 목록에 title,place,imgurl만 출력*/
+    public List<PlayDto.musicalList> getMusicalList(){
+        List<Musical> musicals = musicalRepository.findAll();
+        return musicals.stream().map(musical -> new PlayDto.musicalList(musical.getNo(),musical.getImgUrl(), musical.getTitle(), musical.getPlace(), musical.getDate())).collect(Collectors.toList());
+    }
+
+    /** 뮤지컬 상세 정보*/
+    public PlayDto.musicalInfo getMusicalInfo(Long no){
+        Musical musical = getMusical(no);
+        return new PlayDto.musicalInfo(musical);
+    }
+
+    private Musical getMusical(Long no){
+        return musicalRepository.findById(no).orElseThrow();
+    }
 
 
     /**** 콘서트 크롤링 ****/
@@ -455,26 +455,26 @@ public class MainPageServiceImpl implements MainPageService {
 //            concertRepository.save(savedConcert);
 //        }
 //    }
-
-    /** 종료된 콘서트 삭제 */
-    public void deleteConcerts() {
-        List<Concert> concerts = concertRepository.findAll();
-        for (Concert concert : concerts) {
-            String[] dates = concert.getDate().split(" ~ ");
-            if (dates.length != 2) {
-                continue; // yyyy.mm.dd 형식이 아닌 데이터는 삭제하지 않음
-            }
-            String endDateString = dates[1];
-            try {
-                LocalDate endDate = LocalDate.parse(endDateString, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
-                if (endDate.isBefore(LocalDate.now())) {
-                    concertRepository.delete(concert);
-                }
-            } catch (DateTimeParseException e) {
-                // yyyy.mm.dd 형식으로 파싱할 수 없는 데이터는 삭제하지 않음
-            }
-        }
-    }
+//
+//    /** 종료된 콘서트 삭제 */
+//    public void deleteConcerts() {
+//        List<Concert> concerts = concertRepository.findAll();
+//        for (Concert concert : concerts) {
+//            String[] dates = concert.getDate().split(" ~ ");
+//            if (dates.length != 2) {
+//                continue; // yyyy.mm.dd 형식이 아닌 데이터는 삭제하지 않음
+//            }
+//            String endDateString = dates[1];
+//            try {
+//                LocalDate endDate = LocalDate.parse(endDateString, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+//                if (endDate.isBefore(LocalDate.now())) {
+//                    concertRepository.delete(concert);
+//                }
+//            } catch (DateTimeParseException e) {
+//                // yyyy.mm.dd 형식으로 파싱할 수 없는 데이터는 삭제하지 않음
+//            }
+//        }
+//    }
 //
 //    /** 24시간마다 갱신 */
 //    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
