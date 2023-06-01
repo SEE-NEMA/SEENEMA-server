@@ -27,6 +27,7 @@ public class MainPageDto {
             this.ranking = concertRanking.getRanking();
             this.title = concertRanking.getTitle();
             this.imgUrl = concertRanking.getImgUrl();
+            this.concert = concertRanking.getConcert();
         }
     }
     @Getter
@@ -41,6 +42,7 @@ public class MainPageDto {
             this.ranking = musicalRanking.getRanking();
             this.title = musicalRanking.getTitle();
             this.imgUrl = musicalRanking.getImgUrl();
+            this.musical = musicalRanking.getMusical();
         }
     }
 

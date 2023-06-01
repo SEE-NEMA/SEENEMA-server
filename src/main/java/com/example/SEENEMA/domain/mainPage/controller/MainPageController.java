@@ -22,14 +22,7 @@ public class MainPageController {
     @ApiOperation(value = "SEE-NEMA 메인페이지")
     @GetMapping("/")
     public ResponseEntity<MainPageDto> readRanking() {
-        MainPageDto response = new MainPageDto();
-
-        List<MainPageDto.concertRanking> concertRankings = service.getConcertRank();
-        response.setConcertRank(concertRankings);
-
-        List<MainPageDto.musicalRanking> musicalRankings = service.getMusicalRank();
-        response.setMusicalRank(musicalRankings);
-
+        MainPageDto response = service.readRanking();
         return ResponseEntity.ok(response);
     }
 
