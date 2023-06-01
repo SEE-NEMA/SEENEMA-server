@@ -23,6 +23,6 @@ public class Reward {
     @Builder
     public Reward(User user){
         this.user = user;
-        this.point = 0L;
+        this.point = 500L;  // 회원가입 시 reward 기본 500
     }
 }
