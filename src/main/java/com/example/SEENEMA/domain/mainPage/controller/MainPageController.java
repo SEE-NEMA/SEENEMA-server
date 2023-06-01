@@ -34,25 +34,25 @@ public class MainPageController {
     public ResponseEntity<MainPageDto> readRanking() {
         MainPageDto response = new MainPageDto();
 
-//        List<Concert> concertRankings = service.getConcertRankingsFromDatabase();
-//        response.setConcertRank(concertRankings);
+        List<MainPageDto.concertRanking> concertRankings = service.getConcertRankingsFromDatabase();
+        response.setConcertRank(concertRankings);
 
         List<MainPageDto.musicalRanking> musicalRankings = service.getMusicalRankingsFromDatabase();
         response.setMusicalRank(musicalRankings);
 
         return ResponseEntity.ok(response);
     }
-    @ApiOperation(value = "뮤지컬 목록")
-    @GetMapping("/musicals")
-    public ResponseEntity<List<PlayDto.musicalList>> getMusicalList() {
-        return ResponseEntity.ok(service.getMusicalList());
-    }
-
-    @ApiOperation(value = "뮤지컬 상세정보")
-    @GetMapping("/musicals/{no}")
-    public ResponseEntity<PlayDto.musicalInfo> getMusicalInfo(@PathVariable("no") Long no){
-        return ResponseEntity.ok(service.getMusicalInfo(no));
-    }
+//    @ApiOperation(value = "뮤지컬 목록")
+//    @GetMapping("/musicals")
+//    public ResponseEntity<List<PlayDto.musicalList>> getMusicalList() {
+//        return ResponseEntity.ok(service.getMusicalList());
+//    }
+//
+//    @ApiOperation(value = "뮤지컬 상세정보")
+//    @GetMapping("/musicals/{no}")
+//    public ResponseEntity<PlayDto.musicalInfo> getMusicalInfo(@PathVariable("no") Long no){
+//        return ResponseEntity.ok(service.getMusicalInfo(no));
+//    }
 
 //    @ApiOperation(value = "콘서트 목록")
 //    @GetMapping("/concerts")

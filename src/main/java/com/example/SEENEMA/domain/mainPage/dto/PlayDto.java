@@ -73,6 +73,17 @@ public class PlayDto {
             this.place = place;
             this.date = date;
         }
+        public Concert toEntity(){
+            return Concert.builder()
+                    .title(title)
+                    .genre(genre)
+                    .date(date)
+                    .place(place)
+                    .cast(cast)
+                    .imgUrl(imgUrl)
+                    .detailUrl(detailUrl)
+                    .build();
+        }
     }
 
     @Getter
@@ -99,6 +110,5 @@ public class PlayDto {
         }
     }
 }
-
 
 
