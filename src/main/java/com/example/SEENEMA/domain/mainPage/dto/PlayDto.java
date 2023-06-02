@@ -20,12 +20,13 @@ public class PlayDto {
         private String imgUrl;
         private String detailUrl;
 
-        public musicalList(Long no, String imgUrl, String title, String place, String date) {
+        public musicalList(Long no, String imgUrl, String title, String place, String date, String detailUrl) {
             this.no = no;
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
             this.date = date;
+            this.detailUrl = detailUrl;
         }
     }
 
@@ -66,12 +67,13 @@ public class PlayDto {
         private String imgUrl;
         private String detailUrl;
 
-        public concertList(Long no, String imgUrl, String title, String place, String date) {
+        public concertList(Long no, String imgUrl, String title, String place, String date, String detailUrl) {
             this.no = no;
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
             this.date = date;
+            this.detailUrl = detailUrl;
         }
         public Concert toEntity(){
             return Concert.builder()
