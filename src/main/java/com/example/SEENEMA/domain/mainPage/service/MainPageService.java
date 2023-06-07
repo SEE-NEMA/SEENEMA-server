@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface MainPageService {
-    //List<PlayDto.musicalList> getMusicals();
-   // List<PlayDto.concertList> getConcerts();
+    List<PlayDto.musicalList> getMusicals();
+    List<PlayDto.concertList> getConcerts();
 
 }
