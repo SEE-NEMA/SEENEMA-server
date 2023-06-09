@@ -36,6 +36,12 @@ out/
 ### VS Code ###
 .vscode/
 
+### log ###
+SEENEMA.log
 
-### ###
-application.yml
+### yml ###
+src/main/resources/application-dev.yml
+src/main/resources/application-local.yml
+
+## opencv ###
+/resources/lib
