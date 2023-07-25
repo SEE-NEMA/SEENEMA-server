@@ -34,25 +34,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class MainPageServiceImpl implements MainPageService {
-    private final String interparkMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
-    private final String interparkConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pType=D&pCate=01003";
     private final String playdbURL = "http://www.playdb.co.kr/playdb/playdblist.asp";
-    private final MusicalRepository musicalRepository;
-    private final ConcertRepository concertRepository;
+    private final String rankingMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
+    private final String rankingConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pType=D&pCate=01003";
     private final ConcertRankingRepository concertRankingRepository;
     private final MusicalRankingRepository musicalRankingRepository;
-    private final int MAX_PAGE = 20;
+    private final MusicalRepository musicalRepository;
+    private final ConcertRepository concertRepository;
+    private final int MAX_PAGE = 50;
 
     /** 공연 랭킹 크롤링 */
     public List<MainPageDto.musicalRanking> getMusicalRank() {
         List<MainPageDto.musicalRanking> musicalRankings = new ArrayList<>();
-
-        Connection musicalConnection = Jsoup.connect(interparkMusical);
-
+        Connection musicalConnection = Jsoup.connect(rankingMusical);
         try {
             Document doc = musicalConnection.get();
             Elements divClass = doc.select("td.prds");
-
             for (Element e : divClass) {
                 int rank = Integer.parseInt(e.select("div.ranks i").text());
                 if (rank > 10) {
@@ -60,30 +57,23 @@ public class MainPageServiceImpl implements MainPageService {
                 }
                 String title = e.select("div.prdInfo a b").text();
                 String imgUrl = e.select("a").select("img").attr("src");
-
                 MainPageDto.musicalRanking dto = new MainPageDto.musicalRanking();
                 dto.setRanking(rank);
                 dto.setTitle(title);
                 dto.setImgUrl(imgUrl);
-
                 musicalRankings.add(dto);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return musicalRankings;
     }
-
     public List<MainPageDto.concertRanking> getConcertRank() {
         List<MainPageDto.concertRanking> concertRankings = new ArrayList<>();
-
-        Connection concertConnection = Jsoup.connect(interparkConcert);
-
+        Connection concertConnection = Jsoup.connect(rankingConcert);
         try {
             Document doc = concertConnection.get();
             Elements divClass = doc.select("td.prds");
-
             for (Element e : divClass) {
                 int rank = Integer.parseInt(e.select("div.ranks i").text());
                 if (rank > 10) {
@@ -91,94 +81,44 @@ public class MainPageServiceImpl implements MainPageService {
                 }
                 String title = e.select("div.prdInfo a b").text();
                 String imgUrl = e.select("a").select("img").attr("src");
-
                 MainPageDto.concertRanking dto = new MainPageDto.concertRanking();
                 dto.setRanking(rank);
                 dto.setTitle(title);
                 dto.setImgUrl(imgUrl);
-
                 concertRankings.add(dto);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return concertRankings;
     }
-
     public void saveMusicalRanking(List<MainPageDto.musicalRanking> musicalList) {
         List<MusicalRanking> musicalRankings = new ArrayList<>();
         for (MainPageDto.musicalRanking dto : musicalList) {
-            if (!musicalRankingRepository.findByTitleAndImgUrl(dto.getTitle(), dto.getImgUrl()).isEmpty()) {
+            if(!musicalRankingRepository.findByTitleAndImgUrl(dto.getTitle(),dto.getImgUrl()).isEmpty()){
                 continue;
             }
-
-            List<Musical> matchingMusicals = musicalRepository.findByTitleContainingIgnoreCase(dto.getTitle());
-            if (!matchingMusicals.isEmpty()) {
-                Musical musical = matchingMusicals.get(0); // 첫 번째 일치하는 Musical 객체만 가져옴
-                MusicalRanking musicalRanking = MusicalRanking.builder()
-                        .ranking(dto.getRanking())
-                        .title(dto.getTitle())
-                        .imgUrl(dto.getImgUrl())
-                        .musical(musical)
-                        .build();
+            MusicalRanking musicalRanking = MusicalRanking.builder()
+                    .ranking(dto.getRanking())
+                    .title(dto.getTitle())
+                    .imgUrl(dto.getImgUrl())
+                    .build();
                 musicalRankings.add(musicalRanking);
             }
-        }
         musicalRankingRepository.saveAll(musicalRankings);
-    }
-    public List<MainPageDto.musicalRanking> getMusicalRankingsFromDatabase() {
-        List<MainPageDto.musicalRanking> musicalRankings = new ArrayList<>();
-
-        List<MusicalRanking> concerts = musicalRankingRepository.findAll(); // 적절한 Repository 메서드를 사용하여 모든 Concert 데이터를 가져옵니다.
-
-        for (MusicalRanking concert : concerts) {
-            MainPageDto.musicalRanking dto = new MainPageDto.musicalRanking();
-            dto.setRanking(concert.getRanking());
-            dto.setTitle(concert.getTitle());
-            dto.setImgUrl(concert.getImgUrl());
-            dto.setMusical(concert.getMusical()); // no 필드도 가져옵니다.
-
-            musicalRankings.add(dto);
-        }
-
-        return musicalRankings;
-    }
-    public List<MainPageDto.concertRanking> getConcertRankingsFromDatabase() {
-        List<MainPageDto.concertRanking> concertRankings = new ArrayList<>();
-
-        List<ConcertRanking> concerts = concertRankingRepository.findAll(); // 적절한 Repository 메서드를 사용하여 모든 Concert 데이터를 가져옵니다.
-
-        for (ConcertRanking concert : concerts) {
-            MainPageDto.concertRanking dto = new MainPageDto.concertRanking();
-            dto.setRanking(concert.getRanking());
-            dto.setTitle(concert.getTitle());
-            dto.setImgUrl(concert.getImgUrl());
-            dto.setConcert(concert.getConcert()); // no 필드도 가져옵니다.
-
-            concertRankings.add(dto);
-        }
-
-        return concertRankings;
     }
     public void saveConcertRanking(List<MainPageDto.concertRanking> concertList) {
         List<ConcertRanking> concertRankings = new ArrayList<>();
         for (MainPageDto.concertRanking dto : concertList) {
-            if (!concertRankingRepository.findByTitleAndImgUrl(dto.getTitle(), dto.getImgUrl()).isEmpty()) {
+            if(!concertRankingRepository.findByTitleAndImgUrl(dto.getTitle(),dto.getImgUrl()).isEmpty()){
                 continue;
             }
-
-            List<Concert> matchingConcerts = concertRepository.findByTitleContainingIgnoreCase(dto.getTitle());
-            if (!matchingConcerts.isEmpty()) {
-                Concert concert = matchingConcerts.get(0); // 첫 번째 일치하는 Concert 객체만 가져옴
-                ConcertRanking concertRanking = ConcertRanking.builder()
-                        .ranking(dto.getRanking())
-                        .title(dto.getTitle())
-                        .imgUrl(dto.getImgUrl())
-                        .concert(concert)
-                        .build();
-                concertRankings.add(concertRanking);
-            }
+            ConcertRanking concertRanking = ConcertRanking.builder()
+                    .ranking(dto.getRanking())
+                    .title(dto.getTitle())
+                    .imgUrl(dto.getImgUrl())
+                    .build();
+            concertRankings.add(concertRanking);
         }
         concertRankingRepository.saveAll(concertRankings);
     }
@@ -194,9 +134,8 @@ public class MainPageServiceImpl implements MainPageService {
     }
 
 
-    /**** 뮤지컬 크롤링 ****/
 
-    /** 뮤지컬 목록 **/
+    /**** 뮤지컬 크롤링 ****/
     @Override
     public List<PlayDto.musicalList> getMusicals() {
 
@@ -220,28 +159,9 @@ public class MainPageServiceImpl implements MainPageService {
                 for (Element row : rows) {
                     PlayDto.musicalList musical = new PlayDto.musicalList();
 
-                    String title = row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text();
-
-                    musical.setTitle(title);
-                    System.out.println(title);
-
-
-                    String imgURL_before = row.selectFirst("td[width=\"90\"] img").attr("onclick");
-                    String imgURL_after = imgURL_before.split("'")[1];
-                    Connection conForImg = Jsoup.connect("http://www.playdb.co.kr/playdb/playdbDetail.asp?sReqPlayno="+imgURL_after);
-                    try{
-                        Document imgDoc = conForImg.get();
-                        Elements rowsIMG = imgDoc.select("div.pddetail > h2");
-                        imgURL_after = rowsIMG.select("img").attr("src");
-                        musical.setImgUrl(imgURL_after);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    //musical.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
-
+                    musical.setImgUrl(row.selectFirst("td[width=\"90\"] img").attr("src"));
+                    musical.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
                     String[] parts = row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
-
                     musical.setGenre(parts[0].replaceAll("세부장르 : ", "").trim());
                     musical.setDate(parts[1].replaceAll("일시 : ", "").trim());
                     musical.setPlace(Jsoup.parse(parts[2]).text().replaceAll("장소 : ", ""));
@@ -267,11 +187,10 @@ public class MainPageServiceImpl implements MainPageService {
                 e.printStackTrace();
             }
         }
-//        saveMusicals(musicalList);
         return musicalList;
     }
 
-    /** db 저장 */
+    // db 저장
     public void saveMusicals(List<PlayDto.musicalList> musicalList) {
         for (PlayDto.musicalList musical : musicalList) {
             if (!musicalRepository.findByTitleAndDateAndPlace(musical.getTitle(),musical.getDate(),musical.getPlace()).isEmpty()) {
@@ -290,8 +209,6 @@ public class MainPageServiceImpl implements MainPageService {
             musicalRepository.save(savedMusical);
         }
     }
-
-    /** 종료된 뮤지컬 삭제 */
     public void deleteMusicals() {
         List<Musical> musicals = musicalRepository.findAll();
         for (Musical musical : musicals) {
@@ -310,7 +227,6 @@ public class MainPageServiceImpl implements MainPageService {
             }
         }
     }
-
     /** 24시간마다 갱신 */
     @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
     public void scheduledMusicals() {
@@ -335,7 +251,6 @@ public class MainPageServiceImpl implements MainPageService {
         return musicalRepository.findById(no).orElseThrow();
     }
 
-
     /**** 콘서트 크롤링 ****/
 
     /** 콘서트 목록 **/
@@ -344,7 +259,7 @@ public class MainPageServiceImpl implements MainPageService {
 
         List<PlayDto.concertList> concertList = new ArrayList<>();
 
-        for (int page = 1; page <= 20; page++) {
+        for (int page = 1; page <= MAX_PAGE; page++) {
             for (String sPlayType : new String[]{"2", "3"}) {
                 Connection conn = Jsoup.connect(playdbURL)
                         .data("Page", String.valueOf(page))
@@ -356,7 +271,6 @@ public class MainPageServiceImpl implements MainPageService {
                         .data("sStartYear", "")
                         .data("sSelectType", "1");
 
-
                 try {
                     Document doc = conn.get();
                     Elements rows = doc.select("div.container1 > table > tbody > tr:nth-child(11) > td > table > tbody > tr:nth-child(n+3):nth-child(odd) > td > table > tbody > tr > td[width=\"493\"]");
@@ -364,22 +278,8 @@ public class MainPageServiceImpl implements MainPageService {
                     for (Element row : rows) {
                         PlayDto.concertList concert = new PlayDto.concertList();
 
-                        String imgURL_before = row.selectFirst("td[width=\"90\"] img").attr("onclick");
-                        String imgURL_after = imgURL_before.split("'")[1];
-                        String detailUrl = "http://www.playdb.co.kr/playdb/playdbDetail.asp?sReqPlayno="+imgURL_after;
-
-                        concert.setDetailUrl(detailUrl);
-                        Connection conForImg = Jsoup.connect("http://www.playdb.co.kr/playdb/playdbDetail.asp?sReqPlayno="+imgURL_after);
-                        try{
-                            Document imgDoc = conForImg.get();
-                            Elements rowsIMG = imgDoc.select("div.pddetail > h2");
-                            imgURL_after = rowsIMG.select("img").attr("src");
-                            concert.setImgUrl(imgURL_after);
-                        }catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        String title = row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text();
-                        concert.setTitle(title);
+                        concert.setImgUrl(row.selectFirst("td[width=\"90\"] img").attr("src"));
+                        concert.setTitle(row.selectFirst("td[width=\"375\"]> table > tbody > tr:first-child ").text());
 
                         String[] parts = row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
 
@@ -395,30 +295,18 @@ public class MainPageServiceImpl implements MainPageService {
                         }
                         concert.setCast(cast);
 
-                        System.out.println(concert.getCast());
-                        ;
-                        System.out.println(detailUrl);
-                        int flag =0;
-                        if( cast != null){
-                            List<Concert> dbConcert = concertRepository.findAll();
-                            for(Concert dbC : dbConcert){
-                                if (dbC.getCast()!=null && dbC.getCast().equals(cast)){
-                                    flag = 1;
-                                    break;
-                                }
-                            }
+                        String detailUrl = null;
+                        if (parts.length >= 4) { // detail url이 있는 경우
+                            Element aElement = row.selectFirst("a:has(img)");
+                            detailUrl = aElement != null ? aElement.attr("href") : null;
                         }
-                        if(flag == 1) continue;
-                        Concert c = concertRepository.save(concert.toEntity());
-                        System.out.println("concert->"+c.getTitle()+c.getNo());
+                        concert.setDetailUrl(detailUrl);
+
                         concertList.add(concert);
-                        if(concertRepository.findAll().size() >280) break;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    e.getMessage();
                 }
-                if(concertRepository.findAll().size() >280) break;
             }
         }
         return concertList;
@@ -427,7 +315,7 @@ public class MainPageServiceImpl implements MainPageService {
     /** db 저장 */
     public void saveConcerts(List<PlayDto.concertList> concertList) {
         for (PlayDto.concertList concert : concertList) {
-            if (!concertRepository.findByDetailUrl(concert.getDetailUrl()).isEmpty()) {
+            if (!concertRepository.findByTitleAndDateAndPlace(concert.getTitle(),concert.getDate(),concert.getPlace()).isEmpty()) {
                 // 이미 저장된 데이터이므로 무시
                 continue;
             }
@@ -468,7 +356,7 @@ public class MainPageServiceImpl implements MainPageService {
     @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
     public void scheduledConcerts() {
         List<PlayDto.concertList>concertList = getConcerts();
-        //saveConcerts(concertList);
+        saveConcerts(concertList);
         deleteConcerts();
     }
 

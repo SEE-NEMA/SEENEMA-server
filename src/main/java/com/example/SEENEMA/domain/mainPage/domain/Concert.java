@@ -33,7 +33,6 @@ public class Concert {
     private String detailUrl;
 
     @Builder
-
     public Concert(Long no, String title, String genre, String date, String place, String cast, String imgUrl, String detailUrl) {
         this.no = no;
         this.title = title;
