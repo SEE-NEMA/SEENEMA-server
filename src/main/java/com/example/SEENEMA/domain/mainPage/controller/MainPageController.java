@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class MainPageController {
-    @Autowired
+
     private MainPageServiceImpl service;
 
 //    @ApiOperation(value = "SEE-NEMA 메인페이지")

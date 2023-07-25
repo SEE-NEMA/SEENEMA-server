@@ -12,5 +12,4 @@ public interface ConcertRepository extends JpaRepository<Concert,Long > {
     List<Concert> findByCastContaining(String cast);
     List<Concert> findByGenreContaining(String genre);
     List<Concert> findByTitleContainingIgnoreCase(String title);
-    List<Concert> findByDetailUrl(String detailUrl);
 }

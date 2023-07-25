@@ -29,11 +29,17 @@ public class Concert {
     @Column(name = "img_url")
     private String imgUrl;
 
-    @Column(name="detail_url")
-    private String detailUrl;
+    @Column(name="interpark_url")
+    private String interparkUrl;
+    @Column(name="melon_url")
+    private String melonUrl;
+    @Column(name="wmp_url")
+    private String wmpUrl;
+    @Column(name="eleven_url")
+    private String elevenUrl;
 
     @Builder
-    public Concert(Long no, String title, String genre, String date, String place, String cast, String imgUrl, String detailUrl) {
+    public Concert(Long no, String title, String genre, String date, String place, String cast, String imgUrl, String interparkUrl, String melonUrl, String wmpUrl, String elevenUrl) {
         this.no = no;
         this.title = title;
         this.genre = genre;
@@ -41,6 +47,9 @@ public class Concert {
         this.place = place;
         this.cast = cast;
         this.imgUrl = imgUrl;
-        this.detailUrl = detailUrl;
+        this.interparkUrl = interparkUrl;
+        this.melonUrl = melonUrl;
+        this.wmpUrl = wmpUrl;
+        this.elevenUrl = elevenUrl;
     }
 }
