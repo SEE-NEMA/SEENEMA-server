@@ -3,6 +3,7 @@ package com.example.SEENEMA.domain.mainPage.domain;
 import lombok.*;
 import javax.persistence.*;
 @Getter
+@Setter
 @Table(name = "CONCERT")
 @NoArgsConstructor
 @Entity

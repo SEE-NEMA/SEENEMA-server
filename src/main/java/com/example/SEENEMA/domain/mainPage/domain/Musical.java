@@ -5,6 +5,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @Table(name = "MUSICAL")
 @NoArgsConstructor
 @Entity

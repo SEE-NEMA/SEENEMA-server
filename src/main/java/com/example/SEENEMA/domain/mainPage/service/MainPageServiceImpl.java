@@ -35,8 +35,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MainPageServiceImpl implements MainPageService {
     private final String playdbURL = "http://www.playdb.co.kr/playdb/playdblist.asp";
+    private final String wmpURL = "https://ticket.wemakeprice.com/category/10002";
+    private final String elevenURL = "https://ticket.11st.co.kr/Product/List";
     private final String rankingMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
     private final String rankingConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pType=D&pCate=01003";
+
     private final ConcertRankingRepository concertRankingRepository;
     private final MusicalRankingRepository musicalRankingRepository;
     private final MusicalRepository musicalRepository;
@@ -93,26 +96,27 @@ public class MainPageServiceImpl implements MainPageService {
         return concertRankings;
     }
     public void saveMusicalRanking(List<MainPageDto.musicalRanking> musicalList) {
+        // 기존 랭킹 데이터 삭제
+        musicalRankingRepository.deleteAll();
+
         List<MusicalRanking> musicalRankings = new ArrayList<>();
         for (MainPageDto.musicalRanking dto : musicalList) {
-            if(!musicalRankingRepository.findByTitleAndImgUrl(dto.getTitle(),dto.getImgUrl()).isEmpty()){
-                continue;
-            }
             MusicalRanking musicalRanking = MusicalRanking.builder()
                     .ranking(dto.getRanking())
                     .title(dto.getTitle())
                     .imgUrl(dto.getImgUrl())
                     .build();
-                musicalRankings.add(musicalRanking);
-            }
+            musicalRankings.add(musicalRanking);
+        }
         musicalRankingRepository.saveAll(musicalRankings);
     }
+
     public void saveConcertRanking(List<MainPageDto.concertRanking> concertList) {
+        // 기존 랭킹 데이터 삭제
+        concertRankingRepository.deleteAll();
+
         List<ConcertRanking> concertRankings = new ArrayList<>();
         for (MainPageDto.concertRanking dto : concertList) {
-            if(!concertRankingRepository.findByTitleAndImgUrl(dto.getTitle(),dto.getImgUrl()).isEmpty()){
-                continue;
-            }
             ConcertRanking concertRanking = ConcertRanking.builder()
                     .ranking(dto.getRanking())
                     .title(dto.getTitle())
@@ -122,6 +126,7 @@ public class MainPageServiceImpl implements MainPageService {
         }
         concertRankingRepository.saveAll(concertRankings);
     }
+
     @Scheduled(fixedDelay = 3600000)
     public void scheduledMusicalrank() {
         List<MainPageDto.musicalRanking> musical = getMusicalRank();
@@ -135,7 +140,7 @@ public class MainPageServiceImpl implements MainPageService {
 
 
 
-    /**** 뮤지컬 크롤링 ****/
+    /**** playdb 뮤지컬 크롤링 ****/
     @Override
     public List<PlayDto.musicalList> getMusicals() {
 
@@ -174,12 +179,13 @@ public class MainPageServiceImpl implements MainPageService {
                     }
                     musical.setCast(cast);
 
-                    String interparkUrl = null;
-                    if (parts.length >= 4) { // detail url이 있는 경우
-                        Element aElement = row.selectFirst("a:has(img)");
-                        interparkUrl = aElement != null ? aElement.attr("href") : null;
-                    }
-                    musical.setInterparkUrl(interparkUrl);
+                    String interparkUrl = row.selectFirst("td[width=\"375\"] > table > tbody > tr:first-child a").attr("onclick");
+                    int startIndex = interparkUrl.indexOf('\'') + 1;
+                    int endIndex = interparkUrl.lastIndexOf('\'');
+                    String numericPart = interparkUrl.substring(startIndex, endIndex);
+                    int numericValue = Integer.parseInt(numericPart);
+
+                    musical.setInterparkUrl("http://www.playdb.co.kr/playdb/playdbDetail.asp?sReqPlayno="+numericValue);
 
                     musicalList.add(musical);
                 }
@@ -254,7 +260,7 @@ public class MainPageServiceImpl implements MainPageService {
         return musicalRepository.findById(no).orElseThrow();
     }
 
-    /**** 콘서트 크롤링 ****/
+    /**** playdb 콘서트 크롤링 ****/
 
     /** 콘서트 목록 **/
     @Override
@@ -298,12 +304,20 @@ public class MainPageServiceImpl implements MainPageService {
                         }
                         concert.setCast(cast);
 
-                        String interparkUrl = null;
-                        if (parts.length >= 4) { // detail url이 있는 경우
-                            Element aElement = row.selectFirst("a:has(img)");
-                            interparkUrl = aElement != null ? aElement.attr("href") : null;
-                        }
-                        concert.setInterparkUrl(interparkUrl);
+//                        String interparkUrl = null;
+//                        if (parts.length >= 4) { // detail url이 있는 경우
+//                            Element aElement = row.selectFirst("a:has(img)");
+//                            interparkUrl = aElement != null ? aElement.attr("href") : null;
+//                        }
+//                        concert.setInterparkUrl(interparkUrl);
+
+                        String interparkUrl = row.selectFirst("td[width=\"375\"] > table > tbody > tr:first-child a").attr("onclick");
+                        int startIndex = interparkUrl.indexOf('\'') + 1;
+                        int endIndex = interparkUrl.lastIndexOf('\'');
+                        String numericPart = interparkUrl.substring(startIndex, endIndex);
+                        int numericValue = Integer.parseInt(numericPart);
+
+                        concert.setInterparkUrl("http://www.playdb.co.kr/playdb/playdbDetail.asp?sReqPlayno="+numericValue);
 
                         concertList.add(concert);
                     }
@@ -380,5 +394,327 @@ public class MainPageServiceImpl implements MainPageService {
 
     private Concert getConcert(Long no){
         return concertRepository.findById(no).orElseThrow();
+    }
+
+//    /**** 위메프 콘서트 크롤링 ****/
+//
+//    /** 콘서트 목록 **/
+//    @Override
+//    public List<PlayDto.concertList> getWMPconcerts() {
+//        List<PlayDto.concertList> concertList = new ArrayList<>();
+//
+//        Connection conn = Jsoup.connect("https://ticket.11st.co.kr/Product/List?genreId=14123");
+//
+//        try {
+//            Document doc = conn.get();
+//            Elements rows = doc.select("body > div.app");//> div > div.container > div > div.sub-cate-lst > div.u-lst-ticket.type-poster li");
+//            for (Element row : rows) {
+//                PlayDto.concertList concert = new PlayDto.concertList();
+//
+//                concert.setTitle(row.selectFirst("a > div.u-info-ticket > strong.tit").text());
+//                concert.setWmpUrl(row.selectFirst("a").attr("href"));
+//                concert.setImgUrl(row.selectFirst("a > span.img > img").attr("src"));
+//                concert.setDate(row.selectFirst("a > div.u-info-ticket > p.open-period > span.date").text());
+//
+//                Elements placeElements = row.select("a > div.u-info-ticket > p.open-period > span");
+//                if (placeElements.size() >= 2) {
+//                    concert.setPlace(placeElements.get(1).text());
+//                }
+//
+//                concertList.add(concert);
+//                //System.out.println(concertList);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return concertList;
+//    }
+//
+//
+//
+//    /** db 저장 */
+//    public void saveWMPConcerts(List<PlayDto.concertList> concertList) {
+//        for (PlayDto.concertList concert : concertList) {
+//            if (!concertRepository.findByTitleAndDateAndPlace(concert.getTitle(),concert.getDate(),concert.getPlace()).isEmpty()) {
+//                // 이미 저장된 데이터이므로 무시
+//                continue;
+//            }
+//            Concert savedConcert = Concert.builder()
+//                    .title(concert.getTitle())
+//                    .genre(concert.getGenre())
+//                    .date(concert.getDate())
+//                    .place(concert.getPlace())
+//                    .cast(concert.getCast())
+//                    .imgUrl(concert.getImgUrl())
+//                    .interparkUrl(concert.getInterparkUrl())
+//                    .melonUrl(concert.getMelonUrl())
+//                    .wmpUrl(concert.getWmpUrl())
+//                    .elevenUrl(concert.getElevenUrl())
+//                    .build();
+//            concertRepository.save(savedConcert);
+//        }
+//    }
+//
+//    /** 종료된 콘서트 삭제 */
+//    public void deleteWMPConcerts() {
+//        List<Concert> concerts = concertRepository.findAll();
+//        for (Concert concert : concerts) {
+//            String[] dates = concert.getDate().split(" ~ ");
+//            if (dates.length != 2) {
+//                continue; // yyyy.mm.dd 형식이 아닌 데이터는 삭제하지 않음
+//            }
+//            String endDateString = dates[1];
+//            try {
+//                LocalDate endDate = LocalDate.parse(endDateString, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+//                if (endDate.isBefore(LocalDate.now())) {
+//                    concertRepository.delete(concert);
+//                }
+//            } catch (DateTimeParseException e) {
+//                // yyyy.mm.dd 형식으로 파싱할 수 없는 데이터는 삭제하지 않음
+//            }
+//        }
+//    }
+//
+//    /** 24시간마다 갱신 */
+//    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
+//    public void scheduledWMPConcerts() {
+//        List<PlayDto.concertList>concertList = getWMPconcerts();
+//        saveWMPConcerts(concertList);
+//        deleteWMPConcerts();
+//    }
+//
+//    /** 콘서트 목록에 title,place,imgurl만 출력*/
+//    public List<PlayDto.concertList> getWMPConcertList(){
+//        List<Concert> concerts = concertRepository.findAll();
+//        return concerts.stream().map(concert -> new PlayDto.concertList(concert.getNo(), concert.getImgUrl(), concert.getTitle(), concert.getPlace(), concert.getDate(), concert.getInterparkUrl(), concert.getMelonUrl(), concert.getWmpUrl(), concert.getElevenUrl())).collect(Collectors.toList());
+//    }
+//
+//    /** 콘서트 상세 정보*/
+//    public PlayDto.concertInfo getWMPConcertInfo(Long no){
+//        Concert concert = getWMPConcert(no);
+//        return new PlayDto.concertInfo(concert);
+//    }
+//
+//    private Concert getWMPConcert(Long no){
+//        return concertRepository.findById(no).orElseThrow();
+//    }
+
+    /** 11번가 뮤지컬 */
+    @Override
+    public List<PlayDto.musicalList> getElevenMusicals() {
+        List<PlayDto.musicalList> musicalList = new ArrayList<>();
+
+        for (int CurrentPageIndex = 1; CurrentPageIndex <= 5; CurrentPageIndex++) {
+            Connection conn = Jsoup.connect(elevenURL)
+                    .data("genreId", "14123")
+                    .data("genreSubId", "")
+                    .data("regionId", "")
+                    .data("performanceThema", "")
+                    .data("period", "0")
+                    .data("sortcolumn", "5")
+                    .data("hdHashTagList", "")
+                    .data("searchText", "")
+                    .data("CurrentPageIndex", String.valueOf(CurrentPageIndex));
+
+            try {
+                Document doc = conn.get();
+                Elements rows = doc.select("body > div#wrapBody > div#layBodyWrap > div.l_content > form > div > div > div > div > div.tk_result_list > div.tk_content > div.tk_section.play > ul.tk_list > li");
+                for (Element row : rows) {
+                    PlayDto.musicalList musical = new PlayDto.musicalList();
+
+                    //concert.setTitle(row.selectFirst("a > span.tk_guest").text());
+                    String originalTitle = row.selectFirst("a > span.tk_guest").text();
+                    int separatorIndex = originalTitle.lastIndexOf(']');
+                    if (separatorIndex != -1) {
+                        String artistName = originalTitle.substring(separatorIndex + 1).trim();
+                        String eventName = originalTitle.substring(1, separatorIndex).trim();
+                        musical.setTitle(artistName + " - " + eventName);
+                    } else {
+                        musical.setTitle(originalTitle);
+                    }
+
+                    musical.setElevenUrl("https://ticket.11st.co.kr" + row.selectFirst("a").attr("href"));
+                    musical.setImgUrl(row.selectFirst("a > img").attr("src"));
+
+                    String dateRange = row.selectFirst("a > span.tk_date").text();
+                    dateRange = dateRange.replace("-", " ~ ");
+                    musical.setDate(dateRange);
+
+                    Elements placeElements = row.select("a > span.tk_place");
+                    if (!placeElements.isEmpty()) {
+                        musical.setPlace(placeElements.get(0).text());
+                    }
+                    System.out.println(musical.getTitle());
+                    System.out.println(musical.getDate());
+                    System.out.println(musical.getPlace());
+                    musicalList.add(musical);
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return musicalList;
+    }
+    /** db 저장 */
+    public void saveElevenMusicals(List<PlayDto.musicalList> musicalList) {
+        for (PlayDto.musicalList musical : musicalList) {
+            // 데이터베이스에서 날짜(date)와 장소(place)가 일치하는 데이터를 찾습니다.
+            List<Musical> existingMusicals = musicalRepository.findByDateAndPlaceContaining(musical.getDate(), musical.getPlace());
+
+            if (!existingMusicals.isEmpty()) {
+                // 일치하는 데이터가 있으면 해당 데이터의 elevenUrl 속성에 값을 집어넣습니다.
+                for (Musical existingMusical : existingMusicals) {
+                    existingMusical.setElevenUrl(musical.getElevenUrl());
+                    musicalRepository.save(existingMusical);
+                }
+            } else {
+                // 일치하는 데이터가 없으면 새로운 데이터를 생성하여 저장합니다.
+                Musical newMusical = Musical.builder()
+                        .title(musical.getTitle())
+                        .date(musical.getDate())
+                        .place(musical.getPlace())
+                        .elevenUrl(musical.getElevenUrl())
+                        .imgUrl(musical.getImgUrl())
+                        .build();
+                musicalRepository.save(newMusical);
+            }
+        }
+    }
+    /** 종료된 뮤지컬 삭제 */
+    public void deleteElevenMusicals() {
+        List<Musical> musicals = musicalRepository.findAll();
+        for (Musical musical : musicals) {
+            String[] dates = musical.getDate().split(" ~ ");
+            if (dates.length != 2) {
+                continue; // yyyy.mm.dd 형식이 아닌 데이터는 삭제하지 않음
+            }
+            String endDateString = dates[1];
+            try {
+                LocalDate endDate = LocalDate.parse(endDateString, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+                if (endDate.isBefore(LocalDate.now())) {
+                    musicalRepository.delete(musical);
+                }
+            } catch (DateTimeParseException e) {
+                // yyyy.mm.dd 형식으로 파싱할 수 없는 데이터는 삭제하지 않음
+            }
+        }
+    }
+    /** 24시간마다 갱신 */
+    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
+    public void scheduledElevenMusicals() {
+        List<PlayDto.musicalList> musicalLists = getElevenMusicals();
+        saveElevenMusicals(musicalLists);
+        deleteElevenMusicals();
+    }
+
+    /** 11번가 콘서트 */
+    @Override
+    public List<PlayDto.concertList> getElevenConcerts() {
+        List<PlayDto.concertList> concertList = new ArrayList<>();
+
+        for (int CurrentPageIndex = 1; CurrentPageIndex <= 5; CurrentPageIndex++) {
+            Connection conn = Jsoup.connect(elevenURL)
+                    .data("genreId", "14124")
+                    .data("genreSubId", "")
+                    .data("regionId", "")
+                    .data("performanceThema", "")
+                    .data("period", "0")
+                    .data("sortcolumn", "4")
+                    .data("hdHashTagList", "")
+                    .data("searchText", "")
+                    .data("CurrentPageIndex", String.valueOf(CurrentPageIndex));
+
+            try {
+                Document doc = conn.get();
+                Elements rows = doc.select("body > div#wrapBody > div#layBodyWrap > div.l_content > form > div > div > div > div > div.tk_result_list > div.tk_content > div.tk_section.play > ul.tk_list > li");
+                for (Element row : rows) {
+                    PlayDto.concertList concert = new PlayDto.concertList();
+
+                    //concert.setTitle(row.selectFirst("a > span.tk_guest").text());
+                    String originalTitle = row.selectFirst("a > span.tk_guest").text();
+                    int separatorIndex = originalTitle.lastIndexOf(']');
+                    if (separatorIndex != -1) {
+                        String artistName = originalTitle.substring(separatorIndex + 1).trim();
+                        String eventName = originalTitle.substring(1, separatorIndex).trim();
+                        concert.setTitle(artistName + " - " + eventName);
+                    } else {
+                        concert.setTitle(originalTitle);
+                    }
+
+                    concert.setElevenUrl("https://ticket.11st.co.kr" + row.selectFirst("a").attr("href"));
+                    concert.setImgUrl(row.selectFirst("a > img").attr("src"));
+
+                    String dateRange = row.selectFirst("a > span.tk_date").text();
+                    dateRange = dateRange.replace("-", " ~ ");
+                    concert.setDate(dateRange);
+
+                    Elements placeElements = row.select("a > span.tk_place");
+                    if (!placeElements.isEmpty()) {
+                        concert.setPlace(placeElements.get(0).text());
+                    }
+                    System.out.println(concert.getTitle());
+                    System.out.println(concert.getDate());
+                    System.out.println(concert.getPlace());
+                    concertList.add(concert);
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return concertList;
+    }
+    /** db 저장 */
+    public void saveElevenConcerts(List<PlayDto.concertList> concertList) {
+        for (PlayDto.concertList concert : concertList) {
+            // 데이터베이스에서 날짜(date)와 장소(place)가 일치하는 데이터를 찾습니다.
+            List<Concert> existingConcerts = concertRepository.findByDateAndPlaceContaining(concert.getDate(), concert.getPlace());
+
+            if (!existingConcerts.isEmpty()) {
+                // 일치하는 데이터가 있으면 해당 데이터의 elevenUrl 속성에 값을 집어넣습니다.
+                for (Concert existingConcert : existingConcerts) {
+                    existingConcert.setElevenUrl(concert.getElevenUrl());
+                    concertRepository.save(existingConcert);
+                }
+            } else {
+                // 일치하는 데이터가 없으면 새로운 데이터를 생성하여 저장합니다.
+                Concert newConcert = Concert.builder()
+                        .title(concert.getTitle())
+                        .date(concert.getDate())
+                        .place(concert.getPlace())
+                        .elevenUrl(concert.getElevenUrl())
+                        .imgUrl(concert.getImgUrl())
+                        .build();
+                concertRepository.save(newConcert);
+            }
+        }
+    }
+    /** 종료된 콘서트 삭제 */
+    public void deleteElevenConcerts() {
+        List<Concert> concerts = concertRepository.findAll();
+        for (Concert concert : concerts) {
+            String[] dates = concert.getDate().split(" ~ ");
+            if (dates.length != 2) {
+                continue; // yyyy.mm.dd 형식이 아닌 데이터는 삭제하지 않음
+            }
+            String endDateString = dates[1];
+            try {
+                LocalDate endDate = LocalDate.parse(endDateString, DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+                if (endDate.isBefore(LocalDate.now())) {
+                    concertRepository.delete(concert);
+                }
+            } catch (DateTimeParseException e) {
+                // yyyy.mm.dd 형식으로 파싱할 수 없는 데이터는 삭제하지 않음
+            }
+        }
+    }
+    /** 24시간마다 갱신 */
+    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
+    public void scheduledElevenConcerts() {
+        List<PlayDto.concertList> concertList = getElevenConcerts();
+        saveElevenConcerts(concertList);
+        deleteElevenConcerts();
     }
 }
