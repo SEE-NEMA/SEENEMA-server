@@ -1,9 +1,6 @@
 package com.example.SEENEMA.domain.mainPage.controller;
 
 
-import com.example.SEENEMA.domain.mainPage.domain.Concert;
-import com.example.SEENEMA.domain.mainPage.domain.Musical;
-import com.example.SEENEMA.domain.mainPage.domain.MusicalRanking;
 import com.example.SEENEMA.domain.mainPage.dto.MainPageDto;
 import com.example.SEENEMA.domain.mainPage.dto.PlayDto;
 import com.example.SEENEMA.domain.mainPage.service.MainPageServiceImpl;
@@ -19,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class MainPageController {
-    @Autowired
+
     private MainPageServiceImpl service;
 
 //    @ApiOperation(value = "SEE-NEMA 메인페이지")
@@ -29,25 +26,25 @@ public class MainPageController {
 //        return ResponseEntity.ok(response);
 //    }
 
-    @ApiOperation(value = "SEE-NEMA 메인페이지")
-    @GetMapping("/")
-    public ResponseEntity<MainPageDto> readRanking() {
-        MainPageDto response = new MainPageDto();
 
-        List<MainPageDto.concertRanking> concertRankings = service.getConcertRankingsFromDatabase();
-        response.setConcertRank(concertRankings);
-
-        List<MainPageDto.musicalRanking> musicalRankings = service.getMusicalRankingsFromDatabase();
-        response.setMusicalRank(musicalRankings);
-
-        return ResponseEntity.ok(response);
-    }
+//    @ApiOperation(value = "SEE-NEMA 메인페이지")
+//    @GetMapping("/")
+//    public ResponseEntity<MainPageDto> readRanking() {
+//        MainPageDto response = new MainPageDto();
+//
+//        List<MainPageDto.concertRanking> concertRankings = service.getConcertRankingsFromDatabase();
+//        response.setConcertRank(concertRankings);
+//
+//        List<MainPageDto.musicalRanking> musicalRankings = service.getMusicalRankingsFromDatabase();
+//        response.setMusicalRank(musicalRankings);
+//
+//        return ResponseEntity.ok(response);
+//    }
     @ApiOperation(value = "뮤지컬 목록")
     @GetMapping("/musicals")
     public ResponseEntity<List<PlayDto.musicalList>> getMusicalList() {
         return ResponseEntity.ok(service.getMusicalList());
     }
-
     @ApiOperation(value = "뮤지컬 상세정보")
     @GetMapping("/musicals/{no}")
     public ResponseEntity<PlayDto.musicalInfo> getMusicalInfo(@PathVariable("no") Long no){
