@@ -22,15 +22,12 @@ public class PlayDto {
         private String melonUrl;
         private String elevenUrl;
 
-        public musicalList(Long no, String imgUrl, String title, String place, String date, String interparkUrl, String melonUrl, String elevenUrl) {
+        public musicalList(Long no, String imgUrl, String title, String place, String date) {
             this.no = no;
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
             this.date = date;
-            this.interparkUrl = interparkUrl;
-            this.melonUrl = melonUrl;
-            this.elevenUrl = elevenUrl;
         }
     }
 
@@ -76,15 +73,12 @@ public class PlayDto {
         private String interparkUrl;
         private String melonUrl;
         private String elevenUrl;
-        public concertList(Long no, String imgUrl, String title, String place, String date, String interparkUrl, String melonUrl, String elevenUrl) {
+        public concertList(Long no, String imgUrl, String title, String place, String date) {
             this.no = no;
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
             this.date = date;
-            this.interparkUrl = interparkUrl;
-            this.melonUrl = melonUrl;
-            this.elevenUrl = elevenUrl;
         }
         public Concert toEntity(){
             return Concert.builder()

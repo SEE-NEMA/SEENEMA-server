@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class MainPageController {
 
-    private MainPageServiceImpl service;
+    private final MainPageServiceImpl service;
 
 //    @ApiOperation(value = "SEE-NEMA 메인페이지")
 //    @GetMapping("/")
@@ -27,22 +27,29 @@ public class MainPageController {
 //    }
 
 
-//    @ApiOperation(value = "SEE-NEMA 메인페이지")
-//    @GetMapping("/")
-//    public ResponseEntity<MainPageDto> readRanking() {
-//        MainPageDto response = new MainPageDto();
-//
-//        List<MainPageDto.concertRanking> concertRankings = service.getConcertRankingsFromDatabase();
-//        response.setConcertRank(concertRankings);
-//
-//        List<MainPageDto.musicalRanking> musicalRankings = service.getMusicalRankingsFromDatabase();
-//        response.setMusicalRank(musicalRankings);
-//
-//        return ResponseEntity.ok(response);
-//    }
+    @ApiOperation(value = "SEE-NEMA 메인페이지")
+    @GetMapping("/")
+    public ResponseEntity<MainPageDto> readRanking() {
+        MainPageDto response = new MainPageDto();
+
+        List<MainPageDto.concertRanking> concertRankings = service.getConcertRankings();
+        response.setConcertRank(concertRankings);
+
+        List<MainPageDto.musicalRanking> musicalRankings = service.getMusicalRankings();
+        response.setMusicalRank(musicalRankings);
+
+        return ResponseEntity.ok(response);
+    }
     @ApiOperation(value = "뮤지컬 목록")
     @GetMapping("/musicals")
     public ResponseEntity<List<PlayDto.musicalList>> getMusicalList() {
+        if (service == null) {
+            throw new IllegalStateException("Service is not initialized.");
+        }
+        List<PlayDto.musicalList> musicalList = service.getMusicalList();
+        if (musicalList == null) {
+            throw new IllegalStateException("Musical list is null.");
+        }
         return ResponseEntity.ok(service.getMusicalList());
     }
     @ApiOperation(value = "뮤지컬 상세정보")

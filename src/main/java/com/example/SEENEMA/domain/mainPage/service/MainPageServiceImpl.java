@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MainPageServiceImpl implements MainPageService {
     private final String playdbURL = "http://www.playdb.co.kr/playdb/playdblist.asp";
-    private final String wmpURL = "https://ticket.wemakeprice.com/category/10002";
     private final String elevenURL = "https://ticket.11st.co.kr/Product/List";
     private final String rankingMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
     private final String rankingConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pType=D&pCate=01003";
@@ -138,6 +137,21 @@ public class MainPageServiceImpl implements MainPageService {
         saveConcertRanking(concert);
     }
 
+
+    public List<MainPageDto.concertRanking> getConcertRankings() {
+        List<ConcertRanking> concertRankings = concertRankingRepository.findAll();
+        return concertRankings.stream()
+                .map(concertRanking -> new MainPageDto.concertRanking(concertRanking.getRanking(), concertRanking.getTitle(), concertRanking.getImgUrl(), concertRanking.getConcert()))
+                .collect(Collectors.toList());
+    }
+
+
+    public List<MainPageDto.musicalRanking> getMusicalRankings() {
+        List<MusicalRanking> musicalRankings = musicalRankingRepository.findAll();
+        return musicalRankings.stream()
+                .map(musicalRanking -> new MainPageDto.musicalRanking(musicalRanking.getRanking(), musicalRanking.getTitle(), musicalRanking.getImgUrl(), musicalRanking.getMusical()))
+                .collect(Collectors.toList());
+    }
 
 
     /**** playdb 뮤지컬 크롤링 ****/
@@ -389,7 +403,7 @@ public class MainPageServiceImpl implements MainPageService {
     /** 뮤지컬 목록에 title,place,imgurl만 출력*/
     public List<PlayDto.musicalList> getMusicalList(){
         List<Musical> musicals = musicalRepository.findAll();
-        return musicals.stream().map(musical -> new PlayDto.musicalList(musical.getNo(),musical.getImgUrl(), musical.getTitle(), musical.getPlace(), musical.getDate(), musical.getInterparkUrl(), musical.getMelonUrl(), musical.getElevenUrl())).collect(Collectors.toList());
+        return musicals.stream().map(musical -> new PlayDto.musicalList(musical.getNo(),musical.getImgUrl(), musical.getTitle(), musical.getPlace(), musical.getDate())).collect(Collectors.toList());
     }
 
     /** 뮤지컬 상세 정보*/
@@ -662,7 +676,7 @@ public class MainPageServiceImpl implements MainPageService {
     /** 콘서트 목록에 title,place,imgurl만 출력*/
     public List<PlayDto.concertList> getConcertList(){
         List<Concert> concerts = concertRepository.findAll();
-        return concerts.stream().map(concert -> new PlayDto.concertList(concert.getNo(), concert.getImgUrl(), concert.getTitle(), concert.getPlace(), concert.getDate(), concert.getInterparkUrl(), concert.getMelonUrl(), concert.getElevenUrl())).collect(Collectors.toList());
+        return concerts.stream().map(concert -> new PlayDto.concertList(concert.getNo(), concert.getImgUrl(), concert.getTitle(), concert.getPlace(), concert.getDate())).collect(Collectors.toList());
     }
 
     /** 콘서트 상세 정보*/
