@@ -34,13 +34,11 @@ public class Concert {
     private String interparkUrl;
     @Column(name="melon_url")
     private String melonUrl;
-    @Column(name="wmp_url")
-    private String wmpUrl;
     @Column(name="eleven_url")
     private String elevenUrl;
 
     @Builder
-    public Concert(Long no, String title, String genre, String date, String place, String cast, String imgUrl, String interparkUrl, String melonUrl, String wmpUrl, String elevenUrl) {
+    public Concert(Long no, String title, String genre, String date, String place, String cast, String imgUrl, String interparkUrl, String melonUrl, String elevenUrl) {
         this.no = no;
         this.title = title;
         this.genre = genre;
@@ -50,7 +48,6 @@ public class Concert {
         this.imgUrl = imgUrl;
         this.interparkUrl = interparkUrl;
         this.melonUrl = melonUrl;
-        this.wmpUrl = wmpUrl;
         this.elevenUrl = elevenUrl;
     }
 }
