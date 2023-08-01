@@ -20,19 +20,14 @@ public class PlayDto {
         private String imgUrl;
         private String interparkUrl;
         private String melonUrl;
-        private String wmpUrl;
         private String elevenUrl;
 
-        public musicalList(Long no, String imgUrl, String title, String place, String date, String interparkUrl, String melonUrl, String wmpUrl, String elevenUrl) {
+        public musicalList(Long no, String imgUrl, String title, String place, String date) {
             this.no = no;
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
             this.date = date;
-            this.interparkUrl = interparkUrl;
-            this.melonUrl = melonUrl;
-            this.wmpUrl = wmpUrl;
-            this.elevenUrl = elevenUrl;
         }
     }
 
@@ -48,7 +43,6 @@ public class PlayDto {
         private String imgUrl;
         private String interparkUrl;
         private String melonUrl;
-        private String wmpUrl;
         private String elevenUrl;
 
 
@@ -61,7 +55,6 @@ public class PlayDto {
             this.imgUrl = musical.getImgUrl();
             this.interparkUrl = musical.getInterparkUrl();
             this.melonUrl = musical.getMelonUrl();
-            this.wmpUrl = musical.getWmpUrl();
             this.elevenUrl = musical.getElevenUrl();
         }
     }
@@ -79,18 +72,13 @@ public class PlayDto {
         private String imgUrl;
         private String interparkUrl;
         private String melonUrl;
-        private String wmpUrl;
         private String elevenUrl;
-        public concertList(Long no, String imgUrl, String title, String place, String date, String interparkUrl, String melonUrl, String wmpUrl, String elevenUrl) {
+        public concertList(Long no, String imgUrl, String title, String place, String date) {
             this.no = no;
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
             this.date = date;
-            this.interparkUrl = interparkUrl;
-            this.melonUrl = melonUrl;
-            this.wmpUrl = wmpUrl;
-            this.elevenUrl = elevenUrl;
         }
         public Concert toEntity(){
             return Concert.builder()
@@ -102,7 +90,6 @@ public class PlayDto {
                     .imgUrl(imgUrl)
                     .interparkUrl(interparkUrl)
                     .melonUrl(melonUrl)
-                    .wmpUrl(wmpUrl)
                     .elevenUrl(elevenUrl)
                     .build();
         }
@@ -120,7 +107,6 @@ public class PlayDto {
         private String imgUrl;
         private String interparkUrl;
         private String melonUrl;
-        private String wmpUrl;
         private String elevenUrl;
 
 
@@ -133,7 +119,6 @@ public class PlayDto {
             this.imgUrl = concert.getImgUrl();
             this.interparkUrl = concert.getInterparkUrl();
             this.melonUrl = concert.getMelonUrl();
-            this.wmpUrl = concert.getWmpUrl();
             this.elevenUrl = concert.getElevenUrl();
         }
     }
