@@ -10,5 +10,7 @@ import java.util.List;
 public interface ConcertRepository extends JpaRepository<Concert,Long > {
     List<Concert> findByDateAndPlaceContaining(String date, String place);
     List<Concert> findByTitleAndDateAndPlace(String title, String date, String place);
+    List<Concert> findByGenreOrCast(String genre, String cast);
+    Concert findByNo(Long no);
 
 }
