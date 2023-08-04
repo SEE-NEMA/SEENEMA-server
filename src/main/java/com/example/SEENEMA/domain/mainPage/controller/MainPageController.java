@@ -47,7 +47,17 @@ public class MainPageController {
     }
     @ApiOperation(value = "뮤지컬 상세정보")
     @GetMapping("/musicals/{no}")
-    public ResponseEntity<PlayDto.musicalInfo> getMusicalInfo(@PathVariable("no") Long no){
+    public ResponseEntity<PlayDto.musicalInfo> getMusicalInfo(@PathVariable("no") Long no, HttpServletRequest request){
+        Optional<User> user = findUser(request);
+        PlayDto.musicalInfo musicalInfo = service.getMusicalInfo(no);
+
+        if (musicalInfo != null && user.isPresent()) {
+            // 콘서트 조회 시 UserHistory에 저장
+            userHistoryService.saveUserHistory(user.get().getUserId(), null, no);
+        }
+        else
+            System.out.println(user.get().getUserId()+"저장 실패");
+
         return ResponseEntity.ok(service.getMusicalInfo(no));
     }
 
@@ -60,16 +70,24 @@ public class MainPageController {
     @ApiOperation(value = "콘서트 상세정보")
     @GetMapping("/concerts/{no}")
     public ResponseEntity<PlayDto.concertInfo> getConcertInfo(@PathVariable("no") Long no, HttpServletRequest request) {
-        Optional<User> user = findUser(request);
+        // 로그인 한 사용자가 게시글을 조회하는 경우와 비로그인 상태 구분
+        String token = provider.resolveToken(request);
         PlayDto.concertInfo concertInfo = service.getConcertInfo(no);
-        if (concertInfo != null && user.isPresent()) {
-            // 콘서트 조회 시 UserHistory에 저장
-            userHistoryService.saveUserHistory(user.get().getUserId(), no);
+
+        if (concertInfo != null) {
+            if (token==null) {
+
+            } else {
+                // 로그인한 사용자인 경우, 콘서트 조회 시 UserHistory에 저장
+                Optional<User> user = findUser(request);
+                userHistoryService.saveUserHistory(user.get().getUserId(), no, null);
+            }
+        } else {
+            // 콘서트 정보가 없을 경우, 적절한 처리
         }
-        else
-            System.out.println(user.get().getUserId()+"저장 실패");
 
         return ResponseEntity.ok(concertInfo);
+
     }
 
     private Optional<User> findUser(HttpServletRequest request){
