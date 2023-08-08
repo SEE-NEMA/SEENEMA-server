@@ -26,11 +26,15 @@ public class TheaterDto {
         private Long theaterId;
         private String theaterName;
         private String detailUrl;
+        private Double lat;
+        private Double lon;
 
         public theaterList(Theater theater) {
             this.theaterId = theater.getTheaterId();
             this.theaterName = theater.getTheaterName();
             this.detailUrl = theater.getDetailUrl();
+            this.lat = theater.getLat();
+            this.lon = theater.getLon();
         }
     }
 
