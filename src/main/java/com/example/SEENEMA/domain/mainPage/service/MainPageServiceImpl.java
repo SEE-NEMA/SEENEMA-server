@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
 public class MainPageServiceImpl implements MainPageService {
     private final String playdbURL = "http://www.playdb.co.kr/playdb/playdblist.asp";
     private final String elevenURL = "https://ticket.11st.co.kr/Product/List";
-    private final String rankingMusical = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01011&pType=D&pCate=01011";
-    private final String rankingConcert = "http://ticket.interpark.com/contents/Ranking/RankList?pKind=01003&pType=D&pCate=01003";
+    private final String rankingMusical = "https://tickets.interpark.com/contents/ranking?genre=musical";
+    private final String rankingConcert = "https://tickets.interpark.com/contents/ranking?genre=concert";
 
     private final ConcertRankingRepository concertRankingRepository;
     private final MusicalRankingRepository musicalRankingRepository;
@@ -47,22 +47,40 @@ public class MainPageServiceImpl implements MainPageService {
 
     /** 공연 랭킹 크롤링 */
     public List<MainPageDto.musicalRanking> getMusicalRank() {
+        // 1~3위 for문 + 4~10위 for문
         List<MainPageDto.musicalRanking> musicalRankings = new ArrayList<>();
         Connection musicalConnection = Jsoup.connect(rankingMusical);
+        int rank = 1;
         try {
             Document doc = musicalConnection.get();
-            Elements divClass = doc.select("td.prds");
+            Elements divClass = doc.select("div.ranking-vertical-item_rankingItem__llUL_");
             for (Element e : divClass) {
-                int rank = Integer.parseInt(e.select("div.ranks i").text());
+                // 1 ~ 3위
+                String title = e.select("li.ranking-vertical-item_rankingGoodsName__m0gOz").text();
+                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
+                MainPageDto.musicalRanking dto = new MainPageDto.musicalRanking();
+                dto.setRanking(rank++);
+                dto.setTitle(title);
+                dto.setImgUrl(imgUrl);
+                dto.setUpDown(0);
+                dto.setRange(0);
+                musicalRankings.add(dto);
+                if(rank == 3) break;    // rank가 3보다 크면 반복문 종료
+            }
+            divClass = doc.select("div.ranking-list-bottom_rankingItemWrap__U0SBf");
+            for (Element e : divClass) {
+                // 4 ~ 10위
                 if (rank > 10) {
                     break;  // rank가 10보다 크면 반복문 종료
                 }
-                String title = e.select("div.prdInfo a b").text();
-                String imgUrl = e.select("a").select("img").attr("src");
+                String title = e.select("li.ranking-horizontal-item_rankingTicketTitle__omJYh").text();
+                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
                 MainPageDto.musicalRanking dto = new MainPageDto.musicalRanking();
-                dto.setRanking(rank);
+                dto.setRanking(rank++);
                 dto.setTitle(title);
                 dto.setImgUrl(imgUrl);
+                dto.setUpDown(0);
+                dto.setRange(0);
                 musicalRankings.add(dto);
             }
         } catch (IOException e) {
@@ -71,22 +89,38 @@ public class MainPageServiceImpl implements MainPageService {
         return musicalRankings;
     }
     public List<MainPageDto.concertRanking> getConcertRank() {
+        // 1~3위 for문 + 4~10위 for문
         List<MainPageDto.concertRanking> concertRankings = new ArrayList<>();
         Connection concertConnection = Jsoup.connect(rankingConcert);
+        int rank = 1;
         try {
             Document doc = concertConnection.get();
-            Elements divClass = doc.select("td.prds");
+            Elements divClass = doc.select("div.ranking-vertical-item_rankingItem__llUL_");
             for (Element e : divClass) {
-                int rank = Integer.parseInt(e.select("div.ranks i").text());
-                if (rank > 10) {
-                    break;  // rank가 10보다 크면 반복문 종료
-                }
-                String title = e.select("div.prdInfo a b").text();
-                String imgUrl = e.select("a").select("img").attr("src");
+                // 1 ~ 3위
+                String title = e.select("li.ranking-vertical-item_rankingGoodsName__m0gOz").text();
+                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
                 MainPageDto.concertRanking dto = new MainPageDto.concertRanking();
-                dto.setRanking(rank);
+                dto.setRanking(rank++);
                 dto.setTitle(title);
                 dto.setImgUrl(imgUrl);
+                dto.setUpDown(0);
+                dto.setRange(0);
+                concertRankings.add(dto);
+                if(rank>3) break;
+            }
+            divClass = doc.select("div.ranking-list-bottom_rankingItemWrap__U0SBf");
+            for (Element e : divClass) {
+                // 4 ~ 10위
+                if(rank > 10) break;
+                String title = e.select("li.ranking-horizontal-item_rankingTicketTitle__omJYh").text();
+                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
+                MainPageDto.concertRanking dto = new MainPageDto.concertRanking();
+                dto.setRanking(rank++);
+                dto.setTitle(title);
+                dto.setImgUrl(imgUrl);
+                dto.setUpDown(0);
+                dto.setRange(0);
                 concertRankings.add(dto);
             }
         } catch (IOException e) {
@@ -104,6 +138,8 @@ public class MainPageServiceImpl implements MainPageService {
                     .ranking(dto.getRanking())
                     .title(dto.getTitle())
                     .imgUrl(dto.getImgUrl())
+                    .upDown(dto.getUpDown())
+                    .range(dto.getRange())
                     .build();
             musicalRankings.add(musicalRanking);
         }
@@ -120,6 +156,8 @@ public class MainPageServiceImpl implements MainPageService {
                     .ranking(dto.getRanking())
                     .title(dto.getTitle())
                     .imgUrl(dto.getImgUrl())
+                    .upDown(dto.getUpDown())
+                    .range(dto.getRange())
                     .build();
             concertRankings.add(concertRanking);
         }
@@ -141,7 +179,7 @@ public class MainPageServiceImpl implements MainPageService {
     public List<MainPageDto.concertRanking> getConcertRankings() {
         List<ConcertRanking> concertRankings = concertRankingRepository.findAll();
         return concertRankings.stream()
-                .map(concertRanking -> new MainPageDto.concertRanking(concertRanking.getRanking(), concertRanking.getTitle(), concertRanking.getImgUrl(), concertRanking.getConcert()))
+                .map(concertRanking -> new MainPageDto.concertRanking(concertRanking.getRanking(), concertRanking.getTitle(), concertRanking.getImgUrl(), concertRanking.getConcert(), concertRanking.getUpDown(), concertRanking.getRange()))
                 .collect(Collectors.toList());
     }
 
@@ -149,7 +187,7 @@ public class MainPageServiceImpl implements MainPageService {
     public List<MainPageDto.musicalRanking> getMusicalRankings() {
         List<MusicalRanking> musicalRankings = musicalRankingRepository.findAll();
         return musicalRankings.stream()
-                .map(musicalRanking -> new MainPageDto.musicalRanking(musicalRanking.getRanking(), musicalRanking.getTitle(), musicalRanking.getImgUrl(), musicalRanking.getMusical()))
+                .map(musicalRanking -> new MainPageDto.musicalRanking(musicalRanking.getRanking(), musicalRanking.getTitle(), musicalRanking.getImgUrl(), musicalRanking.getMusical(), musicalRanking.getUpDown(), musicalRanking.getRange()))
                 .collect(Collectors.toList());
     }
 

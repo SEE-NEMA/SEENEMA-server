@@ -69,5 +69,4 @@ public class MainPageController {
     public ResponseEntity<PlayDto.concertInfo> getConcertInfo(@PathVariable("no") Long no){
         return ResponseEntity.ok(service.getConcertInfo(no));
     }
-
 }

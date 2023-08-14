@@ -24,14 +24,20 @@ public class MainPageDto {
         private int ranking;      // 순위
         private String title;   // 공연 명
         private String imgUrl; // 이미지
+        private int upDown;     // 1 : up , 0 : down
+        private int range;      // updown 폭?
+        // (upDown, range) : (1,0) 순위변동 X
+        //                 : (0,0) new
         private Concert concert;
 
         // 생성자 추가
-        public concertRanking(int ranking, String title, String imgUrl, Concert concert) {
+        public concertRanking(int ranking, String title, String imgUrl, Concert concert, int upDown, int range) {
             this.ranking = ranking;
             this.title = title;
             this.imgUrl = imgUrl;
             this.concert = concert;
+            this.upDown = upDown;
+            this.range = range;
         }
 
         // 일반 메소드
@@ -40,6 +46,8 @@ public class MainPageDto {
             this.title = concertRanking.getTitle();
             this.imgUrl = concertRanking.getImgUrl();
             this.concert = concertRanking.getConcert();
+            this.upDown = concertRanking.getUpDown();
+            this.range = concertRanking.getRange();
         }
     }
 
@@ -50,14 +58,20 @@ public class MainPageDto {
         private int ranking;      // 순위
         private String title;   // 공연 명
         private String imgUrl; // 이미지
+        private int upDown;     // 1 : up , 0 : down
+        private int range;      // updown 폭?
+        // (upDown, range) : (1,0) 순위변동 X
+        //                 : (0,0) new
         private Musical musical;
 
         // 생성자 추가
-        public musicalRanking(int ranking, String title, String imgUrl, Musical musical) {
+        public musicalRanking(int ranking, String title, String imgUrl, Musical musical, int upDown, int range) {
             this.ranking = ranking;
             this.title = title;
             this.imgUrl = imgUrl;
             this.musical = musical;
+            this.upDown = upDown;
+            this.range = range;
         }
 
         // 일반 메소드
@@ -66,6 +80,8 @@ public class MainPageDto {
             this.title = musicalRanking.getTitle();
             this.imgUrl = musicalRanking.getImgUrl();
             this.musical = musicalRanking.getMusical();
+            this.upDown = musicalRanking.getUpDown();
+            this.range = musicalRanking.getRange();
         }
     }
 
