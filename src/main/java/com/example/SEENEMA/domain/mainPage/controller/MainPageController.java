@@ -100,5 +100,4 @@ public class MainPageController {
         String token = provider.resolveToken(request);
         return userRepo.findByEmail(provider.getUserPk(token));
     }
-
 }
