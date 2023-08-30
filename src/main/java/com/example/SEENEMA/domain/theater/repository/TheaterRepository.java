@@ -11,5 +11,6 @@ public interface TheaterRepository extends JpaRepository <Theater, Long> {
     @Override
     ArrayList<Theater> findAll();
     List<Theater> findByTheaterNameContaining(String theaterName);
+    Theater findByTheaterName(String theaterName);
 }
 

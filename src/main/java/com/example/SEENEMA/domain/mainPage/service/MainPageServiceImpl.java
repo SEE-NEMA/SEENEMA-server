@@ -10,6 +10,8 @@ import com.example.SEENEMA.domain.mainPage.repository.ConcertRepository;
 import com.example.SEENEMA.domain.mainPage.repository.MusicalRankingRepository;
 import com.example.SEENEMA.domain.mainPage.repository.MusicalRepository;
 import com.example.SEENEMA.domain.mainPage.dto.MainPageDto;
+import com.example.SEENEMA.domain.theater.domain.Theater;
+import com.example.SEENEMA.domain.theater.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
@@ -43,6 +45,7 @@ public class MainPageServiceImpl implements MainPageService {
     private final MusicalRankingRepository musicalRankingRepository;
     private final MusicalRepository musicalRepository;
     private final ConcertRepository concertRepository;
+    private final TheaterRepository theaterRepository;
     private final int MAX_PAGE = 50;
 
     /** 공연 랭킹 크롤링 */
@@ -74,7 +77,7 @@ public class MainPageServiceImpl implements MainPageService {
                     break;  // rank가 10보다 크면 반복문 종료
                 }
                 String title = e.select("li.ranking-horizontal-item_rankingTicketTitle__omJYh").text();
-                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
+                String imgUrl = "https://tickets.interpark.com/" + e.select("div").select("img").attr("src");
                 MainPageDto.musicalRanking dto = new MainPageDto.musicalRanking();
                 dto.setRanking(rank++);
                 dto.setTitle(title);
@@ -93,6 +96,7 @@ public class MainPageServiceImpl implements MainPageService {
         List<MainPageDto.concertRanking> concertRankings = new ArrayList<>();
         Connection concertConnection = Jsoup.connect(rankingConcert);
         int rank = 1;
+
         try {
             Document doc = concertConnection.get();
             Elements divClass = doc.select("div.ranking-vertical-item_rankingItem__llUL_");
@@ -107,6 +111,7 @@ public class MainPageServiceImpl implements MainPageService {
                 dto.setUpDown(0);
                 dto.setRange(0);
                 concertRankings.add(dto);
+
                 if(rank>3) break;
             }
             divClass = doc.select("div.ranking-list-bottom_rankingItemWrap__U0SBf");
@@ -233,7 +238,16 @@ public class MainPageServiceImpl implements MainPageService {
                     String[] parts = row.selectFirst("td[width=\"375\"] > table > tbody > tr:nth-child(2) > td").html().split("<br>");
                     musical.setGenre(parts[0].replaceAll("세부장르 : ", "").trim());
                     musical.setDate(parts[1].replaceAll("일시 : ", "").trim());
-                    musical.setPlace(Jsoup.parse(parts[2]).text().replaceAll("장소 : ", ""));
+
+                    String place = Jsoup.parse(parts[2]).text().replaceAll("장소 : ", "");
+                    musical.setPlace(place);
+
+                    // 극장 정보 조회
+                    Theater theater = theaterRepository.findByTheaterName(place);
+                    musical.setTheaterId(theater);
+
+
+
 
                     String cast = null;
                     if (parts.length >= 4) { // 출연 정보가 있는 경우
@@ -271,6 +285,7 @@ public class MainPageServiceImpl implements MainPageService {
                     .genre(musical.getGenre())
                     .date(musical.getDate())
                     .place(musical.getPlace())
+                    .theater(musical.getTheaterId())
                     .cast(musical.getCast())
                     .imgUrl(musical.getImgUrl())
                     .interparkUrl(musical.getInterparkUrl())
@@ -413,6 +428,7 @@ public class MainPageServiceImpl implements MainPageService {
                         .title(musical.getTitle())
                         .date(musical.getDate())
                         .place(musical.getPlace())
+                        .theater(musical.getTheaterId())
                         .cast(musical.getCast())
                         .genre(musical.getGenre())
                         .elevenUrl(musical.getElevenUrl())
@@ -452,7 +468,7 @@ public class MainPageServiceImpl implements MainPageService {
     /** 뮤지컬 목록에 title,place,imgurl만 출력*/
     public List<PlayDto.musicalList> getMusicalList(){
         List<Musical> musicals = musicalRepository.findAll();
-        return musicals.stream().map(musical -> new PlayDto.musicalList(musical.getNo(),musical.getImgUrl(), musical.getTitle(), musical.getPlace(), musical.getDate())).collect(Collectors.toList());
+        return musicals.stream().map(musical -> new PlayDto.musicalList(musical.getNo(),musical.getImgUrl(), musical.getTitle(), musical.getPlace(), musical.getTheater(), musical.getDate())).collect(Collectors.toList());
     }
 
     /** 뮤지컬 상세 정보*/
@@ -511,7 +527,13 @@ public class MainPageServiceImpl implements MainPageService {
 
                         concert.setGenre(parts[0].replaceAll("세부장르 : ", "").trim());
                         concert.setDate(parts[1].replaceAll("일시 : ", "").trim());
-                        concert.setPlace(Jsoup.parse(parts[2]).text().replaceAll("장소 : ", ""));
+
+                        String place = Jsoup.parse(parts[2]).text().replaceAll("장소 : ", "");
+                        concert.setPlace(place);
+
+                        // 극장 정보 조회
+                        Theater theater = theaterRepository.findByTheaterName(place);
+                        concert.setTheaterId(theater);
 
                         String cast = null;
                         if (parts.length >= 4) { // 출연 정보가 있는 경우
@@ -551,6 +573,7 @@ public class MainPageServiceImpl implements MainPageService {
                     .genre(concert.getGenre())
                     .date(concert.getDate())
                     .place(concert.getPlace())
+                    .theater(concert.getTheaterId())
                     .cast(concert.getCast())
                     .imgUrl(concert.getImgUrl())
                     .interparkUrl(concert.getInterparkUrl())
@@ -694,6 +717,7 @@ public class MainPageServiceImpl implements MainPageService {
                         .title(concert.getTitle())
                         .date(concert.getDate())
                         .place(concert.getPlace())
+                        .theater(concert.getTheaterId())
                         .genre(concert.getGenre())
                         .cast(concert.getCast())
                         .elevenUrl(concert.getElevenUrl())
@@ -733,7 +757,7 @@ public class MainPageServiceImpl implements MainPageService {
     /** 콘서트 목록에 title,place,imgurl만 출력*/
     public List<PlayDto.concertList> getConcertList(){
         List<Concert> concerts = concertRepository.findAll();
-        return concerts.stream().map(concert -> new PlayDto.concertList(concert.getNo(), concert.getImgUrl(), concert.getTitle(), concert.getPlace(), concert.getDate())).collect(Collectors.toList());
+        return concerts.stream().map(concert -> new PlayDto.concertList(concert.getNo(), concert.getImgUrl(), concert.getTitle(), concert.getPlace(), concert.getTheater(),concert.getDate())).collect(Collectors.toList());
     }
 
     /** 콘서트 상세 정보*/
