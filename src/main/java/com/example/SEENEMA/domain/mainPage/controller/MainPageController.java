@@ -96,6 +96,28 @@ public class MainPageController {
 
     }
 
+//    @ApiOperation(value="test")
+//    @GetMapping("/ranking/test")
+//    public ResponseEntity<MainPageDto> readRankingTEST() {
+//        MainPageDto response = new MainPageDto();
+//
+//        List<MainPageDto.concertRanking> concertRankings = service.getConcertRank();
+//        response.setConcertRank(concertRankings);
+//
+//        List<MainPageDto.musicalRanking> musicalRankings = service.getMusicalRank();
+//        response.setMusicalRank(musicalRankings);
+//
+//        return ResponseEntity.ok(response);
+//    }
+//
+//    @ApiOperation(value = "test2")
+//    @GetMapping("/rankging/test/finish")
+//    public String rankTestFin(){
+//        service.scheduledMusicalrank();
+//        service.scheduledConcertrank();
+//        return "FINISH";
+//    }
+
     private Optional<User> findUser(HttpServletRequest request){
         String token = provider.resolveToken(request);
         return userRepo.findByEmail(provider.getUserPk(token));
