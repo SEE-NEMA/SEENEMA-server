@@ -61,7 +61,7 @@ public class MainPageServiceImpl implements MainPageService {
             for (Element e : divClass) {
                 // 1 ~ 3위
                 String title = e.select("li.ranking-vertical-item_rankingGoodsName__m0gOz").text();
-                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
+                String imgUrl = "https://tickets.interpark.com/"+e.select("div.ranking-vertical-item_imageWrap__R6lkF").select("img").attr("src");
                 // 순위 상승폭
                 int upDown, range;
                 // (upDown, range) : (1,0) 순위변동 X
@@ -106,7 +106,7 @@ public class MainPageServiceImpl implements MainPageService {
                     break;  // rank가 10보다 크면 반복문 종료
                 }
                 String title = e.select("li.ranking-horizontal-item_rankingTicketTitle__omJYh").text();
-                String imgUrl = "https://tickets.interpark.com/" + e.select("div").select("img").attr("src");
+                String imgUrl = "https://tickets.interpark.com/" + e.select("div.ranking-horizontal-item_imageWrap__owTl6").select("img").attr("src");
                 // 순위 상승폭
                 int upDown, range;
                 // (upDown, range) : (1,0) 순위변동 X
@@ -162,7 +162,7 @@ public class MainPageServiceImpl implements MainPageService {
             for (Element e : divClass) {
                 // 1 ~ 3위
                 String title = e.select("li.ranking-vertical-item_rankingGoodsName__m0gOz").text();
-                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
+                String imgUrl = "https://tickets.interpark.com/"+e.select("div.ranking-vertical-item_imageWrap__R6lkF").select("img").attr("src");
                 // 순위 상승폭
                 int upDown, range;
                 // (upDown, range) : (1,0) 순위변동 X
@@ -206,7 +206,7 @@ public class MainPageServiceImpl implements MainPageService {
                 // 4 ~ 10위
                 if(rank > 10) break;
                 String title = e.select("li.ranking-horizontal-item_rankingTicketTitle__omJYh").text();
-                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
+                String imgUrl = "https://tickets.interpark.com/"+e.select("div.ranking-horizontal-item_imageWrap__owTl6").select("img").attr("src");
                 // 순위 상승폭
                 int upDown, range;
                 // (upDown, range) : (1,0) 순위변동 X

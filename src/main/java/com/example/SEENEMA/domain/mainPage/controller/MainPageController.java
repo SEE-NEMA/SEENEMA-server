@@ -111,7 +111,7 @@ public class MainPageController {
 //    }
 //
 //    @ApiOperation(value = "test2")
-//    @GetMapping("/rankging/test/finish")
+//    @GetMapping("/ranking/test/finish")
 //    public String rankTestFin(){
 //        service.scheduledMusicalrank();
 //        service.scheduledConcertrank();
