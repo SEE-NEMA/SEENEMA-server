@@ -22,6 +22,7 @@ public class TheaterDto {
     }
 
     @Getter
+    @Setter
     public static class theaterList{
         private Long theaterId;
         private String theaterName;
@@ -31,6 +32,7 @@ public class TheaterDto {
         private String direction;
         private String parking;
         private String info;
+        private String imgUrl; // 이미지 url
 
         public theaterList(Theater theater) {
             this.theaterId = theater.getTheaterId();
@@ -41,6 +43,7 @@ public class TheaterDto {
             this.direction = theater.getDirection();
             this.parking = theater.getParking();
             this.info = theater.getInfo();
+            this.imgUrl = String.valueOf(theater.getImage());
         }
     }
 

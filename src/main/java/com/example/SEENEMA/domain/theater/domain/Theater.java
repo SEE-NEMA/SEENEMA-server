@@ -33,10 +33,11 @@ public class Theater {
 
     @Column(name="info")
     private String info;
-
+    @OneToOne(mappedBy = "theater", cascade = CascadeType.ALL)
+    private TheaterImage image;
 
     @Builder
-    public Theater(Long theaterId, String theaterName, String detailUrl, Double lat, Double lon, String direction, String parking, String info) {
+    public Theater(Long theaterId, String theaterName, String detailUrl, Double lat, Double lon, String direction, String parking, String info, TheaterImage image) {
         this.theaterId = theaterId;
         this.theaterName = theaterName;
         this.detailUrl = detailUrl;
@@ -45,5 +46,6 @@ public class Theater {
         this.direction = direction;
         this.parking = parking;
         this.info = info;
+        this.image = image;
     }
 }
