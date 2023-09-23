@@ -28,6 +28,9 @@ public class TheaterDto {
         private String detailUrl;
         private Double lat;
         private Double lon;
+        private String direction;
+        private String parking;
+        private String info;
 
         public theaterList(Theater theater) {
             this.theaterId = theater.getTheaterId();
@@ -35,6 +38,9 @@ public class TheaterDto {
             this.detailUrl = theater.getDetailUrl();
             this.lat = theater.getLat();
             this.lon = theater.getLon();
+            this.direction = theater.getDirection();
+            this.parking = theater.getParking();
+            this.info = theater.getInfo();
         }
     }
 
