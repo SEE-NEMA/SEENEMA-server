@@ -58,7 +58,7 @@ public class MainPageController {
             } else {
                 // 로그인한 사용자인 경우, 콘서트 조회 시 UserHistory에 저장
                 Optional<User> user = findUser(request);
-                //userHistoryService.saveUserHistory(user.get().getUserId(), no);
+                userHistoryService.saveUserHistory(user.get().getUserId(), 0L, no);
             }
         } else {
             // 콘서트 정보가 없을 경우, 적절한 처리
@@ -86,7 +86,7 @@ public class MainPageController {
             } else {
                 // 로그인한 사용자인 경우, 콘서트 조회 시 UserHistory에 저장
                 Optional<User> user = findUser(request);
-                userHistoryService.saveUserHistory(user.get().getUserId(), no);
+                userHistoryService.saveUserHistory(user.get().getUserId(), no,0L);
             }
         } else {
             // 콘서트 정보가 없을 경우, 적절한 처리
