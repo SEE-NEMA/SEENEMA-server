@@ -32,6 +32,8 @@ public class MusicalRanking {
     private int range;      // updown 폭?
     // (upDown, range) : (1,0) 순위변동 X
     //                 : (0,0) new
+    //                 : (1,n) up
+    //                 : (2,n) down
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "no")
     private Musical musical;
