@@ -24,11 +24,12 @@ public class PlayDto {
         private String melonUrl;
         private String elevenUrl;
 
-        public musicalList(Long no, String imgUrl, String title, String place, String date) {
+        public musicalList(Long no, String imgUrl, String title, String place, Theater theaterId, String date) {
             this.no = no;
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
+            this.theaterId = theaterId;
             this.date = date;
         }
     }
@@ -78,11 +79,12 @@ public class PlayDto {
         private String interparkUrl;
         private String melonUrl;
         private String elevenUrl;
-        public concertList(Long no, String imgUrl, String title, String place,String date) {
+        public concertList(Long no, String imgUrl, String title, String place, Theater theaterId, String date) {
             this.no = no;
             this.title = title;
             this.imgUrl = imgUrl;
             this.place = place;
+            this.theaterId = theaterId;
             this.date = date;
         }
         public Concert toEntity(){
