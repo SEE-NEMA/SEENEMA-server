@@ -14,6 +14,7 @@ public interface MyPageService {
     MyPageDto.WithPoints loadMyPageWithPoints(User user);
     String checkNickname(User user, MyPageDto.EditProfileRequest request);
     MyPageDto.MyPageResponse editProfile(User user, MyPageDto.EditProfileRequest request);
+    MyPageDto.MyPageResponse interparkLogin(User user, MyPageDto.InterparkLoginInfo request);
     List<TheaterPostDto.listResponse> listMyTheaterReview(User user);
     List<MyPageDto.MyCommentList> listMyComment(User user);
     List<ViewPostDto.viewListResponse> listMyViewReview(User user);

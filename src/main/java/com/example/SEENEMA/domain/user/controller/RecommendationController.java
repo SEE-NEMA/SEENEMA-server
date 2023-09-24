@@ -24,19 +24,25 @@ public class RecommendationController {
     private final UserRepository userRepo;
 
     @GetMapping("/user/history")
-    public ResponseEntity<List<Concert>> recommendSimilarConcerts(HttpServletRequest request) {
+    public ResponseEntity<?> recommendSimilarConcerts(HttpServletRequest request) {
         Optional<User> user = findUser(request);
         if (user.isPresent()) {
-            List<Concert> recommendedConcerts = service.recommendSimilarConcertsByViewCount(user.get().getUserId());
-            return ResponseEntity.ok(recommendedConcerts);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            try {
+                List<Concert> recommendedConcerts = service.recommendSimilarConcertsByViewCount(user.get().getUserId());
+                return ResponseEntity.ok(recommendedConcerts);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while recommending concerts");
+            }
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
     }
+
+
 
     private Optional<User> findUser(HttpServletRequest request){
         String token = provider.resolveToken(request);
         return userRepo.findByEmail(provider.getUserPk(token));
     }
 }
-

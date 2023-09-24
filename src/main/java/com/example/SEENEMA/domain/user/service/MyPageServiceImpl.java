@@ -85,6 +85,18 @@ public class MyPageServiceImpl implements MyPageService{
     }
 
     @Override
+    public MyPageDto.MyPageResponse interparkLogin(User user, MyPageDto.InterparkLoginInfo request) {
+        // 프로필 수정
+        User origin = userRepo.findById(user.getUserId()).get();
+        origin.setInterparkId(request.getInterparkId());
+        origin.setInterparkPwd(request.getInterparkPwd());
+        userRepo.save(origin);
+
+        MyPageDto.MyPageResponse response = new MyPageDto.MyPageResponse(origin);
+        return response;
+    }
+
+    @Override
     public List<TheaterPostDto.listResponse> listMyTheaterReview(User user) {
         List<TheaterPostDto.listResponse> response = new ArrayList<>();
         List<TheaterPost> theaterPosts = theaterPostRepo.findByUser(user);
