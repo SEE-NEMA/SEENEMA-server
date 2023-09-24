@@ -91,6 +91,13 @@ public class UserController {
         Optional<User> user = findUser(http);
         return ResponseEntity.ok(service.editProfile(user.get(), request));
     }
+
+    @ApiOperation(value = "인터파크 정보 기입")
+    @PutMapping("/interpark-info")
+    public ResponseEntity<MyPageDto.MyPageResponse> interparkLogin(HttpServletRequest http, @RequestBody MyPageDto.InterparkLoginInfo request){
+        Optional<User> user = findUser(http);
+        return ResponseEntity.ok(service.interparkLogin(user.get(), request));
+    }
     @ApiOperation(value = "내가 쓴 공연장 후기 목록")
     @GetMapping("/my-review/theater")
     public ResponseEntity<List<TheaterPostDto.listResponse>> listMyTheaterReview(HttpServletRequest http){

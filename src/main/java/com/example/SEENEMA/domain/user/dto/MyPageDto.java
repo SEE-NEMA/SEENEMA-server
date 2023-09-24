@@ -20,10 +20,14 @@ public class MyPageDto {
         private Long userId;
         private String email;
         private String nickname;
+        private String interparkId;
+        private String interparkPwd;
         public MyPageResponse(User user){
             this.userId = user.getUserId();
             this.email = user.getEmail();
             this.nickname = user.getNickname();
+            this.interparkId = user.getInterparkId();
+            this.interparkPwd = user.getInterparkPwd();
         }
     }
     @Getter
@@ -43,6 +47,13 @@ public class MyPageDto {
     public static class EditProfileRequest{
         private String nickname;
     }
+
+    @Getter
+    public static class InterparkLoginInfo{
+        private String interparkId;
+        private String interparkPwd;
+    }
+
     // 내가 쓴 + 내가 좋아요 한 후기 목록은 기존 DTO 사용
     @Getter
     public static class MyCommentList implements Comparable<MyCommentList>{
