@@ -1,5 +1,7 @@
 package com.example.SEENEMA.domain.theater.service;
 
+import com.example.SEENEMA.domain.theater.domain.TheaterImage;
+import com.example.SEENEMA.domain.theater.repository.TheaterImageRepository;
 import com.example.SEENEMA.domain.theater.repository.TheaterRepository;
 import com.example.SEENEMA.domain.theater.domain.Theater;
 import com.example.SEENEMA.domain.theater.dto.TheaterDto;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class TheaterServiceImpl implements TheaterService{
 
     private final TheaterRepository theaterRepository;
+    private final TheaterImageRepository imageRepository;
     @Override
     @Transactional(readOnly = true)
     public List<TheaterDto.theaterResponse> searchTheater(String theaterName){
@@ -29,12 +32,27 @@ public class TheaterServiceImpl implements TheaterService{
     public List<TheaterDto.theaterList> getTheater() {
         List<Theater> theaters = theaterRepository.findAll();
         List<TheaterDto.theaterList> theaterLists = new ArrayList<>();
+
         for (Theater theater : theaters) {
             TheaterDto.theaterList theaterList = new TheaterDto.theaterList(theater);
+
+            // Find image for the theater using theaterId
+            TheaterImage image = imageRepository.findByTheaterTheaterId(theater.getTheaterId());
+
+            // Check if image is null
+            String imgUrl = (image != null) ? image.getImgUrl() : null;
+
+            // Set imgUrl in theaterList
+            theaterList.setImgUrl(imgUrl);
+
             theaterLists.add(theaterList);
         }
+
         return theaterLists;
     }
+
+
+
 
     @Override
     @Transactional(readOnly = true)
