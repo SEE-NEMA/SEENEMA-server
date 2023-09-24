@@ -48,7 +48,7 @@ public class MainPageServiceImpl implements MainPageService {
     private final TheaterRepository theaterRepository;
     private final int MAX_PAGE = 50;
 
-    /** 공연 랭킹 크롤링 */
+    /** 뮤지컬 랭킹 크롤링 */
     public List<MainPageDto.musicalRanking> getMusicalRank() {
         // 1~3위 for문 + 4~10위 for문
         List<MainPageDto.musicalRanking> musicalRankings = new ArrayList<>();
@@ -56,19 +56,48 @@ public class MainPageServiceImpl implements MainPageService {
         int rank = 1;
         try {
             Document doc = musicalConnection.get();
-            Elements divClass = doc.select("div.ranking-vertical-item_rankingItem__llUL_");
+//            Elements divClass = doc.select("div.ranking-vertical-item_rankingItem__llUL_");
+            Elements divClass = doc.select("div.ranking-list_rankingItemWrap__wjk3y");  // 순위 변동 여부 포함하기 위해서
             for (Element e : divClass) {
                 // 1 ~ 3위
                 String title = e.select("li.ranking-vertical-item_rankingGoodsName__m0gOz").text();
-                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
+                String imgUrl = "https://tickets.interpark.com/"+e.select("div.ranking-vertical-item_imageWrap__R6lkF").select("img").attr("src");
+                // 순위 상승폭
+                int upDown, range;
+                // (upDown, range) : (1,0) 순위변동 X
+                //                 : (0,0) new
+                //                 : (1,n) up
+                //                 : (2,n) down
+                if(!e.select("div.ranking-list_rankNew__zfg2o").isEmpty()){   //new
+                    upDown = 0;
+                    range = 0;
+                }
+                else if(!e.select("div.ranking-list_curRank__iRDfM").isEmpty()){  // 유지
+                    upDown = 1;
+                    range = 0;
+                }
+                else if(!e.select("span.ranking-list_rankDownText__Gn0f7").isEmpty()){  // down
+                    String r = e.select("span.ranking-list_rankDownText__Gn0f7").text();
+                    range = Integer.parseInt(r);
+                    upDown = 2;
+                }
+                else if(!e.select("span.ranking-list_rankUpText__nxIXL").isEmpty()){  // up
+                    String r = e.select("span.ranking-list_rankUpText__nxIXL").text();
+                    range = Integer.parseInt(r);
+                    upDown = 1;
+                }
+                else{       // invalid
+                    upDown = -1;
+                    range = -1;
+                }
                 MainPageDto.musicalRanking dto = new MainPageDto.musicalRanking();
                 dto.setRanking(rank++);
                 dto.setTitle(title);
                 dto.setImgUrl(imgUrl);
-                dto.setUpDown(0);
-                dto.setRange(0);
+                dto.setUpDown(upDown);
+                dto.setRange(range);
                 musicalRankings.add(dto);
-                if(rank == 3) break;    // rank가 3보다 크면 반복문 종료
+                if(rank == 4) break;    // rank가 4보다 크면 반복문 종료 / rank==3로 하면 1,2위만 조회됨,, 왜..?
             }
             divClass = doc.select("div.ranking-list-bottom_rankingItemWrap__U0SBf");
             for (Element e : divClass) {
@@ -77,13 +106,41 @@ public class MainPageServiceImpl implements MainPageService {
                     break;  // rank가 10보다 크면 반복문 종료
                 }
                 String title = e.select("li.ranking-horizontal-item_rankingTicketTitle__omJYh").text();
-                String imgUrl = "https://tickets.interpark.com/" + e.select("div").select("img").attr("src");
+                String imgUrl = "https://tickets.interpark.com/" + e.select("div.ranking-horizontal-item_imageWrap__owTl6").select("img").attr("src");
+                // 순위 상승폭
+                int upDown, range;
+                // (upDown, range) : (1,0) 순위변동 X
+                //                 : (0,0) new
+                //                 : (1,n) up
+                //                 : (2,n) down
+                if(!e.select("div.ranking-list-bottom_rankNew__pYNwr").isEmpty()){   //new
+                    upDown = 0;
+                    range = 0;
+                }
+                else if(!e.select("div.ranking-list-bottom_imageWrap__YCjN7").isEmpty()){  // 유지
+                    upDown = 1;
+                    range = 0;
+                }
+                else if(!e.select("span.ranking-list-bottom_rankDownText__QfjAv").isEmpty()){  // down
+                    String r = e.select("span.ranking-list-bottom_rankDownText__QfjAv").text();
+                    range = Integer.parseInt(r);
+                    upDown = 2;
+                }
+                else if(!e.select("span.ranking-list-bottom_rankUpText__WcLo9").isEmpty()){  // up
+                    String r = e.select("span.ranking-list-bottom_rankUpText__WcLo9").text();
+                    range = Integer.parseInt(r);
+                    upDown = 1;
+                }
+                else{       // invalid
+                    upDown = -1;
+                    range = -1;
+                }
                 MainPageDto.musicalRanking dto = new MainPageDto.musicalRanking();
                 dto.setRanking(rank++);
                 dto.setTitle(title);
                 dto.setImgUrl(imgUrl);
-                dto.setUpDown(0);
-                dto.setRange(0);
+                dto.setUpDown(upDown);
+                dto.setRange(range);
                 musicalRankings.add(dto);
             }
         } catch (IOException e) {
@@ -91,6 +148,7 @@ public class MainPageServiceImpl implements MainPageService {
         }
         return musicalRankings;
     }
+    /** 콘서트 랭킹 크롤링 */
     public List<MainPageDto.concertRanking> getConcertRank() {
         // 1~3위 for문 + 4~10위 for문
         List<MainPageDto.concertRanking> concertRankings = new ArrayList<>();
@@ -99,17 +157,46 @@ public class MainPageServiceImpl implements MainPageService {
 
         try {
             Document doc = concertConnection.get();
-            Elements divClass = doc.select("div.ranking-vertical-item_rankingItem__llUL_");
+//            Elements divClass = doc.select("div.ranking-vertical-item_rankingItem__llUL_");
+            Elements divClass = doc.select("div.ranking-list_rankingItemWrap__wjk3y");  // 순위 변동 여부 포함하기 위해서
             for (Element e : divClass) {
                 // 1 ~ 3위
                 String title = e.select("li.ranking-vertical-item_rankingGoodsName__m0gOz").text();
-                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
+                String imgUrl = "https://tickets.interpark.com/"+e.select("div.ranking-vertical-item_imageWrap__R6lkF").select("img").attr("src");
+                // 순위 상승폭
+                int upDown, range;
+                // (upDown, range) : (1,0) 순위변동 X
+                //                 : (0,0) new
+                //                 : (1,n) up
+                //                 : (2,n) down
+                if(!e.select("div.ranking-list_rankNew__zfg2o").isEmpty()){   //new
+                    upDown = 0;
+                    range = 0;
+                }
+                else if(!e.select("div.ranking-list_curRank__iRDfM").isEmpty()){  // 유지
+                    upDown = 1;
+                    range = 0;
+                }
+                else if(!e.select("span.ranking-list_rankDownText__Gn0f7").isEmpty()){  // down
+                    String r = e.select("span.ranking-list_rankDownText__Gn0f7").text();
+                    range = Integer.parseInt(r);
+                    upDown = 2;
+                }
+                else if(!e.select("span.ranking-list_rankUpText__nxIXL").isEmpty()){  // up
+                    String r = e.select("span.ranking-list_rankUpText__nxIXL").text();
+                    range = Integer.parseInt(r);
+                    upDown = 1;
+                }
+                else{       // invalid
+                    upDown = -1;
+                    range = -1;
+                }
                 MainPageDto.concertRanking dto = new MainPageDto.concertRanking();
                 dto.setRanking(rank++);
                 dto.setTitle(title);
                 dto.setImgUrl(imgUrl);
-                dto.setUpDown(0);
-                dto.setRange(0);
+                dto.setUpDown(upDown);
+                dto.setRange(range);
                 concertRankings.add(dto);
 
                 if(rank>3) break;
@@ -119,13 +206,41 @@ public class MainPageServiceImpl implements MainPageService {
                 // 4 ~ 10위
                 if(rank > 10) break;
                 String title = e.select("li.ranking-horizontal-item_rankingTicketTitle__omJYh").text();
-                String imgUrl = "https://tickets.interpark.com/"+e.select("div").select("img").attr("src");
+                String imgUrl = "https://tickets.interpark.com/"+e.select("div.ranking-horizontal-item_imageWrap__owTl6").select("img").attr("src");
+                // 순위 상승폭
+                int upDown, range;
+                // (upDown, range) : (1,0) 순위변동 X
+                //                 : (0,0) new
+                //                 : (1,n) up
+                //                 : (2,n) down
+                if(!e.select("div.ranking-list-bottom_rankNew__pYNwr").isEmpty()){   //new
+                    upDown = 0;
+                    range = 0;
+                }
+                else if(!e.select("div.ranking-list-bottom_imageWrap__YCjN7").isEmpty()){  // 유지
+                    upDown = 1;
+                    range = 0;
+                }
+                else if(!e.select("span.ranking-list-bottom_rankDownText__QfjAv").isEmpty()){  // down
+                    String r = e.select("span.ranking-list-bottom_rankDownText__QfjAv").text();
+                    range = Integer.parseInt(r);
+                    upDown = 2;
+                }
+                else if(!e.select("span.ranking-list-bottom_rankUpText__WcLo9").isEmpty()){  // up
+                    String r = e.select("span.ranking-list-bottom_rankUpText__WcLo9").text();
+                    range = Integer.parseInt(r);
+                    upDown = 1;
+                }
+                else{       // invalid
+                    upDown = -1;
+                    range = -5;
+                }
                 MainPageDto.concertRanking dto = new MainPageDto.concertRanking();
                 dto.setRanking(rank++);
                 dto.setTitle(title);
                 dto.setImgUrl(imgUrl);
-                dto.setUpDown(0);
-                dto.setRange(0);
+                dto.setUpDown(upDown);
+                dto.setRange(range);
                 concertRankings.add(dto);
             }
         } catch (IOException e) {
