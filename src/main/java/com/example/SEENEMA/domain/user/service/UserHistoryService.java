@@ -47,36 +47,43 @@ public class UserHistoryService {
     // 사용자가 조회한 공연 중 조회 횟수가 가장 높은 공연의 장르와 캐스트를 활용하여 유사한 공연을 추천
     public List<Concert> recommendSimilarConcertsByViewCount(Long userId) {
         List<Long> mostViewedConcertIds = getMostViewedConcertIds(userId);
+        System.out.println("aaa : "+mostViewedConcertIds);
 
         if (!mostViewedConcertIds.isEmpty()) {
-            Long mostViewedConcertId = mostViewedConcertIds.get(0); // 조회 횟수가 가장 높은 공연 ID 중 가장 최근에 조회한 공연을 사용
+            // 최근에 조회한 공연을 선택
+            Long mostViewedConcertId = mostViewedConcertIds.get(0);
+            System.out.println("bbb : "+mostViewedConcertId);
             Concert mostViewedConcert = concertRepository.findById(mostViewedConcertId).orElse(null);
-            if (mostViewedConcert != null) {
-                String genre = mostViewedConcert.getGenre();
-                String cast = mostViewedConcert.getCast();
+            System.out.println("ccc : "+mostViewedConcert.getTitle());
 
-                // 추천을 위해 해당 장르와 캐스트를 활용하여 유사한 공연을 조회
-                List<Concert> similarConcerts = findSimilarConcertsByGenreAndCast(genre, cast);
-                return similarConcerts;
+            String genre = mostViewedConcert.getGenre();
+            String cast = mostViewedConcert.getCast();
+
+            // 추천을 위해 해당 장르와 캐스트를 활용하여 유사한 공연을 조회
+            System.out.println("ddd : "+findSimilarConcertsByGenreAndCast(genre,cast));
+            return findSimilarConcertsByGenreAndCast(genre, cast);
+
+        } else{
+            return new ArrayList<>(); // 조회 횟수가 가장 높은 공연이 없는 경우 빈 리스트 반환
             }
-        }
 
-        return new ArrayList<>(); // 조회 횟수가 가장 높은 공연이 없는 경우 빈 리스트 반환
     }
-
-
 
     // 사용자가 조회한 공연 중 조회 횟수가 가장 높은 공연 ID를 가져오는 함수
     public List<Long> getMostViewedConcertIds(Long userId) {
         return userHistoryRepository.findMostViewedConcertIdsByUserId(userId);
     }
 
-
     // 콘서트의 장르와 캐스트 정보를 기반으로 유사한 콘서트를 찾는 함수
     public List<Concert> findSimilarConcertsByGenreAndCast(String genre, String cast) {
-        // 구현 로직: 해당 장르와 캐스트에 해당하는 콘서트를 데이터베이스에서 조회하여 반환
-        return concertRepository.findByGenreOrCast(genre, cast);
+        if (genre == null) {
+            // genre가 null인 경우, cast만을 이용하여 유사한 콘서트를 찾음
+            return concertRepository.findByCast(cast);
+        } else {
+            // genre와 cast 모두를 이용하여 유사한 콘서트를 찾음
+            return concertRepository.findByGenreOrCast(genre, cast);
+        }
     }
 
-}
 
+}

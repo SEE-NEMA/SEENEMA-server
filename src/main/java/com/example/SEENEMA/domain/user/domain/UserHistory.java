@@ -5,6 +5,7 @@ import com.example.SEENEMA.domain.mainPage.domain.Musical;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -23,11 +24,13 @@ public class UserHistory {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.REMOVE) // CascadeType.ALL도 사용 가능
     @JoinColumn(name = "concert_id")
     private Concert concert;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.REMOVE) // CascadeType.ALL도 사용 가능
     @JoinColumn(name = "musical_id")
     private Musical musical;
 

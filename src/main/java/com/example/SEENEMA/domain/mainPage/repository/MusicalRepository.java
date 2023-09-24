@@ -11,4 +11,6 @@ import java.util.List;
 public interface MusicalRepository extends JpaRepository<Musical, Long> {
     List<Musical> findByTitleAndDateAndPlace(String title, String date, String place);
     List<Musical> findByDateAndPlaceContaining(String date, String place);
+    List<Musical> findByGenreOrCast(String genre, String cast);
+    Musical findByNo(Long no);
 }

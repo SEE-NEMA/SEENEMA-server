@@ -11,8 +11,6 @@ public interface UserHistoryRepository extends JpaRepository<UserHistory, Long> 
     @Query("SELECT uh.concert.id FROM UserHistory uh WHERE uh.user.id = :userId ORDER BY uh.viewCount DESC, uh.timestamp DESC")
     List<Long> findMostViewedConcertIdsByUserId(@Param("userId") Long userId);
 
-
-
     // 사용자가 조회한 공연 중 공연 ID를 가져오기 위해 user_id와 concert_id를 사용
     UserHistory findByUserUserIdAndConcertNo(Long userId, Long concertId);
 
