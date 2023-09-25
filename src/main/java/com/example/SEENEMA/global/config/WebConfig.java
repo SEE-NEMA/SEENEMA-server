@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:3000",
                         "http://192.168.0.127:3000",
-                        "https://seenema-client-9qzldldc1-seenema.vercel.app/"
+                        "http://223.194.154.209:3000"
                         )
                 .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
