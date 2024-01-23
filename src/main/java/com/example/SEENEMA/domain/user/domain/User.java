@@ -32,6 +32,10 @@ public class User implements UserDetails {
     private String password;
     @Column
     private String nickname;
+    @Column
+    private String interparkId;
+    @Column
+    private String interparkPwd;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "USER_ROLES")

@@ -10,5 +10,7 @@ import java.util.List;
 public interface MainPageService {
     List<PlayDto.musicalList> getMusicals();
     List<PlayDto.concertList> getConcerts();
+    List<PlayDto.concertList> getElevenConcerts();
+    List<PlayDto.musicalList> getElevenMusicals();
 
 }

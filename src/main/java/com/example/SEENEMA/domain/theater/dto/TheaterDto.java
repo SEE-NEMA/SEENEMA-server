@@ -22,15 +22,28 @@ public class TheaterDto {
     }
 
     @Getter
+    @Setter
     public static class theaterList{
         private Long theaterId;
         private String theaterName;
         private String detailUrl;
+        private Double lat;
+        private Double lon;
+        private String direction;
+        private String parking;
+        private String info;
+        private String imgUrl; // 이미지 url
 
         public theaterList(Theater theater) {
             this.theaterId = theater.getTheaterId();
             this.theaterName = theater.getTheaterName();
             this.detailUrl = theater.getDetailUrl();
+            this.lat = theater.getLat();
+            this.lon = theater.getLon();
+            this.direction = theater.getDirection();
+            this.parking = theater.getParking();
+            this.info = theater.getInfo();
+            this.imgUrl = String.valueOf(theater.getImage());
         }
     }
 

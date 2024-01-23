@@ -24,15 +24,24 @@ public class ConcertRanking {
 
     @Column(name = "imgUrl")
     private String imgUrl;
+    @Column(name = "upDown")
+    private int upDown;     // 1 : up , 0 : down
+
+    @Column(name="upDownRange")
+    private int range;      // updown 폭?
+    // (upDown, range) : (1,0) 순위변동 X
+    //                 : (0,0) new
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "no")
     private Concert concert;
     @Builder
-    public ConcertRanking(int id, int ranking, String title, String imgUrl, Concert concert){
+    public ConcertRanking(int id, int ranking, String title, String imgUrl, Concert concert, int upDown, int range){
         this.id = id;
         this.ranking= ranking;
         this.title = title;
         this.imgUrl = imgUrl;
         this.concert = concert;
+        this.upDown = upDown;
+        this.range = range;
     }
 }
